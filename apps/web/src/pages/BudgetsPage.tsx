@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type SubmitEvent } from 'react';
 import { CalendarRange, CirclePoundSterling, Pencil, Plus, Sparkles } from 'lucide-react';
 import { useApp } from '../app/AppContext';
 import type { BudgetDefault, BudgetProgress, Category, Month } from '../data/types';
@@ -62,7 +62,7 @@ export function BudgetsPage() {
     setAmountError('');
   }
 
-  async function saveBudget(event: FormEvent<HTMLFormElement>) {
+  async function saveBudget(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editor) return;
     const limitMinor = amount.trim() === '0' || amount.trim() === '0.00' ? 0 : parseGbpInput(amount);

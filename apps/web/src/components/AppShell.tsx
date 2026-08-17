@@ -71,9 +71,9 @@ export function AppShell({ children, onAddTransaction, onShowNotifications }: Ap
             <small>Slow and steady finances</small>
           </span>
         </NavLink>
-        <Button className="sidebar__add" variant="primary" onClick={onAddTransaction}>
+        <Button className="sidebar__add" variant="primary" aria-label="Add transaction" onClick={onAddTransaction}>
           <Plus aria-hidden="true" size={19} />
-          Add transaction
+          <span className="sidebar__add-label">Add transaction</span>
         </Button>
         <nav className="sidebar__nav">{links}</nav>
         <div className="sidebar__footer">

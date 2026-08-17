@@ -962,7 +962,7 @@ p {
     padding-inline: 0;
   }
   .brand span,
-  .sidebar__add span,
+  .sidebar__add-label,
   .nav-link span,
   .nav-link__chevron,
   .sidebar__footer span {

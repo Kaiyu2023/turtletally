@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type SubmitEvent } from 'react';
 import { CalendarCheck2, CalendarClock, CirclePause, Pencil, Plus, Repeat2 } from 'lucide-react';
 import { useApp } from '../app/AppContext';
 import type {
@@ -143,7 +143,7 @@ export function SchedulesPage() {
     };
   }
 
-  async function saveSchedule(event: FormEvent<HTMLFormElement>) {
+  async function saveSchedule(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const amountMinor = parseGbpInput(form.amount);
     if (!form.name.trim() || !form.description.trim() || !amountMinor || !form.accountId) {

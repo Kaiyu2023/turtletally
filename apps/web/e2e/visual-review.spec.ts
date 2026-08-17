@@ -34,6 +34,14 @@ test('captures representative desktop and mobile views', async ({ page }, testIn
   await expect(page.getByRole('heading', { level: 2, name: 'synthetic-card-preview.csv' })).toBeVisible();
   await capture(page, 'import-preview-desktop');
 
+  await page.setViewportSize({ width: 900, height: 800 });
+  await ready(page, '/dashboard', 'A clear view of your money');
+  await page.locator('.sidebar').screenshot({
+    path: 'artifacts/ui-draft/sidebar-compact.png',
+    animations: 'disabled',
+    caret: 'hide',
+  });
+
   await page.setViewportSize({ width: 390, height: 844 });
   await ready(page, '/dashboard', 'A clear view of your money');
   await capture(page, 'overview-mobile', false);

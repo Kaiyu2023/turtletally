@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react';
 import { FileCheck2, Paperclip, ShieldCheck } from 'lucide-react';
 import { useApp, type TransactionEditorState } from '../app/AppContext';
 import type { Account, Category, LocalDate, Receipt, TransactionFlow, TransactionKind } from '../data/types';
@@ -124,7 +124,7 @@ export function TransactionEditor() {
     return { amountMinor, localDate: form.localDate as LocalDate };
   }
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const valid = validate();
     if (!valid) {

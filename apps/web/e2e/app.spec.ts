@@ -236,3 +236,38 @@ test('mobile navigation fits the viewport and reaches every section', async ({ p
     expect(sizes.content, `${route.path} has horizontal overflow`).toBeLessThanOrEqual(sizes.viewport + 1);
   }
 });
+
+test('compact desktop sidebar keeps its transaction action contained and named', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Desktop-only coverage');
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await openPage(page, '/dashboard', 'A clear view of your money');
+
+  const sidebar = page.locator('.sidebar');
+  const action = sidebar.getByRole('button', { name: 'Add transaction' });
+  const label = action.locator('.sidebar__add-label');
+  await expect(label).toBeVisible();
+
+  await page.setViewportSize({ width: 900, height: 800 });
+  await expect(action).toHaveAccessibleName('Add transaction');
+  await expect(label).toBeHidden();
+
+  const layout = await sidebar.evaluate((element) => {
+    const button = element.querySelector<HTMLButtonElement>('.sidebar__add');
+    if (!button) {
+      throw new Error('Sidebar transaction action is missing');
+    }
+    const sidebarBounds = element.getBoundingClientRect();
+    const buttonBounds = button.getBoundingClientRect();
+    return {
+      contained:
+        buttonBounds.left >= sidebarBounds.left &&
+        buttonBounds.right <= sidebarBounds.right &&
+        buttonBounds.top >= sidebarBounds.top &&
+        buttonBounds.bottom <= sidebarBounds.bottom,
+      contentFits: button.scrollWidth <= button.clientWidth && button.scrollHeight <= button.clientHeight,
+    };
+  });
+
+  expect(layout.contained).toBe(true);
+  expect(layout.contentFits).toBe(true);
+});

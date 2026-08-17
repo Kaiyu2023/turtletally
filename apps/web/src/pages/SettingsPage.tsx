@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type SubmitEvent } from 'react';
 import { CreditCard, FolderTree, Pencil, Plus, ShieldCheck, UserRoundCheck } from 'lucide-react';
 import { useApp } from '../app/AppContext';
 import type { Account, AccountType, Category, CategoryGroup } from '../data/types';
@@ -92,7 +92,7 @@ export function SettingsPage() {
     setFormError('');
   }
 
-  async function saveEditor(event: FormEvent<HTMLFormElement>) {
+  async function saveEditor(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editor) return;
     setBusy(true);
