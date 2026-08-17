@@ -14,6 +14,7 @@ These rules apply to the entire Turtle Tally repository.
 
 ## Required checks
 
+- Before implementation, read `finance-app-implementation-plan.md` completely when it is present locally. It is intentionally untracked; never stage or publish it without a reviewed, sanitized replacement.
 - Run `./scripts/check-repository-secrets.sh` before every commit.
 - Keep dependencies and GitHub Actions pinned and review updates before merging.
 - Once implementation scaffolding exists, run the repository's format, lint, test, audit, build, and `cdk synth` checks before merging.
@@ -21,6 +22,7 @@ These rules apply to the entire Turtle Tally repository.
 
 ## Working practices
 
+- Work on a feature branch and merge through a pull request. Never push directly to protected `main`.
 - Make small, reviewable commits.
 - Treat security controls and stop conditions as product requirements.
 - Keep public documentation free of personal bank details, account IDs, domains, email addresses, and other unnecessary identifying information.
