@@ -27,3 +27,10 @@ These rules apply to the entire Turtle Tally repository.
 - Treat security controls and stop conditions as product requirements.
 - Keep public documentation free of personal bank details, account IDs, domains, email addresses, and other unnecessary identifying information.
 - Preserve unrelated user changes and never use destructive Git commands without explicit authorization.
+
+## Code simplicity
+
+- Treat simplicity as a primary design constraint. Choose the simplest design that fully satisfies the current requirements.
+- Minimise code, concepts, dependencies, abstraction layers, indirection, and configuration. Do not add speculative flexibility or generalise before a concrete need exists.
+- Prefer clear names, focused functions, explicit types, and straightforward control flow so the code explains itself.
+- Avoid docstrings and comments when the code can express the same intent. Add one only when it explains a non-obvious reason, external constraint, security invariant, or important trade-off; never use comments to narrate what the code already says.
