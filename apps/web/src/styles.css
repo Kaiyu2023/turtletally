@@ -905,11 +905,9 @@ p {
 
 @keyframes page-enter {
   from {
-    opacity: 0;
     transform: translateY(7px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
