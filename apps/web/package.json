@@ -1,0 +1,28 @@
+{
+  "name": "@turtle-tally/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint --type-aware --deny-warnings --report-unused-disable-directives src e2e",
+    "typecheck": "tsc -b --pretty false",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "1.31.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.2"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "oxlint": "1.78.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "typescript": "7.0.2",
+    "vite": "8.2.1"
+  }
+}

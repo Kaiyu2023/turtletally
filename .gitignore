@@ -41,6 +41,7 @@ dist/
 coverage/
 playwright-report/
 test-results/
+/artifacts/
 
 # Logs and temporary files
 *.log

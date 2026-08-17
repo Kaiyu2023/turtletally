@@ -1,0 +1,662 @@
+.page-stack {
+  display: grid;
+  gap: 26px;
+}
+
+.month-switcher {
+  display: grid;
+  grid-template-columns: 42px minmax(160px, auto) 42px;
+  align-items: center;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-inset);
+}
+
+.month-switcher button {
+  min-height: 42px;
+  border-radius: 11px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.35rem;
+}
+
+.month-switcher span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 780;
+}
+
+.view-tabs {
+  width: fit-content;
+}
+
+.metric-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.metric-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.metric-card {
+  position: relative;
+  display: grid;
+  min-height: 178px;
+  align-content: center;
+  gap: 7px;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.metric-card::after {
+  position: absolute;
+  right: -38px;
+  bottom: -50px;
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 18%);
+  box-shadow: var(--shadow-inset);
+  content: '';
+}
+
+.metric-card__icon {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  margin-bottom: 7px;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--primary);
+  background: rgb(205 226 215 / 68%);
+}
+
+.metric-card__icon svg {
+  width: 20px;
+}
+.metric-card__icon--amber {
+  color: var(--warning);
+  background: rgb(246 222 170 / 58%);
+}
+.metric-card__icon--green {
+  color: var(--positive);
+}
+.metric-card__label {
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  font-weight: 740;
+}
+.metric-card > strong {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(1.55rem, 2.6vw, 2rem);
+}
+.metric-card > small {
+  position: relative;
+  z-index: 1;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.content-card {
+  padding: 24px;
+}
+
+.budget-plan-list {
+  display: grid;
+}
+
+.budget-plan-row {
+  display: grid;
+  grid-template-columns: 13px minmax(220px, 1fr) minmax(120px, auto) 44px;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.budget-plan-row:last-child {
+  border-bottom: 0;
+}
+.category-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 2px solid rgb(255 255 255 / 68%);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgb(18 58 53 / 16%);
+}
+.budget-plan-row__details {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+.budget-plan-row__details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.budget-plan-row__details span,
+.budget-plan-row__details small {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+.budget-plan-row > .money {
+  font-size: 0.77rem;
+  font-weight: 780;
+}
+
+.future-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-bottom: 24px;
+  padding: 15px 17px;
+  border: 1px solid rgb(11 103 88 / 16%);
+  border-radius: 14px;
+  color: var(--primary);
+  background: rgb(205 226 215 / 46%);
+}
+
+.future-note > svg {
+  flex: none;
+  margin-top: 2px;
+}
+.future-note p {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.schedule-card {
+  display: flex;
+  min-height: 350px;
+  flex-direction: column;
+  padding: 22px;
+}
+
+.schedule-card__top,
+.schedule-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.schedule-icon,
+.history-item__icon,
+.upload-card__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--primary);
+  background: var(--surface);
+  box-shadow: var(--shadow-raised-small);
+}
+
+.schedule-card h2 {
+  margin: 22px 0 5px;
+}
+.schedule-card p {
+  min-height: 42px;
+  margin-bottom: 13px;
+  font-size: 0.82rem;
+}
+.schedule-card__amount {
+  font-size: 1.65rem;
+}
+.schedule-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+.schedule-card dl > div {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 8px;
+}
+.schedule-card dt {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  font-weight: 720;
+}
+.schedule-card dd {
+  margin: 0;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+.schedule-card__actions {
+  justify-content: flex-start;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.form-error {
+  padding: 12px 14px;
+  border: 1px solid rgb(165 55 72 / 24%);
+  border-radius: 12px;
+  color: var(--negative);
+  background: rgb(165 55 72 / 7%);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.split-layout {
+  display: grid;
+  gap: 22px;
+}
+
+.split-layout--imports {
+  grid-template-columns: minmax(280px, 0.7fr) minmax(420px, 1.3fr);
+}
+
+.upload-card {
+  display: grid;
+  align-content: start;
+  gap: 15px;
+  padding: 24px;
+}
+
+.upload-card h2 {
+  margin: 5px 0 -8px;
+}
+.upload-card p {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.dropzone {
+  display: grid;
+  min-height: 142px;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 18%);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    transform 140ms ease,
+    border 140ms ease,
+    background 140ms ease;
+}
+
+.dropzone:hover {
+  border-color: var(--primary);
+  background: rgb(255 255 255 / 30%);
+  transform: translateY(-2px);
+}
+.dropzone svg {
+  color: var(--primary);
+}
+.dropzone span {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.import-history {
+  min-width: 0;
+}
+.history-list {
+  display: grid;
+}
+.history-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  min-height: 72px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.history-item:last-child {
+  border-bottom: 0;
+}
+.history-item:hover strong {
+  color: var(--primary);
+}
+.history-item__icon {
+  width: 38px;
+  height: 38px;
+}
+.history-item__icon svg {
+  width: 18px;
+}
+.history-item > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+.history-item strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-item small {
+  color: var(--text-faint);
+  font-size: 0.7rem;
+}
+
+.import-preview {
+  overflow: hidden;
+}
+.import-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.import-summary > div {
+  display: grid;
+  gap: 3px;
+  padding: 15px;
+  border: 1px solid rgb(255 255 255 / 48%);
+  border-radius: 13px;
+  background: rgb(255 255 255 / 16%);
+  box-shadow: var(--shadow-inset);
+}
+.import-summary strong {
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+.import-summary span {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+}
+.import-table select {
+  min-width: 150px;
+  min-height: 38px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  box-shadow: var(--shadow-inset);
+}
+.import-table input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+.row-warning {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  color: var(--warning);
+}
+.commit-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 18%);
+}
+.commit-bar > div {
+  display: grid;
+  gap: 4px;
+}
+.commit-bar span {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+}
+
+.settings-nav {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+.settings-nav > button {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: center;
+  gap: 9px;
+  min-height: 62px;
+  padding: 8px 11px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: var(--text-soft);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.settings-nav > button.active {
+  border-color: rgb(255 255 255 / 42%);
+  color: var(--primary-dark);
+  background: rgb(255 255 255 / 18%);
+  box-shadow: var(--shadow-inset);
+}
+.settings-nav > button span {
+  display: grid;
+  gap: 3px;
+}
+.settings-nav small {
+  color: var(--text-faint);
+  font-size: 0.64rem;
+  font-weight: 500;
+}
+.owner-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 14px 10px 4px;
+  border-top: 1px solid var(--line);
+  color: var(--primary);
+}
+.owner-panel > div {
+  display: grid;
+  gap: 3px;
+}
+.owner-panel span {
+  color: var(--text-faint);
+  font-size: 0.64rem;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.account-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5px minmax(0, 1fr);
+  min-height: 205px;
+  gap: 17px;
+  padding: 19px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 16%);
+  box-shadow: var(--shadow-raised-small);
+}
+.account-card--inactive {
+  opacity: 0.65;
+}
+.account-card__colour {
+  width: 5px;
+  height: 100%;
+  border-radius: 999px;
+}
+.account-card h3 {
+  margin: 20px 0 4px;
+  font-size: 1.08rem;
+}
+.account-card > div > strong {
+  display: block;
+  font-size: 1.45rem;
+}
+.account-card > div > small {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+}
+.account-card__actions {
+  display: flex;
+  position: absolute;
+  right: 13px;
+  bottom: 13px;
+  left: 40px;
+  align-items: center;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.category-groups {
+  display: grid;
+  gap: 22px;
+}
+.category-groups section > h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+.category-groups section > div {
+  display: grid;
+}
+.category-groups article {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) 40px auto;
+  align-items: center;
+  gap: 11px;
+  min-height: 56px;
+  padding: 7px 3px;
+  border-bottom: 1px solid var(--line);
+}
+.category-groups article.inactive {
+  opacity: 0.6;
+}
+.category-groups article > span:nth-child(2) {
+  display: grid;
+  gap: 2px;
+}
+.category-groups article small {
+  color: var(--text-faint);
+  font-size: 0.64rem;
+}
+.category-groups .icon-button {
+  width: 36px;
+  min-height: 36px;
+  border-radius: 10px;
+}
+
+@media (max-width: 1180px) {
+  .schedule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .split-layout--imports {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .metric-grid--three {
+    grid-template-columns: 1fr 1fr;
+  }
+  .metric-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+  .settings-nav {
+    grid-template-columns: 1fr 1fr;
+  }
+  .owner-panel {
+    grid-column: 1 / -1;
+  }
+  .import-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .metric-grid--three,
+  .schedule-grid,
+  .account-grid {
+    grid-template-columns: 1fr;
+  }
+  .metric-card:last-child {
+    grid-column: auto;
+  }
+  .budget-plan-row {
+    grid-template-columns: 12px minmax(0, 1fr) 42px;
+  }
+  .budget-plan-row > .money {
+    grid-column: 2;
+  }
+  .budget-plan-row__details > div {
+    display: grid;
+  }
+  .view-tabs {
+    width: 100%;
+  }
+  .settings-nav {
+    grid-template-columns: 1fr;
+  }
+  .owner-panel {
+    grid-column: auto;
+  }
+  .import-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+  .commit-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .commit-bar .button {
+    width: 100%;
+  }
+  .content-card {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 400px) {
+  .import-summary {
+    grid-template-columns: 1fr;
+  }
+  .month-switcher {
+    width: 100%;
+    grid-template-columns: 40px 1fr 40px;
+  }
+}

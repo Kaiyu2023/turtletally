@@ -1,0 +1,28 @@
+{
+  "name": "turtle-tally",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @turtle-tally/web",
+    "build": "npm run build --workspace @turtle-tally/web",
+    "format": "prettier --write 'apps/web/**/*.{ts,tsx,css,json,html}' '*.{ts,json,md}' '.github/workflows/*.yml' '.github/dependabot.yml'",
+    "format:check": "prettier --check 'apps/web/**/*.{ts,tsx,css,json,html}' '*.{ts,json,md}' '.github/workflows/*.yml' '.github/dependabot.yml'",
+    "lint": "npm run lint --workspace @turtle-tally/web",
+    "typecheck": "npm run typecheck --workspace @turtle-tally/web",
+    "test": "npm run test:e2e",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "screenshots": "playwright test visual-review.spec.ts --project=chromium"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.62.1",
+    "prettier": "3.9.6"
+  }
+}
