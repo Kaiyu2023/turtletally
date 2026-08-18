@@ -3,22 +3,36 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=22.12.0"
+    "node": "22.22.1"
   },
   "workspaces": [
-    "apps/web"
+    "apps/web",
+    "infra"
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace @turtle-tally/web",
-    "build": "npm run build --workspace @turtle-tally/web",
-    "format": "prettier --write 'apps/web/**/*.{ts,tsx,css,json,html}' '*.{ts,json,md}' '.github/workflows/*.yml' '.github/dependabot.yml'",
-    "format:check": "prettier --check 'apps/web/**/*.{ts,tsx,css,json,html}' '*.{ts,json,md}' '.github/workflows/*.yml' '.github/dependabot.yml'",
-    "lint": "npm run lint --workspace @turtle-tally/web",
-    "typecheck": "npm run typecheck --workspace @turtle-tally/web",
-    "test": "npm run test:e2e",
+    "build": "npm run build --workspaces --if-present && cargo build --workspace",
+    "format": "npm run format:node && npm run format:rust",
+    "format:node": "prettier --write 'apps/web/**/*.{ts,tsx,css,json,html}' 'infra/**/*.{ts,json}' 'docs/**/*.md' '*.{ts,json,md}' '.github/**/*.yml'",
+    "format:rust": "cargo fmt --all",
+    "format:check": "npm run format:check:node && npm run format:check:rust",
+    "format:check:node": "prettier --check 'apps/web/**/*.{ts,tsx,css,json,html}' 'infra/**/*.{ts,json}' 'docs/**/*.md' '*.{ts,json,md}' '.github/**/*.yml'",
+    "format:check:rust": "cargo fmt --all -- --check",
+    "lint": "npm run lint:node && npm run lint:rust",
+    "lint:node": "npm run lint --workspaces --if-present",
+    "lint:rust": "cargo clippy --workspace --all-targets --all-features -- -D warnings",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test:node && npm run test:e2e && npm run test:rust",
+    "test:node": "npm run test --workspaces --if-present",
+    "test:rust": "cargo test --workspace",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "screenshots": "playwright test visual-review.spec.ts --project=chromium"
+    "screenshots": "playwright test visual-review.spec.ts --project=chromium",
+    "audit": "npm run audit:node && npm run audit:rust",
+    "audit:node": "npm audit --audit-level=high",
+    "audit:rust": "cargo audit && cargo deny check",
+    "cdk:synth": "npm run synth --workspace @turtle-tally/infra",
+    "check": "./scripts/check-repository-secrets.sh && npm run format:check && npm run lint && npm run typecheck && npm test && npm run audit && npm run build && npm run cdk:synth"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

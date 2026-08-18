@@ -6,7 +6,7 @@
 
 Turtle Tally is a privacy-first, single-owner personal finance application for tracking transactions, budgets, scheduled entries, receipts, and monthly summaries.
 
-The repository currently contains a full browser-only UI draft. It uses visibly synthetic fixtures and an in-memory mock API, so every change resets when the page reloads. It is not ready for real financial data or production use.
+The implemented product surface is currently a browser-only UI draft. It uses visibly synthetic fixtures and an in-memory mock API, so every change resets when the page reloads. The repository also contains the credential-free Rust and CDK workspace foundation plus its security design records, but no backend or AWS resources. It is not ready for real financial data or production use.
 
 ## UI draft
 
@@ -29,10 +29,12 @@ Use `?scenario=empty` on any route to review the first-use state.
 
 ## Local development
 
-Node.js 22.12 or newer and npm are required.
+Node.js 22.22.1 and Rust 1.97.1 are pinned in the repository. Install the two pinned Rust security tools once before running the complete check suite:
 
 ```sh
-npm ci
+cargo install cargo-audit --version 0.22.2 --locked
+cargo install cargo-deny --version 0.20.2 --locked
+npm ci --ignore-scripts
 npx playwright install chromium
 npm run dev:web
 ```
@@ -42,17 +44,10 @@ Open <http://127.0.0.1:4173>. The UI makes no third-party requests and writes no
 ## Checks
 
 ```sh
-npm run typecheck
-npm run format:check
-npm run lint
-npm run build
-npm run test:e2e
-npm run screenshots
-npm audit
-./scripts/check-repository-secrets.sh
+npm run check
 ```
 
-Playwright runs the behavior and accessibility suite in desktop and mobile Chromium. Visual-review captures are written to the ignored `artifacts/ui-draft` directory.
+The root check covers the repository secret scan, formatting, linting, type checks, Rust and browser tests, dependency audits, builds, and the credential-free CDK synthesis. Playwright runs the browser behavior and accessibility suite in desktop and mobile Chromium. Visual-review captures are written to the ignored `artifacts/ui-draft` directory and can be refreshed with `npm run screenshots`.
 
 ## Security posture
 
@@ -63,6 +58,14 @@ Playwright runs the behavior and accessibility suite in desktop and mobile Chrom
 - Only synthetic fixtures are permitted in source control.
 
 See [SECURITY.md](SECURITY.md) for reporting and [the repository security policy](docs/security/repository-policy.md) for the full rules.
+
+## Architecture and operations
+
+- [Architecture decision records](docs/architecture/) explain the runtime, session, data, ingress, and MCP write boundaries.
+- [Threat model](docs/threat-model.md) records assets, entry points, controls, and residual risks.
+- [Manual owner actions](docs/operations/manual-actions.md) identifies AWS and ChatGPT steps that automation must not cross.
+
+These documents use placeholders and synthetic examples. They do not grant deployment, billing, domain, or live-data approval.
 
 ## Ownership and contributions
 

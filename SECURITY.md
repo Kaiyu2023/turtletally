@@ -11,3 +11,7 @@ If a credential may have been exposed, revoke or rotate it immediately before at
 ## Supported versions
 
 Turtle Tally is pre-release software and must not be used with live financial data yet. Security fixes currently apply only to the latest commit on the default branch.
+
+## Design documentation
+
+See the [threat model](docs/threat-model.md) for application trust boundaries and residual risks, and the [repository security policy](docs/security/repository-policy.md) for source-control, credential, and incident-response rules.
