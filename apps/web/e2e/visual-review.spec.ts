@@ -15,6 +15,22 @@ async function capture(page: Page, name: string, fullPage = true) {
   });
 }
 
+async function switchToChinese(page: Page) {
+  await ready(page, '/settings', 'Settings');
+  await page
+    .locator('.settings-nav')
+    .getByRole('button', { name: /^Preferences/ })
+    .click();
+  const language = page.getByLabel('Display language');
+  await expect(language).toBeEnabled();
+  await language.selectOption('zh-CN');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+  await expect(page.getByRole('heading', { level: 1, name: '设置' })).toBeVisible();
+  const savedToast = page.getByRole('status').filter({ hasText: '语言偏好已保存。' });
+  await expect(savedToast).toBeVisible();
+  await savedToast.getByRole('button', { name: '关闭通知' }).click();
+}
+
 test('captures representative desktop and mobile views', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'One deterministic visual-review set is enough');
 
@@ -48,4 +64,18 @@ test('captures representative desktop and mobile views', async ({ page }, testIn
 
   await ready(page, '/transactions', 'Transactions');
   await capture(page, 'transactions-mobile', false);
+
+  await switchToChinese(page);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await capture(page, 'settings-zh-desktop');
+
+  await page.locator('.sidebar__nav').getByRole('link', { name: '总览', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1, name: '清晰掌握您的财务状况' })).toBeVisible();
+  await expect(page.getByRole('status', { name: /正在加载/ })).toHaveCount(0);
+  await capture(page, 'overview-zh-desktop');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await capture(page, 'overview-zh-mobile', false);
 });

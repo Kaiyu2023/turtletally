@@ -18,7 +18,12 @@ The React and TypeScript draft includes:
 - recurring and one-time schedules;
 - statement preview and deliberate, idempotent mock import;
 - account and category management with deactivation instead of hard deletion;
+- British English and Simplified Chinese with an API-backed user language preference;
 - responsive mobile navigation, reduced-motion support, and accessible controls.
+
+Each route keeps orchestration, presentation components, and styles together in its own folder. Repeated controls with the same semantics live in the shared component layer.
+
+The production-oriented [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
 
 Use `?scenario=empty` on any route to review the first-use state.
 

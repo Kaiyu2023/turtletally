@@ -1,6 +1,7 @@
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
 import type {
   Account,
+  AppLocale,
   Budget,
   BudgetDefault,
   BudgetProgress,
@@ -35,6 +36,8 @@ import type {
   UpdateCategoryInput,
   UpdateScheduleInput,
   UpdateTransactionInput,
+  UpdateUserPreferencesInput,
+  UserPreferences,
 } from './types';
 import { MockApiError } from './types';
 
@@ -91,6 +94,24 @@ class InMemoryMockApi implements MockFinanceApi {
     this.scenario = scenario;
     this.latencyMs = latencyMs;
     this.state = initialState(scenario);
+  }
+
+  async getUserPreferences(): Promise<UserPreferences> {
+    return this.withLatency(() => copy(this.state.preferences));
+  }
+
+  async updateUserPreferences(input: UpdateUserPreferencesInput): Promise<UserPreferences> {
+    return this.withLatency(() => {
+      this.validLocale(input.locale);
+      this.assertVersion(this.state.preferences.version, input.expectedVersion);
+      const updated: UserPreferences = {
+        locale: input.locale,
+        version: this.state.preferences.version + 1,
+        updatedAt: MOCK_NOW,
+      };
+      this.state.preferences = updated;
+      return copy(updated);
+    });
   }
 
   async listAccounts(includeInactive = false): Promise<Account[]> {
@@ -1067,6 +1088,12 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private validColour(value: string): void {
     if (!/^#[0-9a-f]{6}$/i.test(value)) throw new MockApiError('VALIDATION', 'Colour must be a six-digit hex value.');
+  }
+
+  private validLocale(value: AppLocale): void {
+    if (value !== 'en-GB' && value !== 'zh-CN') {
+      throw new MockApiError('VALIDATION', 'Locale is not supported.');
+    }
   }
 
   private validMonth(value: Month): void {

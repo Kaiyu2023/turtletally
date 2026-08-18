@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react';
 import { FileCheck2, Paperclip, ShieldCheck } from 'lucide-react';
 import { useApp, type TransactionEditorState } from '../app/AppContext';
 import type { Account, Category, LocalDate, Receipt, TransactionFlow, TransactionKind } from '../data/types';
+import { useMessages } from '../i18n/locale';
 import { parseGbpInput, toGbpInput } from '../utils/format';
+import { transactionEditorMessages } from './transactionEditor.messages';
 import { Button, Modal, Skeleton } from './Ui';
 
 type FormState = {
@@ -30,6 +32,7 @@ const blankForm: FormState = {
 };
 
 export function TransactionEditor() {
+  const t = useMessages(transactionEditorMessages);
   const { api, transactionEditor, closeTransactionEditor, refresh, notify } = useApp();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -74,8 +77,8 @@ export function TransactionEditor() {
         setErrors({});
         setLoadedEditor(transactionEditor);
       })
-      .catch((reason: unknown) => {
-        notify(reason instanceof Error ? reason.message : 'Transaction details could not be loaded.', 'error');
+      .catch(() => {
+        notify(t('loadError'), 'error');
       });
 
     return () => {
@@ -107,14 +110,13 @@ export function TransactionEditor() {
   function validate(): { readonly amountMinor: number; readonly localDate: LocalDate } | null {
     const nextErrors: FormErrors = {};
     const amountMinor = parseGbpInput(form.amount);
-    if (!form.description.trim()) nextErrors.description = 'Enter a short description.';
-    if (!amountMinor) nextErrors.amount = 'Enter a positive GBP amount with up to two decimal places.';
-    if (!form.accountId) nextErrors.accountId = 'Choose an account.';
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(form.localDate)) nextErrors.localDate = 'Choose a valid date.';
-    if (form.receipt && form.receipt.size > 10 * 1024 * 1024)
-      nextErrors.receipt = 'Receipt files must be 10 MB or smaller.';
+    if (!form.description.trim()) nextErrors.description = t('descriptionRequired');
+    if (!amountMinor) nextErrors.amount = t('amountInvalid');
+    if (!form.accountId) nextErrors.accountId = t('accountRequired');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(form.localDate)) nextErrors.localDate = t('dateInvalid');
+    if (form.receipt && form.receipt.size > 10 * 1024 * 1024) nextErrors.receipt = t('receiptTooLarge');
     if (form.receipt && !['application/pdf', 'image/jpeg', 'image/png'].includes(form.receipt.type))
-      nextErrors.receipt = 'Use a PDF, JPEG, or PNG receipt.';
+      nextErrors.receipt = t('receiptTypeInvalid');
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0 || !amountMinor) {
@@ -154,7 +156,7 @@ export function TransactionEditor() {
           localDate: valid.localDate,
           receipt,
         });
-        notify('Transaction updated.');
+        notify(t('updated'));
       } else {
         await api.createTransaction({
           description: form.description,
@@ -166,12 +168,12 @@ export function TransactionEditor() {
           localDate: valid.localDate,
           receipt,
         });
-        notify('Transaction added to the demo ledger.');
+        notify(t('added'));
       }
       refresh();
       closeTransactionEditor();
-    } catch (error) {
-      notify(error instanceof Error ? error.message : 'The transaction could not be saved.', 'error');
+    } catch {
+      notify(t('saveError'), 'error');
     } finally {
       setBusy(false);
     }
@@ -180,16 +182,16 @@ export function TransactionEditor() {
   return (
     <Modal
       open={open}
-      title={editing ? 'Edit transaction' : 'Add transaction'}
-      description="Demo changes stay in memory and reset when the page reloads."
+      title={editing ? t('editTitle') : t('addTitle')}
+      description={t('draftDescription')}
       onClose={closeTransactionEditor}
       footer={
         <>
           <Button type="button" variant="ghost" onClick={closeTransactionEditor}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button type="submit" variant="primary" busy={busy} disabled={!ready} form="transaction-form">
-            {editing ? 'Save changes' : 'Add transaction'}
+            {editing ? t('saveChanges') : t('addTitle')}
           </Button>
         </>
       }
@@ -203,7 +205,7 @@ export function TransactionEditor() {
           noValidate
         >
           <div className="field field--wide">
-            <label id="kind-label">Transaction kind</label>
+            <label id="kind-label">{t('kind')}</label>
             <div className="segmented" role="group" aria-labelledby="kind-label">
               {(['SPENDING', 'INCOME', 'INVESTMENT'] as const).map((kind) => (
                 <button
@@ -216,14 +218,14 @@ export function TransactionEditor() {
                     updateField('categoryId', '');
                   }}
                 >
-                  {kind === 'SPENDING' ? 'Spending' : kind === 'INCOME' ? 'Income' : 'Investment'}
+                  {kind === 'SPENDING' ? t('spending') : kind === 'INCOME' ? t('income') : t('investment')}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="field field--wide">
-            <label htmlFor="transaction-description">Description</label>
+            <label htmlFor="transaction-description">{t('description')}</label>
             <input
               id="transaction-description"
               value={form.description}
@@ -240,7 +242,7 @@ export function TransactionEditor() {
           </div>
 
           <div className="field">
-            <label htmlFor="transaction-amount">Amount</label>
+            <label htmlFor="transaction-amount">{t('amount')}</label>
             <div className="input-prefix">
               <span>£</span>
               <input
@@ -261,7 +263,7 @@ export function TransactionEditor() {
           </div>
 
           <div className="field">
-            <label htmlFor="transaction-date">Date</label>
+            <label htmlFor="transaction-date">{t('date')}</label>
             <input
               id="transaction-date"
               type="date"
@@ -278,7 +280,7 @@ export function TransactionEditor() {
           </div>
 
           <div className="field">
-            <label htmlFor="transaction-account">Account</label>
+            <label htmlFor="transaction-account">{t('account')}</label>
             <select
               id="transaction-account"
               value={form.accountId}
@@ -286,7 +288,7 @@ export function TransactionEditor() {
               aria-describedby={errors.accountId ? 'account-error' : undefined}
               onChange={(event) => updateField('accountId', event.target.value)}
             >
-              <option value="">Choose account</option>
+              <option value="">{t('chooseAccount')}</option>
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
                   {account.name}
@@ -301,13 +303,13 @@ export function TransactionEditor() {
           </div>
 
           <div className="field">
-            <label htmlFor="transaction-category">Category</label>
+            <label htmlFor="transaction-category">{t('category')}</label>
             <select
               id="transaction-category"
               value={form.categoryId}
               onChange={(event) => updateField('categoryId', event.target.value)}
             >
-              <option value="">Uncategorised</option>
+              <option value="">{t('uncategorised')}</option>
               {availableCategories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -317,27 +319,25 @@ export function TransactionEditor() {
           </div>
 
           <div className="field field--wide">
-            <label id="flow-label">Money flow</label>
+            <label id="flow-label">{t('flow')}</label>
             <div className="segmented" role="group" aria-labelledby="flow-label">
               <button type="button" aria-pressed={form.flow === 'DEBIT'} onClick={() => updateField('flow', 'DEBIT')}>
-                Debit
+                {t('debit')}
               </button>
               <button type="button" aria-pressed={form.flow === 'CREDIT'} onClick={() => updateField('flow', 'CREDIT')}>
-                Credit
+                {t('credit')}
               </button>
             </div>
-            <span className="field__hint">
-              Kind describes purpose; flow describes whether money leaves or enters the account.
-            </span>
+            <span className="field__hint">{t('flowHint')}</span>
           </div>
 
           <div className="field field--wide">
-            <label htmlFor="transaction-receipt">Receipt</label>
+            <label htmlFor="transaction-receipt">{t('receipt')}</label>
             <label className="file-input" htmlFor="transaction-receipt">
               {form.receipt ? <FileCheck2 aria-hidden="true" /> : <Paperclip aria-hidden="true" />}
               <span>
-                <strong>{form.receipt?.name ?? editing?.receipt?.fileName ?? 'Attach a receipt'}</strong>
-                <small>PDF, JPEG, or PNG · up to 10 MB</small>
+                <strong>{form.receipt?.name ?? editing?.receipt?.fileName ?? t('attachReceipt')}</strong>
+                <small>{t('receiptFormats')}</small>
               </span>
             </label>
             <input
@@ -358,7 +358,7 @@ export function TransactionEditor() {
 
           <div className="privacy-note field--wide">
             <ShieldCheck aria-hidden="true" size={18} />
-            <span>This draft does not upload the selected file or store it after refresh.</span>
+            <span>{t('receiptPrivacy')}</span>
           </div>
         </form>
       ) : (

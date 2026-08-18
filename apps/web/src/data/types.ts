@@ -1,6 +1,18 @@
 export type Currency = 'GBP';
+export type AppLocale = 'en-GB' | 'zh-CN';
 export type Month = `${number}-${number}`;
 export type LocalDate = `${number}-${number}-${number}`;
+
+export interface UserPreferences {
+  locale: AppLocale;
+  version: number;
+  updatedAt: string;
+}
+
+export interface UpdateUserPreferencesInput {
+  locale: AppLocale;
+  expectedVersion: number;
+}
 
 export type AccountType = 'CURRENT' | 'CREDIT_CARD' | 'SAVINGS' | 'INVESTMENT';
 
@@ -352,6 +364,8 @@ export class MockApiError extends Error {
 }
 
 export interface MockFinanceApi {
+  getUserPreferences(): Promise<UserPreferences>;
+  updateUserPreferences(input: UpdateUserPreferencesInput): Promise<UserPreferences>;
   listAccounts(includeInactive?: boolean): Promise<Account[]>;
   createAccount(input: CreateAccountInput): Promise<Account>;
   updateAccount(id: string, input: UpdateAccountInput): Promise<Account>;

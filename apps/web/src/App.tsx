@@ -14,12 +14,15 @@ import type {
   TransactionFilters,
   TransactionPage,
 } from './data/types';
-import { BudgetsPage } from './pages/BudgetsPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { ImportsPage } from './pages/ImportsPage';
-import { SchedulesPage } from './pages/SchedulesPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { TransactionsPage } from './pages/TransactionsPage';
+import { commonMessages } from './i18n/common';
+import { useMessages } from './i18n/locale';
+import { BudgetsPage } from './pages/budgets';
+import { DashboardPage } from './pages/dashboard';
+import { ImportsPage } from './pages/imports';
+import { SchedulesPage } from './pages/schedules';
+import { SettingsPage } from './pages/settings';
+import { TransactionsPage } from './pages/transactions';
+import { transactionsMessages } from './pages/transactions/messages';
 
 export function App() {
   return (
@@ -30,12 +33,10 @@ export function App() {
 }
 
 function AppRoutes() {
+  const t = useMessages(commonMessages);
   const { notify, openTransactionEditor } = useApp();
   return (
-    <AppShell
-      onAddTransaction={() => openTransactionEditor()}
-      onShowNotifications={() => notify('No new notifications in this demo.')}
-    >
+    <AppShell onAddTransaction={() => openTransactionEditor()} onShowNotifications={() => notify(t('noNotifications'))}>
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardRoute />} />
@@ -52,6 +53,7 @@ function AppRoutes() {
 }
 
 function DashboardRoute() {
+  const t = useMessages(commonMessages);
   const { api, refreshToken, openTransactionEditor, notify } = useApp();
   const [month, setMonth] = useState<Month>('2026-08');
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -67,9 +69,7 @@ function DashboardRoute() {
         setSummary(nextSummary);
         setSchedules(nextSchedules);
       })
-      .catch((reason: unknown) =>
-        notify(reason instanceof Error ? reason.message : 'The overview could not be loaded.', 'error'),
-      )
+      .catch(() => notify(t('overviewLoadError'), 'error'))
       .finally(() => {
         if (active) setLoading(false);
       });
@@ -92,6 +92,7 @@ function DashboardRoute() {
 }
 
 function TransactionsRoute() {
+  const t = useMessages(transactionsMessages);
   const { api, refreshToken, openTransactionEditor, refresh, notify } = useApp();
   const [filters, setFilters] = useState<TransactionFilters>({
     month: '2026-08',
@@ -118,9 +119,7 @@ function TransactionsRoute() {
         setAccounts(nextAccounts);
         setCategories(nextCategories);
       })
-      .catch((reason: unknown) =>
-        notify(reason instanceof Error ? reason.message : 'Transactions could not be loaded.', 'error'),
-      )
+      .catch(() => notify(t('loadError'), 'error'))
       .finally(() => {
         if (active) setLoading(false);
       });
@@ -134,12 +133,12 @@ function TransactionsRoute() {
     setBusy(true);
     try {
       await api.voidTransaction(voiding.id, voiding.version, voidReason || undefined);
-      notify('Transaction voided. Its audit history remains available.');
+      notify(t('voidSuccess'));
       setVoiding(null);
       setVoidReason('');
       refresh();
-    } catch (reason) {
-      notify(reason instanceof Error ? reason.message : 'The transaction could not be voided.', 'error');
+    } catch {
+      notify(t('voidError'), 'error');
     } finally {
       setBusy(false);
     }
@@ -160,27 +159,27 @@ function TransactionsRoute() {
       />
       <Modal
         open={voiding !== null}
-        title="Void this transaction?"
-        description="The entry remains in history and is excluded from active totals."
+        title={t('voidDialogTitle')}
+        description={t('voidDialogDescription')}
         size="small"
         onClose={() => setVoiding(null)}
         footer={
           <>
             <Button variant="ghost" onClick={() => setVoiding(null)}>
-              Keep transaction
+              {t('keepTransaction')}
             </Button>
             <Button variant="danger" busy={busy} onClick={() => void voidTransaction()}>
-              Void transaction
+              {t('voidTransaction')}
             </Button>
           </>
         }
       >
         <p>
-          <strong>{voiding?.description}</strong> will be marked as voided. Nothing is hard deleted.
+          <strong>{voiding?.description}</strong> {t('voidBodySuffix')}
         </p>
         <div className="field">
           <label htmlFor="void-reason">
-            Reason <span className="muted">(optional)</span>
+            {t('reason')} <span className="muted">{t('optional')}</span>
           </label>
           <input
             id="void-reason"

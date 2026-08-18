@@ -477,14 +477,6 @@
   color: var(--text-faint);
 }
 
-.category-dot {
-  width: 9px;
-  height: 9px;
-  border: 2px solid rgb(255 255 255 / 54%);
-  border-radius: 50%;
-  box-shadow: 0 2px 5px rgb(18 58 53 / 16%);
-}
-
 .budget-row .progress {
   height: 7px;
 }

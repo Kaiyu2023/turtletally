@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { AlertCircle, Check, X } from 'lucide-react';
-import { formatMoney, joinClassNames } from '../utils/format';
+import { commonMessages } from '../i18n/common';
+import { useLocale, useMessages } from '../i18n/locale';
+import { joinClassNames } from '../utils/format';
 
 type CardProps = {
   readonly children: ReactNode;
@@ -10,6 +12,27 @@ type CardProps = {
 
 export function Card({ children, className, as: Element = 'section' }: CardProps) {
   return <Element className={joinClassNames('card', className)}>{children}</Element>;
+}
+
+type CardHeaderProps = {
+  readonly title: ReactNode;
+  readonly description?: ReactNode;
+  readonly eyebrow?: string;
+  readonly action?: ReactNode;
+  readonly className?: string;
+};
+
+export function CardHeader({ title, description, eyebrow, action, className }: CardHeaderProps) {
+  return (
+    <header className={joinClassNames('card__header', className)}>
+      <div>
+        {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
+        <h2>{title}</h2>
+        {description ? <p>{description}</p> : null}
+      </div>
+      {action}
+    </header>
+  );
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -30,6 +53,10 @@ export function Button({ children, className, variant = 'secondary', busy = fals
   );
 }
 
+export function IconButton({ className, type = 'button', ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button className={joinClassNames('icon-button', className)} type={type} {...props} />;
+}
+
 type MoneyProps = {
   readonly amountMinor: number;
   readonly signed?: boolean;
@@ -37,11 +64,12 @@ type MoneyProps = {
 };
 
 export function Money({ amountMinor, signed = false, className }: MoneyProps) {
+  const { format } = useLocale();
   const prefix = signed && amountMinor > 0 ? '+' : '';
   return (
     <span className={joinClassNames('money', className)}>
       {prefix}
-      {formatMoney(amountMinor)}
+      {format.money(amountMinor)}
     </span>
   );
 }
@@ -88,6 +116,7 @@ type ModalProps = {
 };
 
 export function Modal({ open, title, description, children, footer, size = 'medium', onClose }: ModalProps) {
+  const t = useMessages(commonMessages);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -125,9 +154,9 @@ export function Modal({ open, title, description, children, footer, size = 'medi
             <h2 id={titleId}>{title}</h2>
             {description ? <p id={descriptionId}>{description}</p> : null}
           </div>
-          <button className="icon-button" type="button" aria-label={`Close ${title}`} onClick={onClose}>
+          <IconButton aria-label={t('closeDialog', { title })} onClick={onClose}>
             <X aria-hidden="true" size={20} />
-          </button>
+          </IconButton>
         </header>
         <div className="modal__body">{children}</div>
         {footer ? <footer className="modal__footer">{footer}</footer> : null}
@@ -175,8 +204,9 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
 }
 
 export function Skeleton({ lines = 3 }: { readonly lines?: number }) {
+  const t = useMessages(commonMessages);
   return (
-    <div className="skeleton" aria-label="Loading" role="status">
+    <div className="skeleton" aria-label={t('loading')} role="status">
       {Array.from({ length: lines }, (_, index) => (
         <span key={index} />
       ))}
@@ -191,11 +221,12 @@ type ToastProps = {
 };
 
 export function Toast({ message, tone = 'success', onDismiss }: ToastProps) {
+  const t = useMessages(commonMessages);
   return (
     <div className={`toast toast--${tone}`} role={tone === 'error' ? 'alert' : 'status'}>
       {tone === 'success' ? <Check aria-hidden="true" size={18} /> : <AlertCircle aria-hidden="true" size={18} />}
       <span>{message}</span>
-      <button type="button" aria-label="Dismiss notification" onClick={onDismiss}>
+      <button type="button" aria-label={t('dismissNotification')} onClick={onDismiss}>
         <X aria-hidden="true" size={16} />
       </button>
     </div>

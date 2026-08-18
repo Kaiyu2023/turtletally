@@ -10,12 +10,14 @@ import type {
   TransactionFlow,
   TransactionKind,
   TransactionOrigin,
+  UserPreferences,
 } from './types';
 
 export const MOCK_NOW = '2026-08-17T12:00:00.000Z';
 export const MOCK_TODAY = '2026-08-17';
 
 export interface MockFixtureState {
+  preferences: UserPreferences;
   accounts: Account[];
   categories: Category[];
   transactions: Transaction[];
@@ -72,6 +74,12 @@ function fixtureTransaction(input: TransactionFixtureInput): Transaction {
 }
 
 export function createMockFixtures(): MockFixtureState {
+  const preferences: UserPreferences = {
+    locale: 'en-GB',
+    version: 1,
+    updatedAt: '2026-08-17T09:00:00.000Z',
+  };
+
   const accounts: Account[] = [
     {
       id: 'account-demo-everyday',
@@ -894,5 +902,5 @@ export function createMockFixtures(): MockFixtureState {
     },
   ];
 
-  return { accounts, categories, transactions, budgets, budgetDefaults, schedules, imports };
+  return { preferences, accounts, categories, transactions, budgets, budgetDefaults, schedules, imports };
 }

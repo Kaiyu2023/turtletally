@@ -342,6 +342,56 @@ p {
   font-size: 0.84rem;
 }
 
+.page-stack {
+  display: grid;
+  gap: 26px;
+}
+
+.content-card {
+  padding: 24px;
+}
+
+.category-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgb(255 255 255 / 54%);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgb(18 58 53 / 16%);
+}
+
+.future-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-bottom: 24px;
+  padding: 15px 17px;
+  border: 1px solid rgb(11 103 88 / 16%);
+  border-radius: 14px;
+  color: var(--primary);
+  background: rgb(205 226 215 / 46%);
+}
+
+.future-note > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.future-note p {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+}
+
+.form-error {
+  padding: 12px 14px;
+  border: 1px solid rgb(165 55 72 / 24%);
+  border-radius: 12px;
+  color: var(--negative);
+  background: rgb(165 55 72 / 7%);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .button,
 .icon-button {
   display: inline-flex;
@@ -1150,6 +1200,12 @@ p {
   .toast {
     right: 16px;
     bottom: 96px;
+  }
+}
+
+@media (max-width: 650px) {
+  .content-card {
+    padding: 18px;
   }
 }
 
