@@ -14,6 +14,8 @@ while IFS= read -r tracked_path; do
       echo "Forbidden sensitive path is tracked: $tracked_path" >&2
       failure=1
       ;;
+    apps/web/src/pages/imports/*.ts|apps/web/src/pages/imports/*.tsx|apps/web/src/pages/imports/*.css)
+      ;;
     private/*|*/private/*|local-data/*|*/local-data/*|receipts/*|*/receipts/*|imports/*|*/imports/*|statements/*|*/statements/*|*/fixtures/private/*)
       echo "Private-data path is tracked: $tracked_path" >&2
       failure=1

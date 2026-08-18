@@ -6,7 +6,53 @@
 
 Turtle Tally is a privacy-first, single-owner personal finance application for tracking transactions, budgets, scheduled entries, receipts, and monthly summaries.
 
-The project is in its initial planning and security-bootstrap phase. It is not ready for real financial data or production use.
+The repository currently contains a full browser-only UI draft. It uses visibly synthetic fixtures and an in-memory mock API, so every change resets when the page reloads. It is not ready for real financial data or production use.
+
+## UI draft
+
+The React and TypeScript draft includes:
+
+- monthly overview, spending comparisons, budgets, and upcoming schedules;
+- searchable and filterable transactions with create, edit, receipt, and void flows;
+- monthly budgets and reusable defaults;
+- recurring and one-time schedules;
+- statement preview and deliberate, idempotent mock import;
+- account and category management with deactivation instead of hard deletion;
+- British English and Simplified Chinese with an API-backed user language preference;
+- responsive mobile navigation, reduced-motion support, and accessible controls.
+
+Each route keeps orchestration, presentation components, and styles together in its own folder. Repeated controls with the same semantics live in the shared component layer.
+
+The production-oriented [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
+
+Use `?scenario=empty` on any route to review the first-use state.
+
+## Local development
+
+Node.js 22.12 or newer and npm are required.
+
+```sh
+npm ci
+npx playwright install chromium
+npm run dev:web
+```
+
+Open <http://127.0.0.1:4173>. The UI makes no third-party requests and writes no finance data to browser storage.
+
+## Checks
+
+```sh
+npm run typecheck
+npm run format:check
+npm run lint
+npm run build
+npm run test:e2e
+npm run screenshots
+npm audit
+./scripts/check-repository-secrets.sh
+```
+
+Playwright runs the behavior and accessibility suite in desktop and mobile Chromium. Visual-review captures are written to the ignored `artifacts/ui-draft` directory.
 
 ## Security posture
 

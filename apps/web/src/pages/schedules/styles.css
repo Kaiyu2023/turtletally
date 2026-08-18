@@ -1,0 +1,95 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.schedule-card {
+  display: flex;
+  min-height: 350px;
+  flex-direction: column;
+  padding: 22px;
+}
+
+.schedule-card__top,
+.schedule-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.schedule-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--primary);
+  background: var(--surface);
+  box-shadow: var(--shadow-raised-small);
+}
+
+.schedule-card h2 {
+  margin: 22px 0 5px;
+}
+
+.schedule-card p {
+  min-height: 42px;
+  margin-bottom: 13px;
+  font-size: 0.82rem;
+}
+
+.schedule-card__amount {
+  font-size: 1.65rem;
+}
+
+.schedule-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.schedule-card dl > div {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 8px;
+}
+
+.schedule-card dt {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  font-weight: 720;
+}
+
+.schedule-card dd {
+  margin: 0;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.schedule-card__actions {
+  justify-content: flex-start;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 1180px) {
+  .schedule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .schedule-grid {
+    grid-template-columns: 1fr;
+  }
+}
