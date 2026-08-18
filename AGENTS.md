@@ -35,3 +35,4 @@ These rules apply to the entire Turtle Tally repository.
 - Prefer clear names, focused functions, explicit types, and straightforward control flow so the code explains itself.
 - Avoid docstrings and comments when the code can express the same intent. Add one only when it explains a non-obvious reason, external constraint, security invariant, or important trade-off; never use comments to narrate what the code already says.
 - Keep each frontend page in its own folder. Put page orchestration in `index.tsx`, page-specific presentation in `components.tsx`, and promote a component to the shared layer only when the same semantics genuinely repeat.
+- Apply the same folder and orchestration/presentation split to an app-level composite when its main return block becomes difficult to scan.
