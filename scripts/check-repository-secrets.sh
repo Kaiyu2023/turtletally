@@ -6,7 +6,53 @@ cd "$repo_root"
 
 failure=0
 
+is_forbidden_terraform_artifact() {
+  local tracked_path="$1"
+
+  case "$tracked_path" in
+    .terraform.lock.hcl|*/.terraform.lock.hcl|*.tfvars.example|*.tfvars.json.example|backend.example.hcl|*/backend.example.hcl|backend.*.example.hcl|*/backend.*.example.hcl)
+      return 1
+      ;;
+    .terraform/*|*/.terraform/*|*.tfstate|*.tfstate.*|*.tfplan|*.tfplan.*|plan.json|*/plan.json|tfplan.json|*/tfplan.json|*.plan.json|*.tfvars|*.tfvars.json|backend.hcl|*/backend.hcl|backend.*.hcl|*/backend.*.hcl|crash.log|*/crash.log|crash.*.log|*/crash.*.log|.terraformrc|*/.terraformrc|terraform.rc|*/terraform.rc)
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+for forbidden_path in \
+  infra/terraform.tfstate \
+  infra/terraform.tfstate.backup \
+  private-plan.tfplan \
+  plan.json \
+  infra/production.tfvars \
+  infra/backend.production.hcl \
+  infra/.terraform/providers/example \
+  infra/crash.1.log; do
+  if ! is_forbidden_terraform_artifact "$forbidden_path"; then
+    echo "Repository security guard failed its Terraform-path self-test: $forbidden_path" >&2
+    exit 1
+  fi
+done
+
+for allowed_path in \
+  infra/.terraform.lock.hcl \
+  infra/sandbox.tfvars.example \
+  infra/backend.production.example.hcl; do
+  if is_forbidden_terraform_artifact "$allowed_path"; then
+    echo "Repository security guard rejected an allowed Terraform example: $allowed_path" >&2
+    exit 1
+  fi
+done
+
 while IFS= read -r tracked_path; do
+  if is_forbidden_terraform_artifact "$tracked_path"; then
+    echo "Forbidden Terraform artifact is tracked: $tracked_path" >&2
+    failure=1
+    continue
+  fi
+
   case "$tracked_path" in
     .env.example|*/.env.example)
       ;;

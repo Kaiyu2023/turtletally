@@ -8,9 +8,11 @@ These rules apply to the entire Turtle Tally repository.
 - Use synthetic fixtures only. Convert any locally supplied bank sample into a synthetic fixture before committing it.
 - Never create long-lived AWS access keys. Human AWS access uses IAM Identity Center/SSO outside this repository.
 - Do not add AWS credentials to GitHub Secrets. A future deployment workflow must use short-lived GitHub OIDC credentials, least privilege, and a protected environment.
-- Never run `cdk destroy` against production. Production data resources require retention and deletion protection.
+- Never run `terraform destroy` or apply a destroy plan against production. Production data resources require service-level deletion protection, recovery controls, and Terraform `prevent_destroy` while they remain managed.
 - Do not deploy, change billing, select a domain, or cross a documented human gate without the owner's explicit approval.
-- Show and review `cdk diff` before every deployment. Every deployment command must name its profile, account, region, stage, and stack.
+- Before every apply, resolve the exact root configuration, backend key, AWS profile, account, region, stage, variable file, Terraform version, and provider lock revision. Generate a saved plan only under `/private/terraform/plans/` after verifying the exact path is ignored, show it to the owner locally, and apply only that exact approved plan.
+- Treat Terraform state, backups, saved plans and their JSON forms, crash logs, variable files, and outputs as sensitive. Never commit, publish, attach, or log them. Commit `.terraform.lock.hcl`.
+- Backend bootstrap or migration, import, state move/remove/provider replacement, state restoration, force-unlock, replacement or deletion, teardown, and production apply each require a separate documented owner approval.
 - Stop if the Cognito, OAuth resource binding, OpenAI mTLS, or ChatGPT Work compatibility proof fails. Do not add a custom OAuth adapter without explicit owner approval.
 - Do not weaken passkey recovery, enable a paid AWS add-on, or connect live financial data to ChatGPT without the corresponding documented owner approval.
 
@@ -32,8 +34,13 @@ These rules apply to the entire Turtle Tally repository.
   - `cargo audit`
   - `cargo deny check`
   - `npm run test:node`
-  - `npm run cdk:synth`
+  - `terraform fmt -check -diff -recursive infra`
+  - `terraform -chdir=infra init -backend=false -input=false -lockfile=readonly`
+  - `terraform -chdir=infra validate`
+  - `terraform -chdir=infra test`
+  - `npm run terraform:plan`
 - Keep sensitive request and response bodies out of logs and test output.
+- Every Terraform test run in CI or the default local checks must set `command = plan` and use mocked providers. A test that can apply infrastructure requires a separate owner-approved workflow with explicit cost and cleanup gates.
 
 ## Working practices
 
@@ -68,8 +75,9 @@ These rules apply to the entire Turtle Tally repository.
 
 ## Infrastructure guidance
 
-- Keep independently deployable stacks focused on account guardrails, edge/DNS, identity, data, application, MCP, and scheduling concerns.
-- Default to least-privilege roles, private resources, encryption, explicit throttles, and bounded log retention. Production data resources require `RETAIN`, point-in-time recovery or versioning, and deletion protection where supported.
-- Resolve profile, account, region, stage, and stack explicitly before each diff or deployment. Fail closed on missing or mismatched deployment context.
-- Fix `cdk-nag` findings or document a narrow technical reason. Document unavoidable wildcard permissions and manual console actions.
-- Prefer reproducible CDK changes. Do not make an undocumented console change or deploy before the owner reviews the exact `cdk diff`.
+- Terraform is the sole infrastructure-as-code engine. Keep state-owning root configurations explicit and focused; child modules are reusable implementation units, not independently deployable state boundaries.
+- Default to least-privilege roles, private resources, encryption, explicit throttles, and bounded log retention. Production data resources require point-in-time recovery or versioning, service-level deletion protection where supported, and `prevent_destroy` while managed.
+- Before any non-bootstrap AWS resource is managed, use a private encrypted and versioned S3 backend with Block Public Access, TLS-only access, `prevent_destroy`, least-privilege permissions, distinct keys per stage and root, and `use_lockfile = true`. Deny routine deletion of the bucket and state objects while permitting deletion only of the lock objects required for normal unlocking. Never use local production state or Terraform workspaces to separate production from sandbox, and prove state restoration before the first apply.
+- Never use `-auto-approve`, `-lock=false`, manual state-file editing, or an unsaved automatic apply. `-target`, `-replace`, refresh-only plans, imports, state commands, and force-unlock require their specific owner gate and recovery procedure.
+- Add an exact-pinned Terraform configuration security scanner when the first AWS resource is introduced. Fix findings or document a narrow reviewed reason; document unavoidable wildcard permissions and manual console actions.
+- Prefer reproducible Terraform changes. Do not make an undocumented console change, upload a speculative plan, or apply before the owner reviews the exact saved plan. Replanning or changing any bound input invalidates that approval.

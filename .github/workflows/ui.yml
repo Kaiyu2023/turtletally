@@ -37,16 +37,16 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Check types
-        run: npm run typecheck
+        run: npm run typecheck --workspace @turtle-tally/web
 
       - name: Check formatting
-        run: npm run format:check
+        run: npm run format:check:node
 
       - name: Lint
-        run: npm run lint
+        run: npm run lint:node
 
       - name: Build
-        run: npm run build
+        run: npm run build --workspace @turtle-tally/web
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium

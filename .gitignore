@@ -26,10 +26,31 @@ id_ed25519*
 # Local configuration and generated infrastructure output
 *.local
 config.local.*
-cdk.out/
-.cdk.staging/
+**/.terraform/*
 *.tfstate
 *.tfstate.*
+*.tfplan
+*.tfplan.json
+*.plan.json
+plan.json
+tfplan.json
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+!*.tfvars.json.example
+backend.hcl
+backend.*.hcl
+!backend.example.hcl
+!backend.*.example.hcl
+.terraformrc
+terraform.rc
 
 # Rust
 target/
