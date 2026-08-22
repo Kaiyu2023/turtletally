@@ -30,6 +30,12 @@ Only generated synthetic finance data may enter Git history, issues, pull reques
 
 The local working plan is intentionally excluded from the initial public commit because it contains personal banking and detailed architecture information. Publish only a reviewed, sanitized version.
 
+## Terraform artifact policy
+
+Terraform state and backups, saved binary plans and their JSON rendering, crash logs, real variable files, backend configuration, state-command backups, and sensitive outputs must not enter Git history, pull requests, workflow logs, caches, or artifacts. These files can expose values even when the corresponding Terraform declaration marks them sensitive.
+
+Commit the generated `.terraform.lock.hcl` because it records the selected provider versions and checksums. Before any non-bootstrap AWS resource is managed, store state in the approved private, encrypted, versioned, deletion-protected S3 backend with native state locking and a tested restoration path. Backend partial configuration belongs only under the repository-relative `private/terraform/backend/` path; saved plans belong only under `private/terraform/plans/`. Verify the exact target with `git check-ignore` before writing. Plans are reviewed locally and are never public review artifacts.
+
 ## Prevention and response
 
 The tracked pre-commit hook and CI job reject common credential formats and sensitive file paths. GitHub secret scanning and push protection provide an additional server-side barrier, but neither scanner is complete and both can be bypassed by an authorized writer.

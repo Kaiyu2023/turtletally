@@ -1,0 +1,87 @@
+name: Foundation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: foundation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate workspace foundation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26.7.0
+          cache: npm
+
+      - name: Install pinned Terraform
+        env:
+          TERRAFORM_VERSION: 1.15.8
+          TERRAFORM_ZIP_SHA256: d25ce7b6902013ad905db3d2eab0be4cd905887fe88b81a6171b8d5503c31f3d
+        run: |
+          terraform_zip="$RUNNER_TEMP/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+          terraform_checksum="$RUNNER_TEMP/terraform_SHA256SUMS"
+          terraform_bin_dir="$RUNNER_TEMP/terraform-bin"
+          curl --fail --silent --show-error --location \
+            "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" \
+            --output "$terraform_zip"
+          printf '%s  %s\n' "$TERRAFORM_ZIP_SHA256" "$terraform_zip" > "$terraform_checksum"
+          sha256sum --check "$terraform_checksum"
+          mkdir -p "$terraform_bin_dir"
+          unzip -q "$terraform_zip" -d "$terraform_bin_dir"
+          "$terraform_bin_dir/terraform" version
+          printf '%s\n' "$terraform_bin_dir" >> "$GITHUB_PATH"
+
+      - name: Install Node.js dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Install pinned Rust security tools
+        run: |
+          cargo install cargo-audit --version 0.22.2 --locked
+          cargo install cargo-deny --version 0.20.2 --locked
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check TypeScript types
+        run: npm run typecheck
+
+      - name: Run local foundation tests
+        run: |
+          npm run test:node
+          npm run test:rust
+          npm run test:terraform
+
+      - name: Audit dependencies
+        run: npm run audit
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify ARM64 Rust release build
+        run: npm run build:rust:arm64
+
+      - name: Verify the empty Terraform plan
+        run: npm run terraform:plan
+
+      - name: Check repository for forbidden files and common secret formats
+        run: ./scripts/check-repository-secrets.sh
