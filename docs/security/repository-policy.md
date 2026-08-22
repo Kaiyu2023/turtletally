@@ -34,7 +34,7 @@ The local working plan is intentionally excluded from the initial public commit 
 
 Terraform state and backups, saved binary plans and their JSON rendering, crash logs, real variable files, backend configuration, state-command backups, and sensitive outputs must not enter Git history, pull requests, workflow logs, caches, or artifacts. These files can expose values even when the corresponding Terraform declaration marks them sensitive.
 
-Commit the generated `.terraform.lock.hcl` because it records the selected provider versions and checksums. Before any non-bootstrap AWS resource is managed, store state in the approved private, encrypted, versioned, deletion-protected S3 backend with native state locking and a tested restoration path. Backend partial configuration belongs only under `/private/terraform/backend/`; saved plans belong only under `/private/terraform/plans/`. Verify the exact target with `git check-ignore` before writing. Plans are reviewed locally and are never public review artifacts.
+Commit the generated `.terraform.lock.hcl` because it records the selected provider versions and checksums. Before any non-bootstrap AWS resource is managed, store state in the approved private, encrypted, versioned, deletion-protected S3 backend with native state locking and a tested restoration path. Backend partial configuration belongs only under the repository-relative `private/terraform/backend/` path; saved plans belong only under `private/terraform/plans/`. Verify the exact target with `git check-ignore` before writing. Plans are reviewed locally and are never public review artifacts.
 
 ## Prevention and response
 

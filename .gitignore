@@ -29,6 +29,8 @@ config.local.*
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+plan
+tfplan
 *.tfplan
 *.tfplan.json
 *.plan.json

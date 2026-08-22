@@ -8,7 +8,7 @@ Keep account numbers, profile names, domains, callback URLs, email addresses, ce
 
 - Use MFA-backed IAM Identity Center credentials. Do not create root or IAM-user access keys.
 - Resolve the intended root configuration, backend key, profile, account, region, stage, variable file, Terraform version, and provider lock revision explicitly; fail closed on a missing or mismatched value.
-- Run the locked checks, verify the exact target is ignored with `git check-ignore`, save the plan only under `/private/terraform/plans/`, and show the complete plan locally before an apply. Do not publish plan files or plan JSON.
+- Run the locked checks, verify the exact target is ignored with `git check-ignore`, save the plan only under the repository-relative `private/terraform/plans/` path, and show the complete plan locally before an apply. Do not publish plan files or plan JSON.
 - Bind approval to the exact plan checksum, commit, root, backend key, identity, region, stage, inputs, Terraform version, and provider lock. Replanning or changing any bound value invalidates approval.
 - Apply only the exact approved saved plan. Never use an unsaved automatic apply, `-auto-approve`, or `-lock=false` with shared state.
 - Obtain separate owner approval for backend work, state operations, import or adoption, replacement or deletion, certificate or DNS changes, paid features, production apply, and teardown as applicable.
@@ -36,7 +36,7 @@ Owner actions:
 - [ ] Choose or register the production domain after considering the stable passkey relying-party identity.
 - [ ] Approve Route 53 delegation or records and certificate validation changes in each required region.
 - [ ] Approve a separate state-bootstrap root using restricted ignored local state for the exact account, region, and profile.
-- [ ] Approve backend configuration only under `/private/terraform/backend/` after verifying each exact path is ignored.
+- [ ] Approve backend configuration only under the repository-relative `private/terraform/backend/` path after verifying each exact path is ignored.
 - [ ] Approve a private S3 state bucket with encryption, Block Public Access, TLS-only access, versioning, Terraform `prevent_destroy`, least-privilege permissions, and native S3 lockfiles.
 - [ ] Confirm routine roles deny bucket and state-object deletion while permitting deletion only of the `.tflock` objects required for normal unlocking.
 - [ ] Approve migration of the bootstrap state into that backend, distinct keys for each stage and root, and removal of the superseded local copy only after version restoration is successfully drilled.

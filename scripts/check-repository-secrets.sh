@@ -13,7 +13,7 @@ is_forbidden_terraform_artifact() {
     .terraform.lock.hcl|*/.terraform.lock.hcl|*.tfvars.example|*.tfvars.json.example|backend.example.hcl|*/backend.example.hcl|backend.*.example.hcl|*/backend.*.example.hcl)
       return 1
       ;;
-    .terraform/*|*/.terraform/*|*.tfstate|*.tfstate.*|*.tfplan|*.tfplan.*|plan.json|*/plan.json|tfplan.json|*/tfplan.json|*.plan.json|*.tfvars|*.tfvars.json|backend.hcl|*/backend.hcl|backend.*.hcl|*/backend.*.hcl|crash.log|*/crash.log|crash.*.log|*/crash.*.log|.terraformrc|*/.terraformrc|terraform.rc|*/terraform.rc)
+    .terraform/*|*/.terraform/*|*.tfstate|*.tfstate.*|plan|*/plan|tfplan|*/tfplan|*.tfplan|*.tfplan.*|plan.json|*/plan.json|tfplan.json|*/tfplan.json|*.plan.json|override.tf|*/override.tf|override.tf.json|*/override.tf.json|*_override.tf|*_override.tf.json|*.tfvars|*.tfvars.json|backend.hcl|*/backend.hcl|backend.*.hcl|*/backend.*.hcl|crash.log|*/crash.log|crash.*.log|*/crash.*.log|.terraformrc|*/.terraformrc|terraform.rc|*/terraform.rc)
       return 0
       ;;
   esac
@@ -24,8 +24,14 @@ is_forbidden_terraform_artifact() {
 for forbidden_path in \
   infra/terraform.tfstate \
   infra/terraform.tfstate.backup \
+  infra/plan \
+  infra/tfplan \
   private-plan.tfplan \
   plan.json \
+  infra/override.tf \
+  infra/override.tf.json \
+  infra/local_override.tf \
+  infra/local_override.tf.json \
   infra/production.tfvars \
   infra/backend.production.hcl \
   infra/.terraform/providers/example \

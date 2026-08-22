@@ -3,14 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "22.22.1"
+    "node": "26.7.0"
   },
   "workspaces": [
     "apps/web"
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace @turtle-tally/web",
-    "build": "npm run build --workspaces --if-present && cargo build --workspace",
+    "build": "npm run build --workspaces --if-present && cargo build --workspace --locked",
+    "build:rust:arm64": "cargo build --workspace --release --target aarch64-unknown-linux-gnu --locked",
     "format": "npm run format:node && npm run format:rust && npm run format:terraform",
     "format:node": "prettier --write 'apps/web/**/*.{ts,tsx,css,json,html}' 'docs/**/*.md' 'infra/**/*.md' '*.{ts,json,md}' '.github/**/*.yml'",
     "format:rust": "cargo fmt --all",
@@ -21,12 +22,12 @@
     "format:check:terraform": "terraform fmt -check -diff -recursive infra",
     "lint": "npm run lint:node && npm run lint:rust && npm run lint:terraform",
     "lint:node": "npm run lint --workspaces --if-present",
-    "lint:rust": "cargo clippy --workspace --all-targets --all-features -- -D warnings",
+    "lint:rust": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
     "lint:terraform": "npm run terraform:init && terraform -chdir=infra validate",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test:node && npm run test:e2e && npm run test:rust && npm run test:terraform",
     "test:node": "npm run test --workspaces --if-present",
-    "test:rust": "cargo test --workspace",
+    "test:rust": "cargo test --workspace --locked",
     "test:terraform": "npm run terraform:init && terraform -chdir=infra test",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
@@ -36,7 +37,7 @@
     "audit:rust": "cargo audit && cargo deny check",
     "terraform:init": "terraform -chdir=infra init -backend=false -input=false -lockfile=readonly",
     "terraform:plan": "npm run terraform:init && terraform -chdir=infra plan -input=false -refresh=false -detailed-exitcode",
-    "check": "./scripts/check-repository-secrets.sh && npm run format:check && npm run lint && npm run typecheck && npm test && npm run audit && npm run build && npm run terraform:plan"
+    "check": "./scripts/check-repository-secrets.sh && npm run format:check && npm run lint && npm run typecheck && npm test && npm run audit && npm run build && npm run build:rust:arm64 && npm run terraform:plan"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
