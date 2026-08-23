@@ -29,7 +29,7 @@ Use `?scenario=empty` on any route to review the first-use state.
 
 ## Local development
 
-Node.js 26.7.0, Rust 1.98.0, and Terraform 1.15.8 are pinned in the repository. Install Rust through `rustup` so `rust-toolchain.toml` can select the pinned compiler and ARM64 target. Install Terraform and the two pinned Rust security tools before running the complete check suite:
+Node.js 22.22.1, Rust 1.98.0, and Terraform 1.15.8 are pinned in the repository. Install Rust through `rustup` so `rust-toolchain.toml` can select the pinned compiler and ARM64 target. Install Terraform and the two pinned Rust security tools before running the complete check suite:
 
 ```sh
 cargo install cargo-audit --version 0.22.2 --locked
