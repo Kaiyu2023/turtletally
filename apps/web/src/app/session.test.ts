@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { guardSession } from './session';
 import { createApiFromLocation } from './createApi';
-import { MockApiError, type MockFinanceApi } from '../data/types';
+import { ApiError, type FinanceApi } from '../data/types';
 
 describe('guardSession', () => {
   it('reports an expired session once per failing call and rethrows', async () => {
@@ -9,8 +9,8 @@ describe('guardSession', () => {
     const onSessionLost = vi.fn();
     const guarded = guardSession(api, onSessionLost);
 
-    await expect(guarded.listAccounts()).rejects.toBeInstanceOf(MockApiError);
-    await expect(guarded.getDashboard('2026-08')).rejects.toBeInstanceOf(MockApiError);
+    await expect(guarded.listAccounts()).rejects.toBeInstanceOf(ApiError);
+    await expect(guarded.getDashboard('2026-08')).rejects.toBeInstanceOf(ApiError);
 
     expect(onSessionLost).toHaveBeenCalledTimes(2);
   });
@@ -34,7 +34,7 @@ describe('guardSession', () => {
 
   it('covers every operation on the contract, not a hand-listed subset', async () => {
     const api = createApiFromLocation('?session=expired&latency=0');
-    const calls: Array<keyof MockFinanceApi> = ['listAccounts', 'listCategories', 'listSchedules', 'listImports'];
+    const calls: Array<keyof FinanceApi> = ['listAccounts', 'listCategories', 'listSchedules', 'listImports'];
     const onSessionLost = vi.fn();
     const guarded = guardSession(api, onSessionLost);
 
@@ -48,10 +48,14 @@ describe('guardSession', () => {
 
 describe('createApiFromLocation', () => {
   it('selects the empty scenario only for the documented value', async () => {
-    await expect(createApiFromLocation('?scenario=empty&latency=0').listTransactions()).resolves.toMatchObject({
+    await expect(
+      createApiFromLocation('?scenario=empty&latency=0').listTransactions({ month: '2026-08' }),
+    ).resolves.toMatchObject({
       totalItems: 0,
     });
-    await expect(createApiFromLocation('?scenario=nonsense&latency=0').listTransactions()).resolves.not.toMatchObject({
+    await expect(
+      createApiFromLocation('?scenario=nonsense&latency=0').listTransactions({ month: '2026-08' }),
+    ).resolves.not.toMatchObject({
       totalItems: 0,
     });
   });

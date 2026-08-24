@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { flowOf, magnitudeOf, signedAmount } from './money';
 import { spendingByCategory, totalAmount, totalByKind } from './aggregates';
 import { createMockApi } from './mockApi';
-import type { MockFinanceApi, Transaction } from './types';
+import type { FinanceApi, Transaction } from './types';
 
-let api: MockFinanceApi;
+let api: FinanceApi;
 
 beforeEach(() => {
   api = createMockApi('DEFAULT', { latencyMs: 0 });

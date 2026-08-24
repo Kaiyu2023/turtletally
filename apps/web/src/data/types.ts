@@ -131,6 +131,7 @@ export type TransactionStatus = 'ACTIVE' | 'VOIDED' | 'ALL';
 export type TransactionSort = 'NEWEST' | 'OLDEST' | 'AMOUNT_HIGH' | 'AMOUNT_LOW';
 
 export interface TransactionFilters {
+  // A read names its partition. Either a month, or an explicit range.
   month?: Month;
   from?: LocalDate;
   to?: LocalDate;
@@ -375,28 +376,19 @@ export interface UpdateCategoryInput {
   colour?: string;
 }
 
-export type MockSession = 'ACTIVE' | 'EXPIRED';
+export type ApiErrorCode = 'NOT_FOUND' | 'CONFLICT' | 'VALIDATION' | 'UNAUTHENTICATED';
 
-export interface MockApiOptions {
-  latencyMs?: number;
-  session?: MockSession;
-}
+export class ApiError extends Error {
+  readonly code: ApiErrorCode;
 
-export type MockScenario = 'DEFAULT' | 'EMPTY';
-
-export type MockApiErrorCode = 'NOT_FOUND' | 'CONFLICT' | 'VALIDATION' | 'UNAUTHENTICATED';
-
-export class MockApiError extends Error {
-  readonly code: MockApiErrorCode;
-
-  constructor(code: MockApiErrorCode, message: string) {
+  constructor(code: ApiErrorCode, message: string) {
     super(message);
-    this.name = 'MockApiError';
+    this.name = 'ApiError';
     this.code = code;
   }
 }
 
-export interface MockFinanceApi {
+export interface FinanceApi {
   getUserPreferences(): Promise<UserPreferences>;
   updateUserPreferences(input: UpdateUserPreferencesInput): Promise<UserPreferences>;
   listAccounts(includeInactive?: boolean): Promise<Account[]>;
@@ -431,5 +423,4 @@ export interface MockFinanceApi {
   previewImport(input: CreateImportPreviewInput): Promise<ImportBatch>;
   updateImportRow(importId: string, rowId: string, input: UpdateImportRowInput): Promise<ImportBatch>;
   commitImport(importId: string, expectedVersion: number, expectedContentHash: string): Promise<ImportCommitResult>;
-  reset(): Promise<void>;
 }

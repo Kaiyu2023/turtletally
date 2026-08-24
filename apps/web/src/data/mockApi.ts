@@ -10,6 +10,7 @@ import {
 import { batchContentHash, rowFingerprint } from './fingerprint';
 import { flowOf } from './money';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
+import type { MockApiOptions, MockScenario, MockSession } from './mock';
 import { nextOccurrence } from './recurrence';
 import { instantAt, reanchor, zonedDate } from './time';
 import type {
@@ -30,10 +31,7 @@ import type {
   ImportHistoryItem,
   ImportRow,
   LocalDate,
-  MockApiOptions,
-  MockFinanceApi,
-  MockScenario,
-  MockSession,
+  FinanceApi,
   CreateStatementUploadInput,
   DownloadGrant,
   Receipt,
@@ -56,7 +54,7 @@ import type {
   UpdateUserPreferencesInput,
   UserPreferences,
 } from './types';
-import { MockApiError } from './types';
+import { ApiError } from './types';
 
 interface TransactionIdentity {
   readonly scheduleId?: string;
@@ -98,7 +96,7 @@ interface PendingUpload {
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 const ALLOWED_MEDIA_TYPES: readonly UploadMediaType[] = ['application/pdf', 'image/jpeg', 'image/png'];
 
-class InMemoryMockApi implements MockFinanceApi {
+class InMemoryMockApi implements FinanceApi {
   private state: MockFixtureState;
   private readonly uploads = new Map<string, PendingUpload>();
   private readonly receipts = new Map<string, Receipt>();
@@ -153,7 +151,7 @@ class InMemoryMockApi implements MockFinanceApi {
           (account) => account.deactivatedAt === null && account.name.toLowerCase() === name.toLowerCase(),
         )
       ) {
-        throw new MockApiError('CONFLICT', 'An active account already uses that name.');
+        throw new ApiError('CONFLICT', 'An active account already uses that name.');
       }
 
       const account: Account = {
@@ -188,7 +186,7 @@ class InMemoryMockApi implements MockFinanceApi {
             candidate.name.toLowerCase() === name.toLowerCase(),
         )
       ) {
-        throw new MockApiError('CONFLICT', 'An active account already uses that name.');
+        throw new ApiError('CONFLICT', 'An active account already uses that name.');
       }
 
       const updated: Account = {
@@ -237,7 +235,7 @@ class InMemoryMockApi implements MockFinanceApi {
             category.name.toLowerCase() === name.toLowerCase(),
         )
       ) {
-        throw new MockApiError('CONFLICT', 'An active category already uses that name in this group.');
+        throw new ApiError('CONFLICT', 'An active category already uses that name in this group.');
       }
 
       const category: Category = {
@@ -272,7 +270,7 @@ class InMemoryMockApi implements MockFinanceApi {
             candidate.name.toLowerCase() === name.toLowerCase(),
         )
       ) {
-        throw new MockApiError('CONFLICT', 'An active category already uses that name in this group.');
+        throw new ApiError('CONFLICT', 'An active category already uses that name in this group.');
       }
 
       const updated: Category = {
@@ -303,6 +301,11 @@ class InMemoryMockApi implements MockFinanceApi {
       const page = filters.page ?? 1;
       const pageSize = filters.pageSize ?? 10;
       this.validPage(page, pageSize);
+
+      const bounded = filters.month !== undefined || (filters.from !== undefined && filters.to !== undefined);
+      if (!bounded) {
+        throw new ApiError('VALIDATION', 'A transaction query must name a month or a from and to date.');
+      }
 
       const status = filters.status ?? 'ACTIVE';
       const query = filters.search?.trim().toLowerCase();
@@ -462,7 +465,7 @@ class InMemoryMockApi implements MockFinanceApi {
 
       if (existing) {
         if (input.expectedVersion === null)
-          throw new MockApiError('CONFLICT', 'The budget already exists. Refresh and try again.');
+          throw new ApiError('CONFLICT', 'The budget already exists. Refresh and try again.');
         this.assertVersion(existing.version, input.expectedVersion);
         const updated = { ...existing, limitMinor: input.limitMinor, version: existing.version + 1 };
         this.replace(this.state.budgets, updated);
@@ -470,7 +473,7 @@ class InMemoryMockApi implements MockFinanceApi {
       }
 
       if (input.expectedVersion !== null)
-        throw new MockApiError('CONFLICT', 'The budget does not exist. Refresh and try again.');
+        throw new ApiError('CONFLICT', 'The budget does not exist. Refresh and try again.');
       const budget: Budget = {
         id: this.nextId(`budget-${input.month}`),
         month: input.month,
@@ -491,7 +494,7 @@ class InMemoryMockApi implements MockFinanceApi {
 
       if (existing) {
         if (input.expectedVersion === null)
-          throw new MockApiError('CONFLICT', 'The default budget already exists. Refresh and try again.');
+          throw new ApiError('CONFLICT', 'The default budget already exists. Refresh and try again.');
         this.assertVersion(existing.version, input.expectedVersion);
         const updated = { ...existing, limitMinor: input.limitMinor, version: existing.version + 1 };
         this.replace(this.state.budgetDefaults, updated);
@@ -499,7 +502,7 @@ class InMemoryMockApi implements MockFinanceApi {
       }
 
       if (input.expectedVersion !== null)
-        throw new MockApiError('CONFLICT', 'The default budget does not exist. Refresh and try again.');
+        throw new ApiError('CONFLICT', 'The default budget does not exist. Refresh and try again.');
       const budget: BudgetDefault = {
         id: this.nextId('budget-default'),
         categoryId: input.categoryId,
@@ -577,7 +580,7 @@ class InMemoryMockApi implements MockFinanceApi {
       const nextDueDate = input.nextDueDate ?? schedule.nextDueDate;
       this.validAmount(amountMinor, 'Amount');
       this.validRecurrence(recurrence);
-      if (nextDueDate === null) throw new MockApiError('VALIDATION', 'An active schedule needs a next due date.');
+      if (nextDueDate === null) throw new ApiError('VALIDATION', 'An active schedule needs a next due date.');
       this.validDate(nextDueDate);
 
       const updated: Schedule = {
@@ -676,9 +679,9 @@ class InMemoryMockApi implements MockFinanceApi {
   async completeReceiptUpload(uploadId: string, checksum: string): Promise<Receipt> {
     return this.withLatency(() => {
       const pending = this.uploads.get(uploadId);
-      if (!pending) throw new MockApiError('NOT_FOUND', 'That upload was not found or has expired.');
+      if (!pending) throw new ApiError('NOT_FOUND', 'That upload was not found or has expired.');
       if (!/^[0-9a-f]{8,}$/.test(checksum))
-        throw new MockApiError('VALIDATION', 'A completed upload must report its checksum.');
+        throw new ApiError('VALIDATION', 'A completed upload must report its checksum.');
 
       this.uploads.delete(uploadId);
       const receipt: Receipt = {
@@ -698,7 +701,7 @@ class InMemoryMockApi implements MockFinanceApi {
       const known =
         this.receipts.has(receiptId) ||
         this.state.transactions.some((transaction) => transaction.receipt?.id === receiptId);
-      if (!known) throw new MockApiError('NOT_FOUND', 'Receipt not found.');
+      if (!known) throw new ApiError('NOT_FOUND', 'Receipt not found.');
       return { url: `https://mock.invalid/receipts/${receiptId}`, expiresAt: MOCK_NOW };
     });
   }
@@ -707,7 +710,7 @@ class InMemoryMockApi implements MockFinanceApi {
     return this.withLatency(() => {
       this.findActiveAccount(input.accountId);
       if (!input.fileName.trim().toLowerCase().endsWith('.csv')) {
-        throw new MockApiError('VALIDATION', 'Choose a CSV file for this mock import.');
+        throw new ApiError('VALIDATION', 'Choose a CSV file for this mock import.');
       }
       return this.grantUpload(
         { fileName: input.fileName, mediaType: 'application/pdf', sizeBytes: input.sizeBytes },
@@ -718,10 +721,10 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private grantUpload(input: RequestUploadInput, prefix: string): UploadGrant {
     if (input.sizeBytes <= 0 || input.sizeBytes > MAX_UPLOAD_BYTES) {
-      throw new MockApiError('VALIDATION', 'That file is empty or larger than the upload limit.');
+      throw new ApiError('VALIDATION', 'That file is empty or larger than the upload limit.');
     }
     if (prefix === 'receipt-upload' && !ALLOWED_MEDIA_TYPES.includes(input.mediaType)) {
-      throw new MockApiError('VALIDATION', 'Receipts must be a PDF, JPEG, or PNG.');
+      throw new ApiError('VALIDATION', 'Receipts must be a PDF, JPEG, or PNG.');
     }
 
     const id = this.nextId(prefix);
@@ -763,7 +766,7 @@ class InMemoryMockApi implements MockFinanceApi {
   async previewImport(input: CreateImportPreviewInput): Promise<ImportBatch> {
     return this.withLatency(() => {
       const upload = this.uploads.get(input.uploadId);
-      if (!upload) throw new MockApiError('NOT_FOUND', 'That statement upload was not found or has expired.');
+      if (!upload) throw new ApiError('NOT_FOUND', 'That statement upload was not found or has expired.');
       this.uploads.delete(input.uploadId);
       const account = this.findActiveAccount(input.accountId);
       const id = this.nextId('import');
@@ -800,9 +803,9 @@ class InMemoryMockApi implements MockFinanceApi {
       this.assertImportEditable(batch);
       this.assertVersion(batch.version, input.expectedVersion);
       const row = batch.rows.find((candidate) => candidate.id === rowId);
-      if (!row) throw new MockApiError('NOT_FOUND', 'Import row not found.');
+      if (!row) throw new ApiError('NOT_FOUND', 'Import row not found.');
       if (input.included && row.status !== 'READY')
-        throw new MockApiError('VALIDATION', 'Duplicate or invalid rows cannot be included.');
+        throw new ApiError('VALIDATION', 'Duplicate or invalid rows cannot be included.');
 
       const categoryId = 'categoryId' in input ? (input.categoryId ?? null) : row.categoryId;
       const category = categoryId ? this.findActiveCategory(categoryId) : null;
@@ -836,13 +839,13 @@ class InMemoryMockApi implements MockFinanceApi {
       this.assertImportEditable(batch);
       this.assertVersion(batch.version, expectedVersion);
       if (batch.contentHash !== expectedContentHash) {
-        throw new MockApiError('CONFLICT', 'The statement changed since it was previewed. Preview it again.');
+        throw new ApiError('CONFLICT', 'The statement changed since it was previewed. Preview it again.');
       }
       const includedRows = batch.rows.filter((row) => row.included);
 
-      if (includedRows.length === 0) throw new MockApiError('VALIDATION', 'Select at least one row to import.');
+      if (includedRows.length === 0) throw new ApiError('VALIDATION', 'Select at least one row to import.');
       if (includedRows.some((row) => row.status !== 'READY' || row.categoryId === null)) {
-        throw new MockApiError('VALIDATION', 'Resolve all selected row warnings before committing.');
+        throw new ApiError('VALIDATION', 'Resolve all selected row warnings before committing.');
       }
 
       const createdTransactions = includedRows.map((row) =>
@@ -1005,24 +1008,24 @@ class InMemoryMockApi implements MockFinanceApi {
         recurrence.intervalWeeks < 1 ||
         recurrence.intervalWeeks > 52
       ) {
-        throw new MockApiError('VALIDATION', 'Weekly interval must be between 1 and 52.');
+        throw new ApiError('VALIDATION', 'Weekly interval must be between 1 and 52.');
       }
       return;
     }
     if (!Number.isInteger(recurrence.day) || recurrence.day < 1 || recurrence.day > 31) {
-      throw new MockApiError('VALIDATION', 'Schedule day must be between 1 and 31.');
+      throw new ApiError('VALIDATION', 'Schedule day must be between 1 and 31.');
     }
     if (
       recurrence.frequency === 'YEARLY' &&
       (!Number.isInteger(recurrence.month) || recurrence.month < 1 || recurrence.month > 12)
     ) {
-      throw new MockApiError('VALIDATION', 'Schedule month must be between 1 and 12.');
+      throw new ApiError('VALIDATION', 'Schedule month must be between 1 and 12.');
     }
   }
 
   private assertImportEditable(batch: ImportBatch): void {
-    if (batch.status !== 'PREVIEW') throw new MockApiError('CONFLICT', 'This import can no longer be changed.');
-    if (batch.expiresAt <= MOCK_NOW) throw new MockApiError('CONFLICT', 'This import preview has expired.');
+    if (batch.status !== 'PREVIEW') throw new ApiError('CONFLICT', 'This import can no longer be changed.');
+    if (batch.expiresAt <= MOCK_NOW) throw new ApiError('CONFLICT', 'This import preview has expired.');
   }
 
   private projectTransaction(transaction: Transaction): Transaction {
@@ -1045,13 +1048,13 @@ class InMemoryMockApi implements MockFinanceApi {
     const receipt =
       this.receipts.get(receiptId) ??
       this.state.transactions.find((transaction) => transaction.receipt?.id === receiptId)?.receipt;
-    if (!receipt) throw new MockApiError('NOT_FOUND', 'Receipt not found. Upload it again.');
+    if (!receipt) throw new ApiError('NOT_FOUND', 'Receipt not found. Upload it again.');
     return copy(receipt);
   }
 
   private findAccount(id: string): Account {
     const account = this.state.accounts.find((candidate) => candidate.id === id);
-    if (!account) throw new MockApiError('NOT_FOUND', 'Account not found.');
+    if (!account) throw new ApiError('NOT_FOUND', 'Account not found.');
     return account;
   }
 
@@ -1063,7 +1066,7 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private findCategory(id: string): Category {
     const category = this.state.categories.find((candidate) => candidate.id === id);
-    if (!category) throw new MockApiError('NOT_FOUND', 'Category not found.');
+    if (!category) throw new ApiError('NOT_FOUND', 'Category not found.');
     return category;
   }
 
@@ -1076,102 +1079,101 @@ class InMemoryMockApi implements MockFinanceApi {
   private findActiveSpendingCategory(id: string): Category {
     const category = this.findActiveCategory(id);
     if (category.group === 'Income' || category.group === 'Investment') {
-      throw new MockApiError('VALIDATION', 'Budgets can only be set for spending categories.');
+      throw new ApiError('VALIDATION', 'Budgets can only be set for spending categories.');
     }
     return category;
   }
 
   private findTransaction(id: string): Transaction {
     const transaction = this.state.transactions.find((candidate) => candidate.id === id);
-    if (!transaction) throw new MockApiError('NOT_FOUND', 'Transaction not found.');
+    if (!transaction) throw new ApiError('NOT_FOUND', 'Transaction not found.');
     return transaction;
   }
 
   private findSchedule(id: string): Schedule {
     const schedule = this.state.schedules.find((candidate) => candidate.id === id);
-    if (!schedule) throw new MockApiError('NOT_FOUND', 'Schedule not found.');
+    if (!schedule) throw new ApiError('NOT_FOUND', 'Schedule not found.');
     return schedule;
   }
 
   private findImport(id: string): ImportBatch {
     const batch = this.state.imports.find((candidate) => candidate.id === id);
-    if (!batch) throw new MockApiError('NOT_FOUND', 'Import not found.');
+    if (!batch) throw new ApiError('NOT_FOUND', 'Import not found.');
     return batch;
   }
 
   private replace<T extends { id: string }>(items: T[], updated: T): void {
     const index = items.findIndex((item) => item.id === updated.id);
-    if (index === -1) throw new MockApiError('NOT_FOUND', 'Item not found.');
+    if (index === -1) throw new ApiError('NOT_FOUND', 'Item not found.');
     items[index] = updated;
   }
 
   private assertVersion(actual: number, expected: number): void {
     if (actual !== expected)
-      throw new MockApiError('CONFLICT', 'This item changed since it was loaded. Refresh and try again.');
+      throw new ApiError('CONFLICT', 'This item changed since it was loaded. Refresh and try again.');
   }
 
   private assertActive(deactivatedAt: string | null, label: string): void {
-    if (deactivatedAt !== null) throw new MockApiError('CONFLICT', `${label} is already inactive.`);
+    if (deactivatedAt !== null) throw new ApiError('CONFLICT', `${label} is already inactive.`);
   }
 
   private validName(value: string, label: string): string {
     const name = value.trim();
     if (name.length < 1 || name.length > 100)
-      throw new MockApiError('VALIDATION', `${label} must be between 1 and 100 characters.`);
+      throw new ApiError('VALIDATION', `${label} must be between 1 and 100 characters.`);
     return name;
   }
 
   private validMinor(value: number, label: string, allowZero = false): void {
     const minimum = allowZero ? 0 : 1;
     if (!Number.isSafeInteger(value) || value < minimum)
-      throw new MockApiError('VALIDATION', `${label} must be a whole number of pence${allowZero ? ' or zero' : ''}.`);
+      throw new ApiError('VALIDATION', `${label} must be a whole number of pence${allowZero ? ' or zero' : ''}.`);
   }
 
   private validAmount(value: number, label: string): void {
     if (!Number.isSafeInteger(value) || value === 0)
-      throw new MockApiError('VALIDATION', `${label} must be a non-zero whole number of pence.`);
+      throw new ApiError('VALIDATION', `${label} must be a non-zero whole number of pence.`);
   }
 
   private validSignedMinor(value: number, label: string): void {
-    if (!Number.isSafeInteger(value)) throw new MockApiError('VALIDATION', `${label} must be a whole number of pence.`);
+    if (!Number.isSafeInteger(value)) throw new ApiError('VALIDATION', `${label} must be a whole number of pence.`);
   }
 
   private validColour(value: string): void {
-    if (!/^#[0-9a-f]{6}$/i.test(value)) throw new MockApiError('VALIDATION', 'Colour must be a six-digit hex value.');
+    if (!/^#[0-9a-f]{6}$/i.test(value)) throw new ApiError('VALIDATION', 'Colour must be a six-digit hex value.');
   }
 
   private validLocale(value: AppLocale): void {
     if (value !== 'en-GB' && value !== 'zh-CN') {
-      throw new MockApiError('VALIDATION', 'Locale is not supported.');
+      throw new ApiError('VALIDATION', 'Locale is not supported.');
     }
   }
 
   private validMonth(value: Month): void {
-    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) throw new MockApiError('VALIDATION', 'Month must use YYYY-MM format.');
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) throw new ApiError('VALIDATION', 'Month must use YYYY-MM format.');
   }
 
   private validDate(value: LocalDate): void {
     if (!/^\d{4}-(0[1-9]|1[0-2])-([0-2]\d|3[01])$/.test(value))
-      throw new MockApiError('VALIDATION', 'Date must use YYYY-MM-DD format.');
+      throw new ApiError('VALIDATION', 'Date must use YYYY-MM-DD format.');
     const parsed = new Date(`${value}T12:00:00.000Z`);
     if (Number.isNaN(parsed.valueOf()) || formatDate(parsed) !== value)
-      throw new MockApiError('VALIDATION', 'Date is not valid.');
+      throw new ApiError('VALIDATION', 'Date is not valid.');
   }
 
   private validOccurredAt(value: string, localDate: LocalDate): void {
     if (Number.isNaN(Date.parse(value))) {
-      throw new MockApiError('VALIDATION', 'Transaction time must be an ISO timestamp.');
+      throw new ApiError('VALIDATION', 'Transaction time must be an ISO timestamp.');
     }
     if (zonedDate(value) !== localDate) {
-      throw new MockApiError('VALIDATION', 'Transaction time must fall on the selected local date.');
+      throw new ApiError('VALIDATION', 'Transaction time must fall on the selected local date.');
     }
   }
 
   private validPage(page: number, pageSize: number): void {
-    if (!Number.isInteger(page) || page < 1)
-      throw new MockApiError('VALIDATION', 'Page must be a positive whole number.');
+    if (!Number.isInteger(page) || page < 1) throw new ApiError('VALIDATION', 'Page must be a positive whole number.');
     if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > MAX_PAGE_SIZE) {
-      throw new MockApiError('VALIDATION', `Page size must be between 1 and ${MAX_PAGE_SIZE}.`);
+      throw new ApiError('VALIDATION', `Page size must be between 1 and ${MAX_PAGE_SIZE}.`);
     }
   }
 
@@ -1186,16 +1188,16 @@ class InMemoryMockApi implements MockFinanceApi {
       await new Promise<void>((resolve) => setTimeout(resolve, this.latencyMs));
     }
     if (this.session === 'EXPIRED') {
-      throw new MockApiError('UNAUTHENTICATED', 'The session has ended. Sign in again to continue.');
+      throw new ApiError('UNAUTHENTICATED', 'The session has ended. Sign in again to continue.');
     }
     return operation();
   }
 }
 
-export function createMockApi(scenario: MockScenario = 'DEFAULT', options: MockApiOptions = {}): MockFinanceApi {
+export function createMockApi(scenario: MockScenario = 'DEFAULT', options: MockApiOptions = {}): FinanceApi {
   const latencyMs = options.latencyMs ?? DEFAULT_LATENCY_MS;
   if (!Number.isFinite(latencyMs) || latencyMs < 0)
-    throw new MockApiError('VALIDATION', 'Mock latency cannot be negative.');
+    throw new ApiError('VALIDATION', 'Mock latency cannot be negative.');
   return new InMemoryMockApi(scenario, latencyMs, options.session ?? 'ACTIVE');
 }
 

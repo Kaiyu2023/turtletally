@@ -1,5 +1,5 @@
 import {
-  MockApiError,
+  ApiError,
   type Budget,
   type BudgetDefault,
   type BudgetProgress,
@@ -82,7 +82,7 @@ function categoryIndex(categories: readonly Category[]): ReadonlyMap<string, Cat
 
 function requireCategory(index: ReadonlyMap<string, Category>, id: string): Category {
   const category = index.get(id);
-  if (!category) throw new MockApiError('NOT_FOUND', 'Category not found.');
+  if (!category) throw new ApiError('NOT_FOUND', 'Category not found.');
   return category;
 }
 

@@ -1,7 +1,8 @@
 import { createMockApi } from '../data/mockApi';
-import type { MockFinanceApi, MockScenario, MockSession } from '../data/types';
+import type { MockScenario, MockSession } from '../data/mock';
+import type { FinanceApi } from '../data/types';
 
-export function createApiFromLocation(search: string): MockFinanceApi {
+export function createApiFromLocation(search: string): FinanceApi {
   const params = new URLSearchParams(search);
   const scenario: MockScenario = params.get('scenario') === 'empty' ? 'EMPTY' : 'DEFAULT';
   const session: MockSession = params.get('session') === 'expired' ? 'EXPIRED' : 'ACTIVE';
