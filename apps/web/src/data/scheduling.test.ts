@@ -4,6 +4,11 @@ import type { MockFinanceApi } from './types';
 
 let api: MockFinanceApi;
 
+async function previewStatement(accountId: string) {
+  const grant = await api.requestStatementUpload({ fileName: 'statement.csv', accountId, sizeBytes: 2_048 });
+  return api.previewImport({ uploadId: grant.uploadId, accountId });
+}
+
 beforeEach(() => {
   api = createMockApi('DEFAULT', { latencyMs: 0 });
 });
@@ -109,7 +114,7 @@ describe('runDueSchedules', () => {
 
 describe('import identity', () => {
   it('flags a previewed row that matches an existing imported transaction', async () => {
-    const batch = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-everyday' });
+    const batch = await previewStatement('account-demo-everyday');
     const duplicate = batch.rows.find((row) => row.status === 'DUPLICATE');
 
     expect(duplicate).toBeDefined();
@@ -118,7 +123,7 @@ describe('import identity', () => {
   });
 
   it('gives every row a fingerprint and the batch a content hash over them', async () => {
-    const batch = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-everyday' });
+    const batch = await previewStatement('account-demo-everyday');
 
     expect(batch.rows.every((row) => row.sourceFingerprint.length > 0)).toBe(true);
     expect(new Set(batch.rows.map((row) => row.sourceFingerprint)).size).toBe(batch.rows.length);
@@ -126,7 +131,7 @@ describe('import identity', () => {
   });
 
   it('carries the fingerprint onto committed transactions so a re-import detects them', async () => {
-    const batch = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-everyday' });
+    const batch = await previewStatement('account-demo-everyday');
     const result = await api.commitImport(batch.id, batch.version, batch.contentHash);
 
     expect(result.createdTransactions.length).toBeGreaterThan(0);
@@ -134,12 +139,12 @@ describe('import identity', () => {
       expect(transaction.importRowFingerprint).not.toBeNull();
     }
 
-    const second = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-everyday' });
+    const second = await previewStatement('account-demo-everyday');
     expect(second.rows.every((row) => row.status === 'DUPLICATE')).toBe(true);
   });
 
   it('refuses a commit carrying a stale content hash', async () => {
-    const batch = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-everyday' });
+    const batch = await previewStatement('account-demo-everyday');
 
     await expect(api.commitImport(batch.id, batch.version, 'not-the-hash')).rejects.toMatchObject({
       code: 'CONFLICT',
@@ -147,8 +152,8 @@ describe('import identity', () => {
   });
 
   it('separates statements by account, because the account is part of the fingerprint', async () => {
-    const everyday = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-everyday' });
-    const credit = await api.previewImport({ fileName: 'statement.csv', accountId: 'account-demo-credit' });
+    const everyday = await previewStatement('account-demo-everyday');
+    const credit = await previewStatement('account-demo-credit');
 
     expect(credit.contentHash).not.toBe(everyday.contentHash);
     expect(credit.rows.every((row) => row.status === 'READY')).toBe(true);

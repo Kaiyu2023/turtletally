@@ -34,6 +34,12 @@ import type {
   MockFinanceApi,
   MockScenario,
   MockSession,
+  CreateStatementUploadInput,
+  DownloadGrant,
+  Receipt,
+  RequestUploadInput,
+  UploadGrant,
+  UploadMediaType,
   Month,
   Schedule,
   ScheduleRecurrence,
@@ -81,8 +87,21 @@ function initialState(scenario: MockScenario): MockFixtureState {
   return state;
 }
 
+interface PendingUpload {
+  readonly id: string;
+  readonly fileName: string;
+  readonly mediaType: UploadMediaType;
+  readonly sizeBytes: number;
+  readonly expiresAt: string;
+}
+
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+const ALLOWED_MEDIA_TYPES: readonly UploadMediaType[] = ['application/pdf', 'image/jpeg', 'image/png'];
+
 class InMemoryMockApi implements MockFinanceApi {
   private state: MockFixtureState;
+  private readonly uploads = new Map<string, PendingUpload>();
+  private readonly receipts = new Map<string, Receipt>();
   private sequence = 1;
   private readonly scenario: MockScenario;
   private readonly latencyMs: number;
@@ -375,7 +394,8 @@ class InMemoryMockApi implements MockFinanceApi {
         localDate,
         occurredAt,
         timePrecision: input.occurredAt ? 'MINUTE' : transaction.timePrecision,
-        receipt: 'receipt' in input ? (input.receipt ?? null) : transaction.receipt,
+        receipt:
+          'receiptId' in input ? (input.receiptId ? this.requireReceipt(input.receiptId) : null) : transaction.receipt,
         updatedAt: MOCK_NOW,
         version: transaction.version + 1,
       };
@@ -649,6 +669,72 @@ class InMemoryMockApi implements MockFinanceApi {
     });
   }
 
+  async requestReceiptUpload(input: RequestUploadInput): Promise<UploadGrant> {
+    return this.withLatency(() => this.grantUpload(input, 'receipt-upload'));
+  }
+
+  async completeReceiptUpload(uploadId: string, checksum: string): Promise<Receipt> {
+    return this.withLatency(() => {
+      const pending = this.uploads.get(uploadId);
+      if (!pending) throw new MockApiError('NOT_FOUND', 'That upload was not found or has expired.');
+      if (!/^[0-9a-f]{8,}$/.test(checksum))
+        throw new MockApiError('VALIDATION', 'A completed upload must report its checksum.');
+
+      this.uploads.delete(uploadId);
+      const receipt: Receipt = {
+        id: this.nextId('receipt'),
+        fileName: pending.fileName,
+        mediaType: pending.mediaType,
+        sizeBytes: pending.sizeBytes,
+        checksum,
+      };
+      this.receipts.set(receipt.id, receipt);
+      return copy(receipt);
+    });
+  }
+
+  async getReceiptDownloadUrl(receiptId: string): Promise<DownloadGrant> {
+    return this.withLatency(() => {
+      const known =
+        this.receipts.has(receiptId) ||
+        this.state.transactions.some((transaction) => transaction.receipt?.id === receiptId);
+      if (!known) throw new MockApiError('NOT_FOUND', 'Receipt not found.');
+      return { url: `https://mock.invalid/receipts/${receiptId}`, expiresAt: MOCK_NOW };
+    });
+  }
+
+  async requestStatementUpload(input: CreateStatementUploadInput): Promise<UploadGrant> {
+    return this.withLatency(() => {
+      this.findActiveAccount(input.accountId);
+      if (!input.fileName.trim().toLowerCase().endsWith('.csv')) {
+        throw new MockApiError('VALIDATION', 'Choose a CSV file for this mock import.');
+      }
+      return this.grantUpload(
+        { fileName: input.fileName, mediaType: 'application/pdf', sizeBytes: input.sizeBytes },
+        'statement-upload',
+      );
+    });
+  }
+
+  private grantUpload(input: RequestUploadInput, prefix: string): UploadGrant {
+    if (input.sizeBytes <= 0 || input.sizeBytes > MAX_UPLOAD_BYTES) {
+      throw new MockApiError('VALIDATION', 'That file is empty or larger than the upload limit.');
+    }
+    if (prefix === 'receipt-upload' && !ALLOWED_MEDIA_TYPES.includes(input.mediaType)) {
+      throw new MockApiError('VALIDATION', 'Receipts must be a PDF, JPEG, or PNG.');
+    }
+
+    const id = this.nextId(prefix);
+    this.uploads.set(id, {
+      id,
+      fileName: input.fileName.trim(),
+      mediaType: input.mediaType,
+      sizeBytes: input.sizeBytes,
+      expiresAt: MOCK_NOW,
+    });
+    return { uploadId: id, uploadUrl: `https://mock.invalid/uploads/${id}`, expiresAt: MOCK_NOW };
+  }
+
   async listImports(): Promise<ImportHistoryItem[]> {
     return this.withLatency(() =>
       copy(
@@ -676,9 +762,9 @@ class InMemoryMockApi implements MockFinanceApi {
 
   async previewImport(input: CreateImportPreviewInput): Promise<ImportBatch> {
     return this.withLatency(() => {
-      if (!input.fileName.trim().toLowerCase().endsWith('.csv')) {
-        throw new MockApiError('VALIDATION', 'Choose a CSV file for this mock import.');
-      }
+      const upload = this.uploads.get(input.uploadId);
+      if (!upload) throw new MockApiError('NOT_FOUND', 'That statement upload was not found or has expired.');
+      this.uploads.delete(input.uploadId);
       const account = this.findActiveAccount(input.accountId);
       const id = this.nextId('import');
       const rows: ImportRow[] = [
@@ -688,7 +774,7 @@ class InMemoryMockApi implements MockFinanceApi {
       ];
       const batch: ImportBatch = {
         id,
-        fileName: input.fileName.trim(),
+        fileName: upload.fileName,
         accountId: account.id,
         accountName: account.name,
         createdAt: MOCK_NOW,
@@ -696,7 +782,7 @@ class InMemoryMockApi implements MockFinanceApi {
         committedAt: null,
         status: 'PREVIEW',
         contentHash: batchContentHash(
-          input.fileName,
+          upload.fileName,
           rows.map((row) => row.sourceFingerprint),
         ),
         rows,
@@ -854,7 +940,7 @@ class InMemoryMockApi implements MockFinanceApi {
       scheduleId: identity.scheduleId ?? null,
       occurrenceDate: identity.occurrenceDate ?? null,
       importRowFingerprint: identity.importRowFingerprint ?? null,
-      receipt: input.receipt ? copy(input.receipt) : null,
+      receipt: input.receiptId ? this.requireReceipt(input.receiptId) : null,
       voidedAt: null,
       voidReason: null,
       createdAt: MOCK_NOW,
@@ -953,6 +1039,14 @@ class InMemoryMockApi implements MockFinanceApi {
       accountName: this.findAccount(schedule.accountId).name,
       categoryName: schedule.categoryId ? this.findCategory(schedule.categoryId).name : null,
     };
+  }
+
+  private requireReceipt(receiptId: string): Receipt {
+    const receipt =
+      this.receipts.get(receiptId) ??
+      this.state.transactions.find((transaction) => transaction.receipt?.id === receiptId)?.receipt;
+    if (!receipt) throw new MockApiError('NOT_FOUND', 'Receipt not found. Upload it again.');
+    return copy(receipt);
   }
 
   private findAccount(id: string): Account {

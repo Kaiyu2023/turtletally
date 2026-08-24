@@ -15,7 +15,7 @@ Direction lives in the sign of the amount and nowhere else. A stored record carr
 
 Display names such as an account or category name are a read-model projection resolved from the current entity, never a value stored on the record that references it. A rename is therefore visible everywhere immediately, including in search, and no propagation job is required. Account balance is the opposite case: it is a maintained counter updated with the ledger write, not a scan, for the reason ADR 0007 gives for monthly rollups. The balance is owned by the ledger and is not directly editable; an opening balance is set once at creation and may be negative.
 
-Write repositories explicitly without an ORM. Use conditional and transactional writes for version checks, idempotency, and mutation-plus-audit atomicity. Keep receipt and import objects in private, versioned S3 storage rather than DynamoDB. Enable encryption, point-in-time recovery, deletion protection, and production retention.
+Write repositories explicitly without an ORM. Use conditional and transactional writes for version checks, idempotency, and mutation-plus-audit atomicity. Keep receipt and import objects in private, versioned S3 storage rather than DynamoDB. Bytes never pass through the API: the client requests a short-lived upload grant, writes to the returned URL, and reports the checksum the server verifies the stored object against. A record references an object the server already holds by its server-issued identifier; a client-minted identifier is rejected. Enable encryption, point-in-time recovery, deletion protection, and production retention.
 
 ## Consequences
 

@@ -404,6 +404,7 @@ export function createMockFixtures(): MockFixtureState {
         fileName: 'synthetic-groceries.png',
         mediaType: 'image/png',
         sizeBytes: 184_320,
+        checksum: 'a1b2c3d4',
       },
     }),
     fixtureTransaction({
