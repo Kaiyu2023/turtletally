@@ -38,7 +38,16 @@ Commit the generated `.terraform.lock.hcl` because it records the selected provi
 
 ## Prevention and response
 
-The tracked pre-commit hook and CI job reject common credential formats and sensitive file paths. GitHub secret scanning and push protection provide an additional server-side barrier, but neither scanner is complete and both can be bypassed by an authorized writer.
+The CI job rejects common credential formats, bank identifiers, and sensitive file paths on every push and pull request. The same scan runs before each commit through the tracked `.githooks/pre-commit`, but only once `npm run hooks:install` has pointed Git at that directory; an uninstalled hook is not a control. GitHub secret scanning and push protection provide an additional server-side barrier, but no scanner here is complete and all of them can be bypassed by an authorized writer.
+
+### What the repository scan does not detect
+
+- Credential formats outside the listed patterns, including Cognito client secrets, generic API keys, JWTs, and database connection strings.
+- Financial identifiers other than UK sort codes, IBANs, and Luhn-valid card numbers. Names, addresses, balances, and transaction narratives are not detectable by shape.
+- Anything inside a binary or an excluded lockfile.
+- Anything already present before a scanned range. The default scan reads the current tree only; `./scripts/check-repository-secrets.sh --history <range>` reads what a range introduced.
+
+Treat the scan as a backstop against mistakes, never as permission to handle real data in this repository.
 
 If sensitive material is exposed:
 

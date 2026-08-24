@@ -77,14 +77,85 @@ done < <(git ls-files)
 
 secret_pattern='(AKIA|ASIA)[A-Z0-9]{16}|-----BEGIN ([A-Z0-9]+ )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|aws_secret_access_key[[:space:]]*=[[:space:]]*[^[:space:]<][^[:space:]]{15,}'
 
+# UK sort code, a sort code followed by an account number, and a UK IBAN.
+# Amounts and ISO dates do not match these shapes.
+bank_pattern='(^|[^0-9-])[0-9]{2}-[0-9]{2}-[0-9]{2}([^0-9-]|$)|\bGB[0-9]{2}[A-Z]{4}[0-9]{14}\b|\b[A-Z]{2}[0-9]{2}([[:space:]][A-Z0-9]{4}){3,7}\b'
+
 if matches="$(git grep --cached -I -l -E "$secret_pattern" -- . 2>/dev/null)" && [[ -n "$matches" ]]; then
   echo "Possible secret material found in tracked files:" >&2
   echo "$matches" >&2
   failure=1
 fi
 
-if ! git diff --cached --check; then
+if matches="$(git grep --cached -I -l -E "$bank_pattern" -- . 2>/dev/null)" && [[ -n "$matches" ]]; then
+  echo "Possible bank identifier found in tracked files:" >&2
+  echo "$matches" >&2
   failure=1
+fi
+
+# Luhn-valid 13-19 digit runs. A regex alone flags any long number, so the
+# check digit is what separates a card number from an identifier or amount.
+find_card_numbers() {
+  awk '
+    function luhn(digits,    index_, position, digit, sum, double) {
+      sum = 0
+      double = 0
+      for (index_ = length(digits); index_ >= 1; index_--) {
+        digit = substr(digits, index_, 1) + 0
+        if (double) {
+          digit *= 2
+          if (digit > 9) digit -= 9
+        }
+        sum += digit
+        double = !double
+      }
+      return sum % 10 == 0
+    }
+    {
+      line = $0
+      gsub(/[ -]/, "", line)
+      while (match(line, /[0-9]{13,19}/)) {
+        candidate = substr(line, RSTART, RLENGTH)
+        if (luhn(candidate)) {
+          print FILENAME ": possible card number"
+          nextfile
+        }
+        line = substr(line, RSTART + RLENGTH)
+      }
+    }
+  ' "$@" 2>/dev/null
+}
+
+while IFS= read -r tracked_path; do
+  case "$tracked_path" in
+    package-lock.json|*/package-lock.json|*.lock.hcl|Cargo.lock|*.png|*.jpg|*.jpeg|*.pdf|*.ico)
+      continue
+      ;;
+  esac
+  [[ -f "$tracked_path" ]] || continue
+  if card_hit="$(find_card_numbers "$tracked_path")" && [[ -n "$card_hit" ]]; then
+    echo "$card_hit" >&2
+    failure=1
+  fi
+done < <(git ls-files)
+
+# History mode. The scans above see only the current tree, so anything
+# committed and later deleted stays invisible to them.
+if [[ "${1:-}" == "--history" ]]; then
+  range="${2:-origin/main..HEAD}"
+  if git rev-parse "$range" >/dev/null 2>&1; then
+    added="$(git log -p --no-color "$range" -- . | grep -E '^\+' || true)"
+    if [[ -n "$added" ]] && printf '%s\n' "$added" | grep -q -E "$secret_pattern|$bank_pattern"; then
+      echo "Possible secret or bank identifier introduced in $range." >&2
+      failure=1
+    fi
+    if [[ -n "$added" ]] && printf '%s\n' "$added" | find_card_numbers - | grep -q .; then
+      echo "Possible card number introduced in $range." >&2
+      failure=1
+    fi
+  else
+    echo "History range $range is not available; skipping the history scan." >&2
+  fi
 fi
 
 if [[ "$failure" -ne 0 ]]; then

@@ -9,6 +9,7 @@
     "apps/web"
   ],
   "scripts": {
+    "hooks:install": "git config core.hooksPath .githooks",
     "dev:web": "npm run dev --workspace @turtle-tally/web",
     "build": "npm run build --workspaces --if-present && cargo build --workspace --locked",
     "build:rust:arm64": "cargo build --workspace --release --target aarch64-unknown-linux-gnu --locked",

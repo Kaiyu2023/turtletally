@@ -35,9 +35,12 @@ Node.js 22.22.1, Rust 1.98.0, and Terraform 1.15.8 are pinned in the repository.
 cargo install cargo-audit --version 0.22.2 --locked
 cargo install cargo-deny --version 0.20.2 --locked
 npm ci --ignore-scripts
+npm run hooks:install
 npx playwright install chromium
 npm run dev:web
 ```
+
+`npm run hooks:install` points Git at the tracked `.githooks` directory. Until it is run the pre-commit secret scan does not execute, and `npm ci --ignore-scripts` means no install step can do it for you.
 
 Open <http://127.0.0.1:4173>. The UI makes no third-party requests and writes no finance data to browser storage.
 

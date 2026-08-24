@@ -2,21 +2,34 @@ name: Repository security
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: repository-security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   guardrails:
     name: Guardrails
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Check repository for forbidden files and common secret formats
         run: ./scripts/check-repository-secrets.sh
+
+      - name: Check what this pull request introduces
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          ./scripts/check-repository-secrets.sh --history "origin/${{ github.base_ref }}..HEAD"
