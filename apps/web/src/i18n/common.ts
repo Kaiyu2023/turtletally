@@ -31,6 +31,11 @@ export const commonMessages = defineMessages(
     sessionEndedTitle: 'Your session has ended',
     sessionEndedBody: 'Sign in again to continue. Anything you have not saved stays on screen until you reload.',
     reload: 'Reload',
+    loadFailedTitle: 'This could not be loaded',
+    loadFailedBody: 'The request did not complete. Nothing has been changed.',
+    loadStaleTitle: 'This changed while you were looking at it',
+    loadStaleBody: 'Load it again to see the current figures.',
+    tryAgain: 'Try again',
   },
   {
     skipToContent: '跳到主要内容',
@@ -62,5 +67,10 @@ export const commonMessages = defineMessages(
     sessionEndedTitle: '会话已结束',
     sessionEndedBody: '请重新登录以继续。在重新加载之前，尚未保存的内容仍会显示在页面上。',
     reload: '重新加载',
+    loadFailedTitle: '无法加载此内容',
+    loadFailedBody: '请求未能完成，未更改任何内容。',
+    loadStaleTitle: '此内容在您查看期间已更改',
+    loadStaleBody: '请重新加载以查看当前数据。',
+    tryAgain: '重试',
   },
 );

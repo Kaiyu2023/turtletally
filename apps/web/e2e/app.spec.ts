@@ -177,6 +177,17 @@ test.describe('core experience', () => {
   });
 });
 
+test('shows a retry card when a load fails, not an empty month', async ({ page }) => {
+  await page.goto('/dashboard?session=expired');
+
+  const failure = page.getByRole('alert').filter({ hasText: 'This could not be loaded' });
+  await expect(failure).toBeVisible();
+  await expect(failure.getByRole('button', { name: 'Try again' })).toBeVisible();
+
+  await expect(page.getByRole('heading', { level: 1, name: 'A clear view of your money' })).toBeVisible();
+  await expect(page.getByText('Nothing to tally', { exact: false })).toHaveCount(0);
+});
+
 test('surfaces an ended session without discarding what is on screen', async ({ page }) => {
   await openPage(page, '/transactions?session=expired', 'Transactions');
 
