@@ -1,5 +1,8 @@
 # User preferences API
 
+- Status: Design baseline. The endpoint is not deployed; the browser draft exercises this shape against an in-memory mock, and reloading the draft resets all state.
+- Conventions: [`conventions.md`](conventions.md) applies to this endpoint and to every other.
+
 ## Decision
 
 Locale is an owner-scoped server preference. The browser may use `en-GB` while the preference request is loading, but cookies, `localStorage`, IndexedDB, and service-worker caches are not sources of truth.
@@ -13,7 +16,7 @@ The authenticated session determines the owner. Requests never accept an owner o
 
 ## Contract
 
-Wire JSON uses `snake_case`, consistently with the planned API contract. Generated or handwritten TypeScript adapters may expose camel-case fields such as `updatedAt` and `expectedVersion` inside the application.
+Wire JSON uses `camelCase`, matching the contract that ADR 0008 makes the source of truth. The Rust handler carries the serde attributes needed to produce it; no adapter layer sits in the browser.
 
 ### Read preferences
 
@@ -26,7 +29,7 @@ Accept: application/json
 {
   "locale": "en-GB",
   "version": 1,
-  "updated_at": "2026-08-17T09:00:00Z"
+  "updatedAt": "2026-08-17T09:00:00Z"
 }
 ```
 
@@ -37,18 +40,21 @@ If no record exists, the API returns the default preference with a version suita
 ```http
 PATCH /api/v1/preferences
 Content-Type: application/json
+X-Csrf-Token: <per-session token>
 ```
 
 ```json
 {
   "locale": "zh-CN",
-  "expected_version": 1
+  "expectedVersion": 1
 }
 ```
 
-A successful response returns the complete updated resource with an incremented `version`. Unknown fields and locales outside the allowlist are rejected. A stale `expected_version` returns `409 Conflict`; clients reload the current preference before retrying.
+The CSRF header is required on every mutation, alongside the session cookie and passing `Origin` and `Sec-Fetch-Site` checks. ADR 0002 gives the reasoning.
 
-Both responses use `Cache-Control: no-store`. Errors use the application's problem-details format with stable codes such as `INVALID_LOCALE` and `VERSION_CONFLICT`, without returning internal storage details. The client maps those codes to its message catalogue instead of displaying service-provided text.
+A successful response returns the complete updated resource with an incremented `version`. Unknown fields and locales outside the allowlist are rejected. A stale `expectedVersion` returns `409 Conflict`; clients reload the current preference before retrying.
+
+Both responses use `Cache-Control: no-store`. Errors carry a code from the closed set in [`conventions.md`](conventions.md) — here `VALIDATION` for an unknown field or a locale outside the allowlist, and `CONFLICT` for a stale version — without returning internal storage details. The client maps the code to its message catalogue instead of displaying service-provided text.
 
 ## Storage
 
@@ -59,7 +65,7 @@ Store the resource in `FinanceData` with:
 
 Updates use a conditional expression on `version`. The runtime derives the partition key from the verified session and writes the preference and its coarse audit event atomically where practical. Audit data records that preferences changed, but does not need to duplicate their full value.
 
-The mock API mirrors the resource shape, allowlist, and optimistic-concurrency rules in memory. It deliberately accepts no owner field; production ownership and persistence begin at the authenticated API boundary. Reloading the public draft still resets all mock state.
+The mock API mirrors the resource shape, allowlist, and optimistic-concurrency rules in memory. It deliberately accepts no owner field; production ownership and persistence begin at the authenticated API boundary.
 
 ## Evolution
 

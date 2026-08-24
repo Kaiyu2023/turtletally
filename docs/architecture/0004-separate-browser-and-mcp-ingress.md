@@ -17,4 +17,4 @@ Keep the MCP handler stateless and expose only action-specific, bounded tools. D
 
 - A compromise or configuration error on one ingress has a smaller blast radius.
 - Separate domains, certificates, API configuration, alarms, clients, and permissions add infrastructure work.
-- MCP development stops if the compatibility gate fails; a custom OAuth compatibility service is not an automatic fallback.
+- MCP development stops if the compatibility gate fails; a custom OAuth compatibility service is not an automatic fallback. The fallback is a scope reduction: the browser application ships without MCP, as ADR 0009 records.

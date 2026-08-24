@@ -1,6 +1,6 @@
 # Manual owner actions and human gates
 
-This checklist records actions that Terraform or Codex must not perform autonomously. Completing an item authorises only that item; it does not authorise a later gate, paid feature, production deployment, or live-data connection.
+This checklist records actions that Terraform or automation must not perform autonomously. Completing an item authorises only that item; it does not authorise a later gate, paid feature, production deployment, or live-data connection.
 
 Keep account numbers, profile names, domains, callback URLs, email addresses, certificates, tokens, recovery material, and financial samples out of this tracked file. Record only a date, outcome, and redacted evidence reference. Interactive credentials remain on the owner's device.
 
@@ -43,7 +43,7 @@ Owner actions:
 - [ ] Approve each sandbox or production saved plan separately; a prior approval does not cover a regenerated or changed plan.
 - [ ] Approve every import, state move or removal, provider replacement, state restoration, removed-resource operation, and force-unlock separately after an encrypted backup and proof that no other writer is active.
 
-Codex prepares commands and redacts captured output. No domain, account identifier, or profile name belongs in tracked examples.
+Automation prepares commands and redacts captured output. No domain, account identifier, or profile name belongs in tracked examples.
 
 ## CloudFront plan and WAF console gate
 
