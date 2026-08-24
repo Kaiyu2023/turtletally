@@ -349,7 +349,7 @@ export function SettingsEditorModal({
               </select>
             </div>
             <div className="field">
-              <label htmlFor="account-balance">{t('openingBalance')}</label>
+              <label htmlFor="account-balance">{editor.item ? t('currentBalance') : t('openingBalance')}</label>
               <div className="input-prefix">
                 <span>£</span>
                 <input
