@@ -7,7 +7,9 @@ import {
   spendingByCategory,
   summariseMonth,
 } from './aggregates';
+import { batchContentHash, rowFingerprint } from './fingerprint';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
+import { nextOccurrence } from './recurrence';
 import type {
   Account,
   AppLocale,
@@ -47,6 +49,12 @@ import type {
   UserPreferences,
 } from './types';
 import { MockApiError } from './types';
+
+interface TransactionIdentity {
+  readonly scheduleId?: string;
+  readonly occurrenceDate?: LocalDate;
+  readonly importRowFingerprint?: string;
+}
 
 const DEFAULT_LATENCY_MS = 180;
 const MAX_PAGE_SIZE = 100;
@@ -518,6 +526,7 @@ class InMemoryMockApi implements MockFinanceApi {
         flow: input.flow,
         recurrence: copy(input.recurrence),
         nextDueDate: input.nextDueDate,
+        lastGeneratedDate: null,
         deactivatedAt: null,
         version: 1,
       };
@@ -584,6 +593,61 @@ class InMemoryMockApi implements MockFinanceApi {
     });
   }
 
+  async runDueSchedules(asOf: LocalDate): Promise<Transaction[]> {
+    return this.withLatency(() => {
+      this.validDate(asOf);
+      const created: Transaction[] = [];
+
+      for (const schedule of this.state.schedules) {
+        if (schedule.deactivatedAt !== null) continue;
+
+        let due = schedule.nextDueDate;
+        let lastGeneratedDate = schedule.lastGeneratedDate;
+        let generated = false;
+
+        while (due !== null && due <= asOf) {
+          const alreadyGenerated = this.state.transactions.some(
+            (transaction) => transaction.scheduleId === schedule.id && transaction.occurrenceDate === due,
+          );
+
+          if (!alreadyGenerated) {
+            const transaction = this.buildTransaction(
+              {
+                accountId: schedule.accountId,
+                categoryId: schedule.categoryId,
+                description: schedule.description,
+                amountMinor: schedule.amountMinor,
+                kind: schedule.kind,
+                flow: schedule.flow,
+                localDate: due,
+              },
+              'SCHEDULE',
+              { scheduleId: schedule.id, occurrenceDate: due },
+            );
+            this.state.transactions.push(transaction);
+            this.adjustBalance(transaction, 1);
+            created.push(transaction);
+          }
+
+          lastGeneratedDate = due;
+          generated = true;
+          due = nextOccurrence(schedule.recurrence, due);
+        }
+
+        if (generated) {
+          this.replace(this.state.schedules, {
+            ...schedule,
+            nextDueDate: due,
+            lastGeneratedDate,
+            version: schedule.version + 1,
+          });
+        }
+      }
+
+      return copy(created);
+    });
+  }
+
   async listImports(): Promise<ImportHistoryItem[]> {
     return this.withLatency(() =>
       copy(
@@ -617,14 +681,9 @@ class InMemoryMockApi implements MockFinanceApi {
       const account = this.findActiveAccount(input.accountId);
       const id = this.nextId('import');
       const rows: ImportRow[] = [
-        this.importRow(id, 2, '2026-08-13', 'Weekly groceries', 4_325, 'category-demo-groceries'),
-        this.importRow(id, 3, '2026-08-14', 'Rail travel', 2_600, 'category-demo-rail'),
-        {
-          ...this.importRow(id, 4, '2026-08-12', 'Local travel', 1_560, 'category-demo-transit'),
-          status: 'DUPLICATE',
-          warnings: ['Matches an existing transaction'],
-          included: false,
-        },
+        this.importRow(id, account.id, 2, '2026-08-13', 'Weekly groceries', 4_325, 'category-demo-groceries'),
+        this.importRow(id, account.id, 3, '2026-08-14', 'Rail travel', 2_600, 'category-demo-rail'),
+        this.importRow(id, account.id, 4, '2026-08-12', 'Local travel', 1_560, 'category-demo-transit'),
       ];
       const batch: ImportBatch = {
         id,
@@ -635,6 +694,10 @@ class InMemoryMockApi implements MockFinanceApi {
         expiresAt: '2026-08-19T12:00:00.000Z',
         committedAt: null,
         status: 'PREVIEW',
+        contentHash: batchContentHash(
+          input.fileName,
+          rows.map((row) => row.sourceFingerprint),
+        ),
         rows,
         importedCount: 0,
         version: 1,
@@ -676,11 +739,18 @@ class InMemoryMockApi implements MockFinanceApi {
     });
   }
 
-  async commitImport(importId: string, expectedVersion: number): Promise<ImportCommitResult> {
+  async commitImport(
+    importId: string,
+    expectedVersion: number,
+    expectedContentHash: string,
+  ): Promise<ImportCommitResult> {
     return this.withLatency(() => {
       const batch = this.findImport(importId);
       this.assertImportEditable(batch);
       this.assertVersion(batch.version, expectedVersion);
+      if (batch.contentHash !== expectedContentHash) {
+        throw new MockApiError('CONFLICT', 'The statement changed since it was previewed. Preview it again.');
+      }
       const includedRows = batch.rows.filter((row) => row.included);
 
       if (includedRows.length === 0) throw new MockApiError('VALIDATION', 'Select at least one row to import.');
@@ -700,6 +770,7 @@ class InMemoryMockApi implements MockFinanceApi {
             localDate: row.localDate,
           },
           'IMPORT',
+          { importRowFingerprint: row.sourceFingerprint },
         ),
       );
       for (const transaction of createdTransactions) {
@@ -750,7 +821,11 @@ class InMemoryMockApi implements MockFinanceApi {
     );
   }
 
-  private buildTransaction(input: CreateTransactionInput, origin: Transaction['origin']): Transaction {
+  private buildTransaction(
+    input: CreateTransactionInput,
+    origin: Transaction['origin'],
+    identity: TransactionIdentity = {},
+  ): Transaction {
     const account = this.findActiveAccount(input.accountId);
     const category = input.categoryId ? this.findActiveCategory(input.categoryId) : null;
     const description = this.validName(input.description, 'Description');
@@ -775,6 +850,9 @@ class InMemoryMockApi implements MockFinanceApi {
       localDate: input.localDate,
       timePrecision: input.occurredAt ? 'MINUTE' : 'DATE',
       timezone: 'Europe/London',
+      scheduleId: identity.scheduleId ?? null,
+      occurrenceDate: identity.occurrenceDate ?? null,
+      importRowFingerprint: identity.importRowFingerprint ?? null,
       receipt: input.receipt ? copy(input.receipt) : null,
       voidedAt: null,
       voidReason: null,
@@ -786,6 +864,7 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private importRow(
     importId: string,
+    accountId: string,
     rowNumber: number,
     localDate: LocalDate,
     description: string,
@@ -793,6 +872,11 @@ class InMemoryMockApi implements MockFinanceApi {
     categoryId: string,
   ): ImportRow {
     const category = this.findActiveCategory(categoryId);
+    const sourceFingerprint = rowFingerprint({ accountId, localDate, description, amountMinor, flow: 'DEBIT' });
+    const duplicate = this.state.transactions.some(
+      (transaction) => transaction.voidedAt === null && transaction.importRowFingerprint === sourceFingerprint,
+    );
+
     return {
       id: `${importId}-row-${rowNumber}`,
       rowNumber,
@@ -803,9 +887,10 @@ class InMemoryMockApi implements MockFinanceApi {
       kind: 'SPENDING',
       categoryId: category.id,
       categoryName: category.name,
-      status: 'READY',
-      warnings: [],
-      included: true,
+      status: duplicate ? 'DUPLICATE' : 'READY',
+      sourceFingerprint,
+      warnings: duplicate ? ['Matches an existing transaction'] : [],
+      included: !duplicate,
     };
   }
 

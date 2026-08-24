@@ -91,7 +91,7 @@ export function ImportsPage() {
     if (!preview) return;
     setBusy(true);
     try {
-      const result = await api.commitImport(preview.id, preview.version);
+      const result = await api.commitImport(preview.id, preview.version, preview.contentHash);
       setPreview(result.batch);
       setConfirmCommit(false);
       notify(t('importedNotice', { count: format.number(result.createdTransactions.length) }));
