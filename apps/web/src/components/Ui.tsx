@@ -232,3 +232,19 @@ export function Toast({ message, tone = 'success', onDismiss }: ToastProps) {
     </div>
   );
 }
+
+export function SessionEndedNotice({ onReload }: { readonly onReload: () => void }) {
+  const t = useMessages(commonMessages);
+  return (
+    <div className="session-ended" role="alert">
+      <AlertCircle aria-hidden="true" size={18} />
+      <div>
+        <strong>{t('sessionEndedTitle')}</strong>
+        <p>{t('sessionEndedBody')}</p>
+      </div>
+      <Button variant="ghost" onClick={onReload}>
+        {t('reload')}
+      </Button>
+    </div>
+  );
+}

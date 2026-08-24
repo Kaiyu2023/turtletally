@@ -351,13 +351,16 @@ export interface UpdateCategoryInput {
   colour?: string;
 }
 
+export type MockSession = 'ACTIVE' | 'EXPIRED';
+
 export interface MockApiOptions {
   latencyMs?: number;
+  session?: MockSession;
 }
 
 export type MockScenario = 'DEFAULT' | 'EMPTY';
 
-export type MockApiErrorCode = 'NOT_FOUND' | 'CONFLICT' | 'VALIDATION';
+export type MockApiErrorCode = 'NOT_FOUND' | 'CONFLICT' | 'VALIDATION' | 'UNAUTHENTICATED';
 
 export class MockApiError extends Error {
   readonly code: MockApiErrorCode;

@@ -28,6 +28,9 @@ export const commonMessages = defineMessages(
     dismissNotification: 'Dismiss notification',
     preferencesLoadError: 'Preferences could not be loaded.',
     overviewLoadError: 'The overview could not be loaded.',
+    sessionEndedTitle: 'Your session has ended',
+    sessionEndedBody: 'Sign in again to continue. Anything you have not saved stays on screen until you reload.',
+    reload: 'Reload',
   },
   {
     skipToContent: '跳到主要内容',
@@ -56,5 +59,8 @@ export const commonMessages = defineMessages(
     dismissNotification: '关闭通知',
     preferencesLoadError: '无法加载偏好设置。',
     overviewLoadError: '无法加载总览。',
+    sessionEndedTitle: '会话已结束',
+    sessionEndedBody: '请重新登录以继续。在重新加载之前，尚未保存的内容仍会显示在页面上。',
+    reload: '重新加载',
   },
 );

@@ -165,6 +165,15 @@ test.describe('core experience', () => {
   });
 });
 
+test('surfaces an ended session without discarding what is on screen', async ({ page }) => {
+  await openPage(page, '/transactions?session=expired', 'Transactions');
+
+  const notice = page.getByRole('alert').filter({ hasText: 'Your session has ended' });
+  await expect(notice).toBeVisible();
+  await expect(notice.getByRole('button', { name: 'Reload' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Transactions' })).toBeVisible();
+});
+
 test.describe('accessibility', () => {
   for (const route of routes) {
     test(`${route.heading} has no serious or critical axe violations`, async ({ page }) => {
