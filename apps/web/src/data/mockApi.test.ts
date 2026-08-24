@@ -173,9 +173,8 @@ describe('budget aggregate under unbudgeted spending', () => {
       accountId: account.id,
       categoryId: unbudgeted.id,
       description: 'Unbudgeted spend',
-      amountMinor: 5_000,
+      amountMinor: -5_000,
       kind: 'SPENDING',
-      flow: 'DEBIT',
       localDate: '2026-08-10',
     });
     const after = await api.getDashboard(MONTH);

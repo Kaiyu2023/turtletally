@@ -8,6 +8,7 @@ import {
   summariseMonth,
 } from './aggregates';
 import { batchContentHash, rowFingerprint } from './fingerprint';
+import { flowOf } from './money';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
 import { nextOccurrence } from './recurrence';
 import type {
@@ -292,7 +293,7 @@ class InMemoryMockApi implements MockFinanceApi {
         if (filters.accountId && transaction.accountId !== filters.accountId) return false;
         if (filters.categoryId && transaction.categoryId !== filters.categoryId) return false;
         if (filters.kind && transaction.kind !== filters.kind) return false;
-        if (filters.flow && transaction.flow !== filters.flow) return false;
+        if (filters.flow && flowOf(transaction.amountMinor) !== filters.flow) return false;
         if (filters.origin && transaction.origin !== filters.origin) return false;
         if (status === 'ACTIVE' && transaction.voidedAt !== null) return false;
         if (status === 'VOIDED' && transaction.voidedAt === null) return false;
@@ -353,7 +354,7 @@ class InMemoryMockApi implements MockFinanceApi {
       const description =
         input.description === undefined ? transaction.description : this.validName(input.description, 'Description');
       const amountMinor = input.amountMinor ?? transaction.amountMinor;
-      this.validMinor(amountMinor, 'Amount');
+      this.validAmount(amountMinor, 'Amount');
       const localDate = input.localDate ?? transaction.localDate;
       this.validDate(localDate);
       const occurredAt = input.occurredAt ?? (input.localDate ? `${localDate}T12:00:00.000Z` : transaction.occurredAt);
@@ -369,7 +370,6 @@ class InMemoryMockApi implements MockFinanceApi {
         description,
         amountMinor,
         kind: input.kind ?? transaction.kind,
-        flow: input.flow ?? transaction.flow,
         localDate,
         occurredAt,
         timePrecision:
@@ -511,7 +511,7 @@ class InMemoryMockApi implements MockFinanceApi {
       const category = input.categoryId ? this.findActiveCategory(input.categoryId) : null;
       const name = this.validName(input.name, 'Schedule name');
       const description = this.validName(input.description, 'Description');
-      this.validMinor(input.amountMinor, 'Amount');
+      this.validAmount(input.amountMinor, 'Amount');
       this.validRecurrence(input.recurrence);
       this.validDate(input.nextDueDate);
 
@@ -526,7 +526,6 @@ class InMemoryMockApi implements MockFinanceApi {
         amountMinor: input.amountMinor,
         currency: 'GBP',
         kind: input.kind,
-        flow: input.flow,
         recurrence: copy(input.recurrence),
         nextDueDate: input.nextDueDate,
         lastGeneratedDate: null,
@@ -555,7 +554,7 @@ class InMemoryMockApi implements MockFinanceApi {
       const amountMinor = input.amountMinor ?? schedule.amountMinor;
       const recurrence = input.recurrence ?? schedule.recurrence;
       const nextDueDate = input.nextDueDate ?? schedule.nextDueDate;
-      this.validMinor(amountMinor, 'Amount');
+      this.validAmount(amountMinor, 'Amount');
       this.validRecurrence(recurrence);
       if (nextDueDate === null) throw new MockApiError('VALIDATION', 'An active schedule needs a next due date.');
       this.validDate(nextDueDate);
@@ -570,7 +569,6 @@ class InMemoryMockApi implements MockFinanceApi {
         description,
         amountMinor,
         kind: input.kind ?? schedule.kind,
-        flow: input.flow ?? schedule.flow,
         recurrence: copy(recurrence),
         nextDueDate,
         version: schedule.version + 1,
@@ -621,7 +619,6 @@ class InMemoryMockApi implements MockFinanceApi {
                 description: schedule.description,
                 amountMinor: schedule.amountMinor,
                 kind: schedule.kind,
-                flow: schedule.flow,
                 localDate: due,
               },
               'SCHEDULE',
@@ -684,9 +681,9 @@ class InMemoryMockApi implements MockFinanceApi {
       const account = this.findActiveAccount(input.accountId);
       const id = this.nextId('import');
       const rows: ImportRow[] = [
-        this.importRow(id, account.id, 2, '2026-08-13', 'Weekly groceries', 4_325, 'category-demo-groceries'),
-        this.importRow(id, account.id, 3, '2026-08-14', 'Rail travel', 2_600, 'category-demo-rail'),
-        this.importRow(id, account.id, 4, '2026-08-12', 'Local travel', 1_560, 'category-demo-transit'),
+        this.importRow(id, account.id, 2, '2026-08-13', 'Weekly groceries', -4_325, 'category-demo-groceries'),
+        this.importRow(id, account.id, 3, '2026-08-14', 'Rail travel', -2_600, 'category-demo-rail'),
+        this.importRow(id, account.id, 4, '2026-08-12', 'Local travel', -1_560, 'category-demo-transit'),
       ];
       const batch: ImportBatch = {
         id,
@@ -769,7 +766,6 @@ class InMemoryMockApi implements MockFinanceApi {
             description: row.description,
             amountMinor: row.amountMinor,
             kind: row.kind,
-            flow: row.flow,
             localDate: row.localDate,
           },
           'IMPORT',
@@ -834,7 +830,7 @@ class InMemoryMockApi implements MockFinanceApi {
     const account = this.findActiveAccount(input.accountId);
     const category = input.categoryId ? this.findActiveCategory(input.categoryId) : null;
     const description = this.validName(input.description, 'Description');
-    this.validMinor(input.amountMinor, 'Amount');
+    this.validAmount(input.amountMinor, 'Amount');
     this.validDate(input.localDate);
     const occurredAt = input.occurredAt ?? `${input.localDate}T12:00:00.000Z`;
     this.validOccurredAt(occurredAt, input.localDate);
@@ -849,7 +845,6 @@ class InMemoryMockApi implements MockFinanceApi {
       amountMinor: input.amountMinor,
       currency: 'GBP',
       kind: input.kind,
-      flow: input.flow,
       origin,
       occurredAt,
       localDate: input.localDate,
@@ -877,7 +872,7 @@ class InMemoryMockApi implements MockFinanceApi {
     categoryId: string,
   ): ImportRow {
     const category = this.findActiveCategory(categoryId);
-    const sourceFingerprint = rowFingerprint({ accountId, localDate, description, amountMinor, flow: 'DEBIT' });
+    const sourceFingerprint = rowFingerprint({ accountId, localDate, description, amountMinor });
     const duplicate = this.state.transactions.some(
       (transaction) => transaction.voidedAt === null && transaction.importRowFingerprint === sourceFingerprint,
     );
@@ -888,7 +883,6 @@ class InMemoryMockApi implements MockFinanceApi {
       localDate,
       description,
       amountMinor,
-      flow: 'DEBIT',
       kind: 'SPENDING',
       categoryId: category.id,
       categoryName: category.name,
@@ -901,8 +895,7 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private adjustBalance(transaction: Transaction, direction: 1 | -1): void {
     const account = this.findAccount(transaction.accountId);
-    const signedAmount = transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor;
-    account.balanceMinor += signedAmount * direction;
+    account.balanceMinor += transaction.amountMinor * direction;
   }
 
   private sortTransactions(transactions: Transaction[], sort: NonNullable<TransactionFilters['sort']>): void {
@@ -1037,6 +1030,11 @@ class InMemoryMockApi implements MockFinanceApi {
     const minimum = allowZero ? 0 : 1;
     if (!Number.isSafeInteger(value) || value < minimum)
       throw new MockApiError('VALIDATION', `${label} must be a whole number of pence${allowZero ? ' or zero' : ''}.`);
+  }
+
+  private validAmount(value: number, label: string): void {
+    if (!Number.isSafeInteger(value) || value === 0)
+      throw new MockApiError('VALIDATION', `${label} must be a non-zero whole number of pence.`);
   }
 
   private validSignedMinor(value: number, label: string): void {

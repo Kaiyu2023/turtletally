@@ -490,7 +490,7 @@ function transactionIcon(transaction: Transaction): LucideIcon {
   if (transaction.kind === 'INVESTMENT') {
     return TrendingUp;
   }
-  return transaction.flow === 'CREDIT' ? ArrowDownLeft : ArrowUpRight;
+  return transaction.amountMinor >= 0 ? ArrowDownLeft : ArrowUpRight;
 }
 
 const transactionOriginMessage = {
@@ -523,7 +523,7 @@ function RecentTransactions({
     <ul className="activity-list">
       {transactions.map((transaction) => {
         const Icon = transactionIcon(transaction);
-        const displayAmount = transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor;
+        const displayAmount = transaction.amountMinor;
         return (
           <li key={transaction.id}>
             <button type="button" className="activity-row" onClick={() => onOpen(transaction)}>
@@ -623,7 +623,7 @@ function UpcomingSchedules({ schedules }: { readonly schedules: readonly Schedul
   return (
     <ol className="schedule-list">
       {upcoming.map((schedule) => {
-        const displayAmount = schedule.flow === 'CREDIT' ? schedule.amountMinor : -schedule.amountMinor;
+        const displayAmount = schedule.amountMinor;
         return (
           <li key={schedule.id} className="schedule-row">
             <time dateTime={schedule.nextDueDate}>

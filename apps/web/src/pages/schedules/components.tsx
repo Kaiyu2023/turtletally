@@ -1,5 +1,6 @@
 import { CalendarCheck2, CalendarClock, CirclePause, Pencil, Repeat2 } from 'lucide-react';
 import { Badge, Button, Card, EmptyState, Modal, Skeleton } from '../../components/Ui';
+import { flowOf } from '../../data/money';
 import type {
   Account,
   Category,
@@ -184,7 +185,8 @@ function ScheduleCard({
         <div>
           <dt>{t('entry')}</dt>
           <dd>
-            {kindText(schedule.kind, t).toLocaleLowerCase()} · {flowText(schedule.flow, t).toLocaleLowerCase()}
+            {kindText(schedule.kind, t).toLocaleLowerCase()} ·{' '}
+            {flowText(flowOf(schedule.amountMinor), t).toLocaleLowerCase()}
           </dd>
         </div>
         <div>

@@ -61,7 +61,6 @@ export interface Transaction {
   amountMinor: number;
   currency: Currency;
   kind: TransactionKind;
-  flow: TransactionFlow;
   origin: TransactionOrigin;
   occurredAt: string;
   localDate: LocalDate;
@@ -84,7 +83,6 @@ export interface CreateTransactionInput {
   description: string;
   amountMinor: number;
   kind: TransactionKind;
-  flow: TransactionFlow;
   localDate: LocalDate;
   occurredAt?: string;
   origin?: TransactionOrigin;
@@ -98,7 +96,6 @@ export interface UpdateTransactionInput {
   description?: string;
   amountMinor?: number;
   kind?: TransactionKind;
-  flow?: TransactionFlow;
   localDate?: LocalDate;
   occurredAt?: string;
   receipt?: Receipt | null;
@@ -192,7 +189,6 @@ export interface Schedule {
   amountMinor: number;
   currency: Currency;
   kind: TransactionKind;
-  flow: TransactionFlow;
   recurrence: ScheduleRecurrence;
   nextDueDate: LocalDate | null;
   lastGeneratedDate: LocalDate | null;
@@ -207,7 +203,6 @@ export interface CreateScheduleInput {
   description: string;
   amountMinor: number;
   kind: TransactionKind;
-  flow: TransactionFlow;
   recurrence: ScheduleRecurrence;
   nextDueDate: LocalDate;
 }
@@ -220,7 +215,6 @@ export interface UpdateScheduleInput {
   description?: string;
   amountMinor?: number;
   kind?: TransactionKind;
-  flow?: TransactionFlow;
   recurrence?: ScheduleRecurrence;
   nextDueDate?: LocalDate;
 }
@@ -234,7 +228,6 @@ export interface ImportRow {
   localDate: LocalDate;
   description: string;
   amountMinor: number;
-  flow: TransactionFlow;
   kind: TransactionKind;
   categoryId: string | null;
   categoryName: string | null;

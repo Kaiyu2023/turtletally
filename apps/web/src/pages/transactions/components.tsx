@@ -16,6 +16,7 @@ import {
   WalletCards,
 } from 'lucide-react';
 import { Badge, Button, Card, EmptyState, IconButton, Money, Skeleton } from '../../components/Ui';
+import { flowOf } from '../../data/money';
 import type {
   Account,
   Category,
@@ -492,7 +493,7 @@ function TransactionCards({ page, categories, onEdit, onVoid }: TransactionColle
           </p>
           <div className="transaction-card__badges">
             <KindBadge kind={transaction.kind} />
-            <FlowLabel flow={transaction.flow} />
+            <FlowLabel flow={flowOf(transaction.amountMinor)} />
             <OriginBadge origin={transaction.origin} />
             <ReceiptIndicator transaction={transaction} />
           </div>
@@ -539,7 +540,7 @@ function TransactionClassification({ transaction }: { readonly transaction: Tran
   return (
     <div className="transaction-classification">
       <KindBadge kind={transaction.kind} />
-      <FlowLabel flow={transaction.flow} />
+      <FlowLabel flow={flowOf(transaction.amountMinor)} />
       <OriginBadge origin={transaction.origin} />
     </div>
   );
@@ -548,9 +549,9 @@ function TransactionClassification({ transaction }: { readonly transaction: Tran
 function TransactionAmount({ transaction }: { readonly transaction: Transaction }) {
   return (
     <Money
-      amountMinor={transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor}
+      amountMinor={transaction.amountMinor}
       signed
-      className={joinClassNames('transaction-amount', transaction.flow === 'CREDIT' ? 'positive' : 'negative')}
+      className={joinClassNames('transaction-amount', transaction.amountMinor >= 0 ? 'positive' : 'negative')}
     />
   );
 }

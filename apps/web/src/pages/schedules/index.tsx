@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useApp } from '../../app/AppContext';
 import { Button, PageHeader } from '../../components/Ui';
+import { flowOf, magnitudeOf, signedAmount } from '../../data/money';
 import type { Account, Category, CreateScheduleInput, LocalDate, Schedule, ScheduleRecurrence } from '../../data/types';
 import { useMessages } from '../../i18n/locale';
 import { parseGbpInput, toGbpInput } from '../../utils/format';
@@ -83,11 +84,11 @@ export function SchedulesPage() {
     setForm({
       name: schedule.name,
       description: schedule.description,
-      amount: toGbpInput(schedule.amountMinor),
+      amount: toGbpInput(magnitudeOf(schedule.amountMinor)),
       accountId: schedule.accountId,
       categoryId: schedule.categoryId ?? '',
       kind: schedule.kind,
-      flow: schedule.flow,
+      flow: flowOf(schedule.amountMinor),
       frequency: recurrence.frequency,
       nextDueDate: schedule.nextDueDate ?? '2026-09-01',
       weekday: recurrence.frequency === 'WEEKLY' ? recurrence.weekday : 'MONDAY',
@@ -121,11 +122,10 @@ export function SchedulesPage() {
     const input: CreateScheduleInput = {
       name: form.name,
       description: form.description,
-      amountMinor,
+      amountMinor: signedAmount(amountMinor, form.flow),
       accountId: form.accountId,
       categoryId: form.categoryId || null,
       kind: form.kind,
-      flow: form.flow,
       recurrence: recurrenceFromForm(),
       nextDueDate: form.nextDueDate as LocalDate,
     };
