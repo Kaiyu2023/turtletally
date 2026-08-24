@@ -131,16 +131,28 @@ test.describe('core experience', () => {
     await page.getByRole('button', { name: 'Create preview' }).click();
 
     await expect(page.getByRole('heading', { level: 2, name: 'synthetic-draft-review.csv' })).toBeVisible();
-    await expect(page.locator('.import-summary')).toContainText('2rows selected');
+    await expect(page.locator('.import-summary')).toContainText('3rows selected');
+    await expect(page.locator('.import-summary')).toContainText('0duplicates skipped');
     await expect(page.getByText('fixture-content-is-never-parsed')).toHaveCount(0);
     await page.getByLabel('Category for Weekly groceries').selectOption({ label: 'Dining' });
     await page.getByRole('button', { name: 'Review and commit' }).click();
 
     const commitDialog = page.getByRole('dialog', { name: 'Commit this import?' });
-    await expect(commitDialog).toContainText('2 transactions');
-    await commitDialog.getByRole('button', { name: 'Commit 2 rows' }).click();
+    await expect(commitDialog).toContainText('3 transactions');
+    await commitDialog.getByRole('button', { name: 'Commit 3 rows' }).click();
     await expect(page.getByText('Import complete')).toBeVisible();
-    await expect(page.getByRole('status').filter({ hasText: '2 synthetic transactions imported.' })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: '3 synthetic transactions imported.' })).toBeVisible();
+  });
+
+  test('skips a statement row that already exists in the ledger', async ({ page }) => {
+    await openPage(page, '/imports', 'Statement imports');
+
+    await page.getByLabel('Destination account').selectOption({ label: 'Everyday Current' });
+    await page.locator('#statement-file').setInputFiles('apps/web/e2e/fixtures/synthetic-draft-review.csv');
+    await page.getByRole('button', { name: 'Create preview' }).click();
+
+    await expect(page.locator('.import-summary')).toContainText('1duplicates skipped');
+    await expect(page.locator('.import-summary')).toContainText('2rows selected');
   });
 
   test('adds and deactivates an account shell while retaining history', async ({ page }) => {

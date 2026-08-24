@@ -1,3 +1,4 @@
+import { batchContentHash, rowFingerprint } from './fingerprint';
 import type {
   Account,
   Budget,
@@ -38,6 +39,7 @@ interface TransactionFixtureInput {
   kind: TransactionKind;
   flow: TransactionFlow;
   origin: TransactionOrigin;
+  scheduleId?: string;
   localDate: `${number}-${number}-${number}`;
   time?: string;
   receipt?: Receipt;
@@ -64,6 +66,18 @@ function fixtureTransaction(input: TransactionFixtureInput): Transaction {
     localDate: input.localDate,
     timePrecision: input.time ? 'MINUTE' : 'DATE',
     timezone: 'Europe/London',
+    scheduleId: input.scheduleId ?? null,
+    occurrenceDate: input.origin === 'SCHEDULE' ? input.localDate : null,
+    importRowFingerprint:
+      input.origin === 'IMPORT'
+        ? rowFingerprint({
+            accountId: input.accountId,
+            localDate: input.localDate,
+            description: input.description,
+            amountMinor: input.amountMinor,
+            flow: input.flow,
+          })
+        : null,
     receipt: input.receipt ?? null,
     voidedAt: input.voided ? MOCK_NOW : null,
     voidReason: input.voided ? 'Duplicate demo entry' : null,
@@ -714,6 +728,7 @@ export function createMockFixtures(): MockFixtureState {
       flow: 'DEBIT',
       recurrence: { frequency: 'MONTHLY', day: 2, endOfMonthPolicy: 'CLAMP' },
       nextDueDate: '2026-09-02',
+      lastGeneratedDate: null,
       deactivatedAt: null,
       version: 1,
     },
@@ -731,6 +746,7 @@ export function createMockFixtures(): MockFixtureState {
       flow: 'DEBIT',
       recurrence: { frequency: 'WEEKLY', weekday: 'SATURDAY', intervalWeeks: 1 },
       nextDueDate: '2026-08-22',
+      lastGeneratedDate: null,
       deactivatedAt: null,
       version: 1,
     },
@@ -748,6 +764,7 @@ export function createMockFixtures(): MockFixtureState {
       flow: 'DEBIT',
       recurrence: { frequency: 'MONTHLY', day: 11, endOfMonthPolicy: 'CLAMP' },
       nextDueDate: '2026-09-11',
+      lastGeneratedDate: null,
       deactivatedAt: null,
       version: 1,
     },
@@ -765,6 +782,7 @@ export function createMockFixtures(): MockFixtureState {
       flow: 'DEBIT',
       recurrence: { frequency: 'ONCE', date: '2026-08-24' },
       nextDueDate: '2026-08-24',
+      lastGeneratedDate: null,
       deactivatedAt: null,
       version: 1,
     },
@@ -782,6 +800,7 @@ export function createMockFixtures(): MockFixtureState {
       flow: 'DEBIT',
       recurrence: { frequency: 'MONTHLY', day: 1, endOfMonthPolicy: 'CLAMP' },
       nextDueDate: null,
+      lastGeneratedDate: null,
       deactivatedAt: '2026-07-31T12:00:00.000Z',
       version: 2,
     },
@@ -797,6 +816,7 @@ export function createMockFixtures(): MockFixtureState {
       expiresAt: '2026-08-05T10:00:00.000Z',
       committedAt: '2026-08-04T10:08:00.000Z',
       status: 'COMMITTED',
+      contentHash: '',
       rows: [
         {
           id: 'import-row-demo-001',
@@ -809,6 +829,7 @@ export function createMockFixtures(): MockFixtureState {
           categoryId: 'category-demo-groceries',
           categoryName: 'Groceries',
           status: 'READY',
+          sourceFingerprint: '',
           warnings: [],
           included: true,
         },
@@ -823,6 +844,7 @@ export function createMockFixtures(): MockFixtureState {
           categoryId: 'category-demo-rail',
           categoryName: 'Rail',
           status: 'READY',
+          sourceFingerprint: '',
           warnings: [],
           included: true,
         },
@@ -837,6 +859,7 @@ export function createMockFixtures(): MockFixtureState {
           categoryId: 'category-demo-household',
           categoryName: 'Household',
           status: 'READY',
+          sourceFingerprint: '',
           warnings: [],
           included: true,
         },
@@ -853,6 +876,7 @@ export function createMockFixtures(): MockFixtureState {
       expiresAt: '2026-08-18T14:00:00.000Z',
       committedAt: null,
       status: 'PREVIEW',
+      contentHash: '',
       rows: [
         {
           id: 'import-row-demo-004',
@@ -865,6 +889,7 @@ export function createMockFixtures(): MockFixtureState {
           categoryId: 'category-demo-transit',
           categoryName: 'Public transit',
           status: 'DUPLICATE',
+          sourceFingerprint: '',
           warnings: ['Matches an existing transaction'],
           included: false,
         },
@@ -879,6 +904,7 @@ export function createMockFixtures(): MockFixtureState {
           categoryId: 'category-demo-broadband',
           categoryName: 'Broadband',
           status: 'READY',
+          sourceFingerprint: '',
           warnings: [],
           included: true,
         },
@@ -893,6 +919,7 @@ export function createMockFixtures(): MockFixtureState {
           categoryId: null,
           categoryName: null,
           status: 'READY',
+          sourceFingerprint: '',
           warnings: ['Choose a category before committing'],
           included: true,
         },
@@ -901,6 +928,22 @@ export function createMockFixtures(): MockFixtureState {
       version: 1,
     },
   ];
+
+  for (const batch of imports) {
+    for (const row of batch.rows) {
+      row.sourceFingerprint = rowFingerprint({
+        accountId: batch.accountId,
+        localDate: row.localDate,
+        description: row.description,
+        amountMinor: row.amountMinor,
+        flow: row.flow,
+      });
+    }
+    batch.contentHash = batchContentHash(
+      batch.fileName,
+      batch.rows.map((row) => row.sourceFingerprint),
+    );
+  }
 
   return { preferences, accounts, categories, transactions, budgets, budgetDefaults, schedules, imports };
 }
