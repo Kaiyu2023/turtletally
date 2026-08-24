@@ -19,28 +19,11 @@ These rules apply to the entire Turtle Tally repository.
 
 ## Required checks
 
+- Read [`docs/roadmap.md`](docs/roadmap.md) for the milestone vocabulary these rules refer to.
 - Before implementation, read `finance-app-implementation-plan.md` completely when it is present locally. Append dated evidence to its Progress, Surprises and discoveries, Decision log, and Outcomes sections as work progresses. It is intentionally untracked; never stage or publish it without a reviewed, sanitized replacement.
 - Run `./scripts/check-repository-secrets.sh` before every commit.
 - Keep dependencies and GitHub Actions pinned and review updates before merging.
-- Run the applicable checks below before merging. A check becomes mandatory when its component exists:
-  - `npm run format:check`
-  - `npm run lint`
-  - `npm run typecheck`
-  - `npm test`
-  - `npm run build`
-  - `npm audit`
-  - `cargo fmt --all -- --check`
-  - `cargo clippy --workspace --all-targets --all-features --locked -- -D warnings`
-  - `cargo test --workspace --locked`
-  - `cargo build --workspace --release --target aarch64-unknown-linux-gnu --locked`
-  - `cargo audit`
-  - `cargo deny check`
-  - `npm run test:node`
-  - `terraform fmt -check -diff -recursive infra`
-  - `terraform -chdir=infra init -backend=false -input=false -lockfile=readonly`
-  - `terraform -chdir=infra validate`
-  - `terraform -chdir=infra test`
-  - `npm run terraform:plan`
+- Run `npm run check` before merging. It is the single gate: repository secret scan, formatting, linting, type checks, unit, browser and Terraform tests, dependency audits, builds, and a credential-free Terraform plan that must contain no changes. When a component is added, extend that script rather than this list.
 - Keep sensitive request and response bodies out of logs and test output.
 - Every Terraform test run in CI or the default local checks must set `command = plan` and use mocked providers. A test that can apply infrastructure requires a separate owner-approved workflow with explicit cost and cleanup gates.
 

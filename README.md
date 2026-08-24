@@ -67,7 +67,10 @@ See [SECURITY.md](SECURITY.md) for reporting and [the repository security policy
 
 ## Architecture and operations
 
-- [Architecture decision records](docs/architecture/) explain the runtime, session, data, ingress, MCP write, and Terraform state boundaries.
+- [Architecture decision records](docs/architecture/README.md) explain the runtime, session, data, ingress, MCP write, contract, scope, and Terraform state boundaries.
+- [Roadmap](docs/roadmap.md) defines the milestone vocabulary used across the repository.
+- [AGENTS.md](AGENTS.md) holds the repository rules, security boundaries, and the human approval gates automation must not cross.
+- [API conventions](docs/api/conventions.md) apply to every endpoint; the [user preferences API](docs/api/user-preferences.md) is the worked example.
 - [Threat model](docs/threat-model.md) records assets, entry points, controls, and residual risks.
 - [Manual owner actions](docs/operations/manual-actions.md) identifies AWS and ChatGPT steps that automation must not cross.
 
