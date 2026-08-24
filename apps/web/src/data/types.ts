@@ -67,6 +67,9 @@ export interface Transaction {
   localDate: LocalDate;
   timePrecision: TimePrecision;
   timezone: 'Europe/London';
+  scheduleId: string | null;
+  occurrenceDate: LocalDate | null;
+  importRowFingerprint: string | null;
   receipt: Receipt | null;
   voidedAt: string | null;
   voidReason: string | null;
@@ -192,6 +195,7 @@ export interface Schedule {
   flow: TransactionFlow;
   recurrence: ScheduleRecurrence;
   nextDueDate: LocalDate | null;
+  lastGeneratedDate: LocalDate | null;
   deactivatedAt: string | null;
   version: number;
 }
@@ -235,6 +239,7 @@ export interface ImportRow {
   categoryId: string | null;
   categoryName: string | null;
   status: ImportRowStatus;
+  sourceFingerprint: string;
   warnings: string[];
   included: boolean;
 }
@@ -248,6 +253,7 @@ export interface ImportBatch {
   expiresAt: string;
   committedAt: string | null;
   status: ImportStatus;
+  contentHash: string;
   rows: ImportRow[];
   importedCount: number;
   version: number;
@@ -397,10 +403,11 @@ export interface MockFinanceApi {
   createSchedule(input: CreateScheduleInput): Promise<Schedule>;
   updateSchedule(id: string, input: UpdateScheduleInput): Promise<Schedule>;
   deactivateSchedule(id: string, expectedVersion: number): Promise<Schedule>;
+  runDueSchedules(asOf: LocalDate): Promise<Transaction[]>;
   listImports(): Promise<ImportHistoryItem[]>;
   getImportPreview(id: string): Promise<ImportBatch>;
   previewImport(input: CreateImportPreviewInput): Promise<ImportBatch>;
   updateImportRow(importId: string, rowId: string, input: UpdateImportRowInput): Promise<ImportBatch>;
-  commitImport(importId: string, expectedVersion: number): Promise<ImportCommitResult>;
+  commitImport(importId: string, expectedVersion: number, expectedContentHash: string): Promise<ImportCommitResult>;
   reset(): Promise<void>;
 }
