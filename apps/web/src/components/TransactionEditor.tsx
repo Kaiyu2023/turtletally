@@ -7,7 +7,7 @@ import type { Account, Category, LocalDate, TransactionFlow, TransactionKind, Up
 import { useLocale, useMessages } from '../i18n/locale';
 import { parseGbpInput, toGbpInput } from '../utils/format';
 import { transactionEditorMessages } from './transactionEditor.messages';
-import { Button, Modal, Skeleton } from './Ui';
+import { Button, Modal, Skeleton, SegmentedControl } from './Ui';
 
 type FormState = {
   description: string;
@@ -216,27 +216,19 @@ export function TransactionEditor() {
           onSubmit={(event) => void submit(event)}
           noValidate
         >
-          <div className="field field--wide">
-            <span id="kind-label" className="field__label">
-              {t('kind')}
-            </span>
-            <div className="segmented" role="group" aria-labelledby="kind-label">
-              {(['SPENDING', 'INCOME', 'INVESTMENT'] as const).map((kind) => (
-                <button
-                  key={kind}
-                  type="button"
-                  aria-pressed={form.kind === kind}
-                  onClick={() => {
-                    updateField('kind', kind);
-                    updateField('flow', kind === 'INCOME' ? 'CREDIT' : 'DEBIT');
-                    updateField('categoryId', '');
-                  }}
-                >
-                  {domain.kind(kind)}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SegmentedControl
+            label={t('kind')}
+            value={form.kind}
+            options={(['SPENDING', 'INCOME', 'INVESTMENT'] as const).map((kind) => ({
+              value: kind,
+              label: domain.kind(kind),
+            }))}
+            onChange={(kind) => {
+              updateField('kind', kind);
+              updateField('flow', kind === 'INCOME' ? 'CREDIT' : 'DEBIT');
+              updateField('categoryId', '');
+            }}
+          />
 
           <div className="field field--wide">
             <label htmlFor="transaction-description">{t('description')}</label>
@@ -332,20 +324,16 @@ export function TransactionEditor() {
             </select>
           </div>
 
-          <div className="field field--wide">
-            <span id="flow-label" className="field__label">
-              {t('flow')}
-            </span>
-            <div className="segmented" role="group" aria-labelledby="flow-label">
-              <button type="button" aria-pressed={form.flow === 'DEBIT'} onClick={() => updateField('flow', 'DEBIT')}>
-                {domain.flow('DEBIT')}
-              </button>
-              <button type="button" aria-pressed={form.flow === 'CREDIT'} onClick={() => updateField('flow', 'CREDIT')}>
-                {domain.flow('CREDIT')}
-              </button>
-            </div>
-            <span className="field__hint">{t('flowHint')}</span>
-          </div>
+          <SegmentedControl
+            label={t('flow')}
+            value={form.flow}
+            hint={t('flowHint')}
+            options={[
+              { value: 'DEBIT', label: domain.flow('DEBIT') },
+              { value: 'CREDIT', label: domain.flow('CREDIT') },
+            ]}
+            onChange={(flow) => updateField('flow', flow)}
+          />
 
           <div className="field field--wide">
             <label htmlFor="transaction-receipt">{t('receipt')}</label>
