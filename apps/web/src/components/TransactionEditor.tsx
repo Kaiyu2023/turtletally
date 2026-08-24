@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react';
 import { FileCheck2, Paperclip, ShieldCheck } from 'lucide-react';
 import { useApp, type TransactionEditorState } from '../app/AppContext';
 import { flowOf, magnitudeOf, signedAmount } from '../data/money';
+import { useDomainMessages } from '../i18n/domain';
 import type { Account, Category, LocalDate, Receipt, TransactionFlow, TransactionKind } from '../data/types';
-import { useMessages } from '../i18n/locale';
+import { useLocale, useMessages } from '../i18n/locale';
 import { parseGbpInput, toGbpInput } from '../utils/format';
 import { transactionEditorMessages } from './transactionEditor.messages';
 import { Button, Modal, Skeleton } from './Ui';
@@ -34,6 +35,8 @@ const blankForm: FormState = {
 
 export function TransactionEditor() {
   const t = useMessages(transactionEditorMessages);
+  const { format } = useLocale();
+  const domain = useDomainMessages();
   const { api, transactionEditor, closeTransactionEditor, refresh, notify } = useApp();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -219,7 +222,7 @@ export function TransactionEditor() {
                     updateField('categoryId', '');
                   }}
                 >
-                  {kind === 'SPENDING' ? t('spending') : kind === 'INCOME' ? t('income') : t('investment')}
+                  {domain.kind(kind)}
                 </button>
               ))}
             </div>
@@ -245,7 +248,7 @@ export function TransactionEditor() {
           <div className="field">
             <label htmlFor="transaction-amount">{t('amount')}</label>
             <div className="input-prefix">
-              <span>£</span>
+              <span>{format.currencySymbol()}</span>
               <input
                 id="transaction-amount"
                 inputMode="decimal"
@@ -325,10 +328,10 @@ export function TransactionEditor() {
             </span>
             <div className="segmented" role="group" aria-labelledby="flow-label">
               <button type="button" aria-pressed={form.flow === 'DEBIT'} onClick={() => updateField('flow', 'DEBIT')}>
-                {t('debit')}
+                {domain.flow('DEBIT')}
               </button>
               <button type="button" aria-pressed={form.flow === 'CREDIT'} onClick={() => updateField('flow', 'CREDIT')}>
-                {t('credit')}
+                {domain.flow('CREDIT')}
               </button>
             </div>
             <span className="field__hint">{t('flowHint')}</span>

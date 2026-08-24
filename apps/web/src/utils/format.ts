@@ -1,7 +1,8 @@
 import type { Month } from '../data/types';
 
-export function parseGbpInput(value: string): number | null {
-  const match = /^\s*(\d{1,9})(?:\.(\d{1,2}))?\s*$/.exec(value);
+export function parseGbpInput(value: string, groupSeparator = ','): number | null {
+  const bare = value.replace(/[£\s]/g, '').split(groupSeparator).join('');
+  const match = /^(\d{1,9})(?:\.(\d{1,2}))?$/.exec(bare);
   if (!match) {
     return null;
   }

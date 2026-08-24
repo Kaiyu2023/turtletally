@@ -282,6 +282,7 @@ export function SettingsEditorModal({
   onClose,
 }: SettingsEditorModalProps) {
   const t = useMessages(settingsMessages);
+  const { format } = useLocale();
   const groupLabels: Readonly<Record<CategoryGroup, string>> = {
     Shopping: t('groupShopping'),
     Rent: t('groupRent'),
@@ -351,7 +352,7 @@ export function SettingsEditorModal({
             <div className="field">
               <label htmlFor="account-balance">{editor.item ? t('currentBalance') : t('openingBalance')}</label>
               <div className="input-prefix">
-                <span>£</span>
+                <span>{format.currencySymbol()}</span>
                 <input
                   id="account-balance"
                   inputMode="decimal"

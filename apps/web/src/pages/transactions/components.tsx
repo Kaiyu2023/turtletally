@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Badge, Button, Card, EmptyState, IconButton, Money, Skeleton } from '../../components/Ui';
 import { flowOf } from '../../data/money';
+import { useDomainMessages } from '../../i18n/domain';
 import type {
   Account,
   Category,
@@ -68,21 +69,14 @@ export function TransactionFiltersPanel({
 }: TransactionFiltersPanelProps) {
   const t = useMessages(transactionsMessages);
   const { format } = useLocale();
+  const domain = useDomainMessages();
   const selectedStatus = filters.status ?? 'ACTIVE';
   const statusLabels: Record<TransactionStatus, string> = {
     ACTIVE: t('active'),
     VOIDED: t('voided'),
     ALL: t('all'),
   };
-  const kindLabels: Record<TransactionKind, string> = {
-    INCOME: t('income'),
-    SPENDING: t('spending'),
-    INVESTMENT: t('investment'),
-  };
-  const flowLabels: Record<TransactionFlow, string> = {
-    CREDIT: t('credit'),
-    DEBIT: t('debit'),
-  };
+
   const originLabels: Record<TransactionOrigin, string> = {
     MANUAL: t('manual'),
     IMPORT: t('import'),
@@ -230,7 +224,7 @@ export function TransactionFiltersPanel({
             <option value="">{t('allKinds')}</option>
             {kinds.map((kind) => (
               <option key={kind} value={kind}>
-                {kindLabels[kind]}
+                {domain.kind(kind)}
               </option>
             ))}
           </select>
@@ -246,7 +240,7 @@ export function TransactionFiltersPanel({
             <option value="">{t('allFlows')}</option>
             {flows.map((flow) => (
               <option key={flow} value={flow}>
-                {flowLabels[flow]}
+                {domain.flow(flow)}
               </option>
             ))}
           </select>
@@ -392,10 +386,7 @@ export function TransactionResults({
               <ChevronLeft aria-hidden="true" size={17} />
               {t('previous')}
             </Button>
-            <span>
-              {t('pagePrefix')} <strong>{format.number(page.page)}</strong> {t('pageMiddle')}{' '}
-              <strong>{format.number(page.totalPages)}</strong> {t('pageSuffix')}
-            </span>
+            <span>{t('pageOfTotal', { page: format.number(page.page), total: format.number(page.totalPages) })}</span>
             <Button
               variant="ghost"
               disabled={page.page >= page.totalPages}
@@ -592,25 +583,24 @@ function OriginBadge({ origin }: { readonly origin: TransactionOrigin }) {
 }
 
 function KindBadge({ kind }: { readonly kind: TransactionKind }) {
-  const t = useMessages(transactionsMessages);
-
+  const domain = useDomainMessages();
   switch (kind) {
     case 'INCOME':
-      return <Badge tone="positive">{t('income')}</Badge>;
+      return <Badge tone="positive">{domain.kind('INCOME')}</Badge>;
     case 'SPENDING':
-      return <Badge tone="negative">{t('spending')}</Badge>;
+      return <Badge tone="negative">{domain.kind('SPENDING')}</Badge>;
     case 'INVESTMENT':
-      return <Badge tone="info">{t('investment')}</Badge>;
+      return <Badge tone="info">{domain.kind('INVESTMENT')}</Badge>;
   }
 }
 
 function FlowLabel({ flow }: { readonly flow: TransactionFlow }) {
-  const t = useMessages(transactionsMessages);
   const Icon = flow === 'CREDIT' ? ArrowDownLeft : ArrowUpRight;
+  const domain = useDomainMessages();
   return (
     <span className={joinClassNames('transaction-flow', flow === 'CREDIT' ? 'positive' : 'negative')}>
       <Icon aria-hidden="true" size={14} />
-      {flow === 'CREDIT' ? t('credit') : t('debit')}
+      {domain.flow(flow)}
     </span>
   );
 }

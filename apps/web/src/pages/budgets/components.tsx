@@ -314,7 +314,7 @@ export function BudgetEditorModal({
       <form id="budget-form" className="field" onSubmit={onSubmit} noValidate>
         <label htmlFor="budget-amount">{t('monthlyAmount')}</label>
         <div className="input-prefix">
-          <span>£</span>
+          <span>{format.currencySymbol()}</span>
           <input
             id="budget-amount"
             inputMode="decimal"
