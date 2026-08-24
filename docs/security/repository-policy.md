@@ -59,4 +59,6 @@ If sensitive material is exposed:
 
 ## Brand asset
 
-`assets/brand/turtle-tally.png` is the original 1254×1254 RGBA icon supplied for the project. Its SHA-256 digest is `be610e4df26f8f40c7ce89822573f5354559bc2b37b593f98777f8657bbbc776`. The original contains C2PA provenance metadata identifying AI-assisted generation; keep this original unchanged when deriving web variants.
+`assets/brand/turtle-tally.png` is the original 1254×1254 RGBA icon supplied for the project. Its SHA-256 digest is `be610e4df26f8f40c7ce89822573f5354559bc2b37b593f98777f8657bbbc776`. The original contains C2PA provenance metadata identifying AI-assisted generation, carried in a `caBX` PNG chunk; keep this original unchanged.
+
+`apps/web/public/turtle-tally.png` is the derived web variant the application ships: 256×256, re-encoded from pixel data so no ancillary chunk survives. Derive it with Pillow rather than copying, and never point the bundler's public directory at `assets/brand`, which would publish the original and anything later placed beside it without review.
