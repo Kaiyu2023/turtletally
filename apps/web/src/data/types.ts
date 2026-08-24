@@ -143,7 +143,12 @@ export interface BudgetDefault {
   version: number;
 }
 
-export interface BudgetProgress extends Budget {
+export interface BudgetProgress {
+  id: string;
+  month: Month;
+  categoryId: string;
+  limitMinor: number;
+  version: number | null;
   categoryName: string;
   colour: string;
   spentMinor: number;
@@ -306,6 +311,7 @@ export interface DashboardSummary {
   investmentDebitsMinor: number;
   netCashFlowMinor: number;
   budgetTotalMinor: number;
+  budgetedSpendingMinor: number;
   budgetRemainingMinor: number;
   uncategorisedSpendingMinor: number;
   transactionCount: number;
