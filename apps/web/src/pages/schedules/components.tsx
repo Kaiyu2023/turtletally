@@ -1,6 +1,7 @@
 import { CalendarCheck2, CalendarClock, CirclePause, Pencil, Repeat2 } from 'lucide-react';
 import { Badge, Button, Card, EmptyState, Modal, Skeleton } from '../../components/Ui';
 import { flowOf } from '../../data/money';
+import { useDomainMessages } from '../../i18n/domain';
 import type {
   Account,
   Category,
@@ -10,7 +11,7 @@ import type {
   TransactionFlow,
   TransactionKind,
 } from '../../data/types';
-import { useLocale, useMessages, type LocaleFormatters } from '../../i18n/locale';
+import { useLocale, useMessages, usePlural, type LocaleFormatters } from '../../i18n/locale';
 import { schedulesMessages } from './messages';
 
 export type ScheduleForm = {
@@ -53,19 +54,6 @@ function weekdayText(weekday: ScheduleForm['weekday'], t: Translate): string {
     SUNDAY: 'sunday',
   };
   return t(keys[weekday]);
-}
-
-function kindText(kind: TransactionKind, t: Translate): string {
-  const keys: Record<TransactionKind, ScheduleMessageKey> = {
-    SPENDING: 'spending',
-    INCOME: 'income',
-    INVESTMENT: 'investment',
-  };
-  return t(keys[kind]);
-}
-
-function flowText(flow: TransactionFlow, t: Translate): string {
-  return t(flow === 'CREDIT' ? 'credit' : 'debit');
 }
 
 function recurrenceText(recurrence: ScheduleRecurrence, t: Translate, format: LocaleFormatters): string {
@@ -111,6 +99,7 @@ export function SchedulesCollection({
   onDeactivate,
 }: SchedulesCollectionProps) {
   const t = useMessages(schedulesMessages);
+  const plural = usePlural(schedulesMessages);
   const { format } = useLocale();
 
   return (
@@ -125,7 +114,7 @@ export function SchedulesCollection({
           </button>
         </div>
         <span className="muted">
-          {schedules.length === 1 ? t('oneSchedule') : t('schedulesCount', { count: format.number(schedules.length) })}
+          {plural('schedulesCount', schedules.length, { count: format.number(schedules.length) })}
         </span>
       </div>
       {loading ? (
@@ -166,6 +155,7 @@ function ScheduleCard({
   readonly onDeactivate: (schedule: Schedule) => void;
 }) {
   const t = useMessages(schedulesMessages);
+  const domain = useDomainMessages();
   const { format } = useLocale();
 
   return (
@@ -185,8 +175,8 @@ function ScheduleCard({
         <div>
           <dt>{t('entry')}</dt>
           <dd>
-            {kindText(schedule.kind, t).toLocaleLowerCase()} ·{' '}
-            {flowText(flowOf(schedule.amountMinor), t).toLocaleLowerCase()}
+            {domain.kind(schedule.kind).toLocaleLowerCase()} ·{' '}
+            {domain.flow(flowOf(schedule.amountMinor)).toLocaleLowerCase()}
           </dd>
         </div>
         <div>
@@ -244,6 +234,7 @@ export function ScheduleEditorDialog({
   onSubmit,
 }: ScheduleEditorDialogProps) {
   const t = useMessages(schedulesMessages);
+  const domain = useDomainMessages();
   const { format } = useLocale();
 
   return (
@@ -289,7 +280,7 @@ export function ScheduleEditorDialog({
         <div className="field">
           <label htmlFor="schedule-amount">{t('amount')}</label>
           <div className="input-prefix">
-            <span>£</span>
+            <span>{format.currencySymbol()}</span>
             <input
               id="schedule-amount"
               inputMode="decimal"
@@ -345,9 +336,9 @@ export function ScheduleEditorDialog({
               onFormChange({ ...form, kind, flow: kind === 'INCOME' ? 'CREDIT' : 'DEBIT', categoryId: '' });
             }}
           >
-            <option value="SPENDING">{t('spending')}</option>
-            <option value="INCOME">{t('income')}</option>
-            <option value="INVESTMENT">{t('investment')}</option>
+            <option value="SPENDING">{domain.kind('SPENDING')}</option>
+            <option value="INCOME">{domain.kind('INCOME')}</option>
+            <option value="INVESTMENT">{domain.kind('INVESTMENT')}</option>
           </select>
         </div>
         <div className="field">
@@ -357,8 +348,8 @@ export function ScheduleEditorDialog({
             value={form.flow}
             onChange={(event) => onFormChange({ ...form, flow: event.target.value as TransactionFlow })}
           >
-            <option value="DEBIT">{t('debit')}</option>
-            <option value="CREDIT">{t('credit')}</option>
+            <option value="DEBIT">{domain.flow('DEBIT')}</option>
+            <option value="CREDIT">{domain.flow('CREDIT')}</option>
           </select>
         </div>
         <div className="field">
