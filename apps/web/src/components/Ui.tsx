@@ -258,3 +258,20 @@ export function SessionEndedNotice({ onReload }: { readonly onReload: () => void
     </div>
   );
 }
+
+export function LoadError({ code, onRetry }: { readonly code: string; readonly onRetry: () => void }) {
+  const t = useMessages(commonMessages);
+  const stale = code === 'CONFLICT';
+  return (
+    <div className="load-error" role="alert">
+      <AlertCircle aria-hidden="true" size={20} />
+      <div>
+        <strong>{stale ? t('loadStaleTitle') : t('loadFailedTitle')}</strong>
+        <p>{stale ? t('loadStaleBody') : t('loadFailedBody')}</p>
+      </div>
+      <Button variant="ghost" onClick={onRetry}>
+        {t('tryAgain')}
+      </Button>
+    </div>
+  );
+}
