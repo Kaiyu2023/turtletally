@@ -23,7 +23,7 @@
   --primary: #0b6758;
   --primary-dark: #075247;
   --primary-soft: #cde2d7;
-  --accent: #d9992e;
+  --accent: #a86f0c;
   --positive: #16715c;
   --negative: #a53748;
   --warning: #855800;
@@ -39,6 +39,23 @@
   --radius: 18px;
   --radius-large: 26px;
   --sidebar-width: 258px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --text-xs: 0.75rem;
+  --text-sm: 0.85rem;
+  --text-base: 1rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.4rem;
+  --text-2xl: 1.85rem;
+  --z-sticky: 60;
+  --z-overlay: 80;
+  --break-compact: 1040px;
+  --break-mobile: 767px;
 }
 
 * {
@@ -1112,7 +1129,7 @@ p {
     color: var(--text-faint);
     background: transparent;
     cursor: pointer;
-    font-size: 0.58rem;
+    font-size: var(--text-xs);
     font-weight: 750;
   }
   .bottom-nav .active {
@@ -1199,7 +1216,7 @@ p {
   }
   .bottom-nav a,
   .bottom-nav button {
-    font-size: 0.53rem;
+    font-size: var(--text-xs);
   }
 }
 

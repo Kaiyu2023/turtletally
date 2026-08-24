@@ -51,6 +51,7 @@ export function SettingsPage() {
     colour: '#76b7b2',
   });
   const [formError, setFormError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; openingBalance?: string }>({});
   const [deactivateItem, setDeactivateItem] = useState<Account | Category | null>(null);
   const [busy, setBusy] = useState(false);
   const [preferencesBusy, setPreferencesBusy] = useState(false);
@@ -91,6 +92,7 @@ export function SettingsPage() {
         : { name: '', type: 'CURRENT', openingBalance: '0.00', colour: '#4d908e' },
     );
     setFormError('');
+    setFieldErrors({});
   }
 
   function editCategory(category: Category | null) {
@@ -101,6 +103,7 @@ export function SettingsPage() {
         : { name: '', group: 'Shopping', colour: '#76b7b2' },
     );
     setFormError('');
+    setFieldErrors({});
   }
 
   async function saveEditor(event: SubmitEvent<HTMLFormElement>) {
@@ -108,10 +111,12 @@ export function SettingsPage() {
     if (!editor) return;
     setBusy(true);
     setFormError('');
+    setFieldErrors({});
     try {
       if (editor.type === 'account') {
         if (!accountForm.name.trim()) {
           setFormError(t('invalidAccount'));
+          setFieldErrors({ name: t('invalidAccount') });
           return;
         }
         if (editor.item) {
@@ -129,6 +134,7 @@ export function SettingsPage() {
               : parseGbpInput(accountForm.openingBalance);
           if (openingBalanceMinor === null) {
             setFormError(t('invalidAccount'));
+            setFieldErrors({ openingBalance: t('invalidAccount') });
             return;
           }
           await api.createAccount({
@@ -239,6 +245,7 @@ export function SettingsPage() {
         categoryForm={categoryForm}
         categoryGroups={categoryGroups}
         formError={formError}
+        fieldErrors={fieldErrors}
         busy={busy}
         onAccountFormChange={setAccountForm}
         onCategoryFormChange={setCategoryForm}

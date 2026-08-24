@@ -1,6 +1,6 @@
 import { CreditCard, FolderTree, Languages, Pencil, Plus, UserRoundCheck } from 'lucide-react';
 import type { SubmitEventHandler } from 'react';
-import { Badge, Button, Card, CardHeader, EmptyState, IconButton, Modal, Skeleton } from '../../components/Ui';
+import { Badge, Button, Card, CardHeader, EmptyState, IconButton, Modal, Skeleton, Field } from '../../components/Ui';
 import type { Account, AccountType, AppLocale, Category, CategoryGroup } from '../../data/types';
 import { useLocale, useMessages } from '../../i18n/locale';
 import { settingsMessages } from './messages';
@@ -262,6 +262,7 @@ type SettingsEditorModalProps = {
   readonly categoryForm: CategoryForm;
   readonly categoryGroups: readonly CategoryGroup[];
   readonly formError: string;
+  readonly fieldErrors: { readonly name?: string; readonly openingBalance?: string };
   readonly busy: boolean;
   readonly onAccountFormChange: (form: AccountForm) => void;
   readonly onCategoryFormChange: (form: CategoryForm) => void;
@@ -275,6 +276,7 @@ export function SettingsEditorModal({
   categoryForm,
   categoryGroups,
   formError,
+  fieldErrors,
   busy,
   onAccountFormChange,
   onCategoryFormChange,
@@ -328,14 +330,15 @@ export function SettingsEditorModal({
         ) : null}
         {editor?.type === 'account' ? (
           <>
-            <div className="field field--wide">
-              <label htmlFor="account-name">{t('accountName')}</label>
-              <input
-                id="account-name"
-                value={accountForm.name}
-                onChange={(event) => onAccountFormChange({ ...accountForm, name: event.target.value })}
-              />
-            </div>
+            <Field id="account-name" label={t('accountName')} error={fieldErrors.name} wide>
+              {(aria) => (
+                <input
+                  {...aria}
+                  value={accountForm.name}
+                  onChange={(event) => onAccountFormChange({ ...accountForm, name: event.target.value })}
+                />
+              )}
+            </Field>
             <div className="field">
               <label htmlFor="account-type">{t('type')}</label>
               <select
@@ -357,10 +360,17 @@ export function SettingsEditorModal({
                   id="account-balance"
                   inputMode="decimal"
                   disabled={Boolean(editor.item)}
+                  aria-invalid={Boolean(fieldErrors.openingBalance)}
+                  aria-describedby={fieldErrors.openingBalance ? 'account-balance-error' : undefined}
                   value={accountForm.openingBalance}
                   onChange={(event) => onAccountFormChange({ ...accountForm, openingBalance: event.target.value })}
                 />
               </div>
+              {fieldErrors.openingBalance ? (
+                <span id="account-balance-error" className="field__error">
+                  {fieldErrors.openingBalance}
+                </span>
+              ) : null}
             </div>
             <div className="field">
               <label htmlFor="account-colour">{t('colour')}</label>

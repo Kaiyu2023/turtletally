@@ -275,3 +275,77 @@ export function LoadError({ code, onRetry }: { readonly code: string; readonly o
     </div>
   );
 }
+
+type FieldProps = {
+  readonly id: string;
+  readonly label: string;
+  readonly hint?: string | undefined;
+  readonly error?: string | undefined;
+  readonly wide?: boolean | undefined;
+  readonly children: (aria: {
+    readonly id: string;
+    readonly 'aria-invalid': boolean;
+    readonly 'aria-describedby': string | undefined;
+  }) => ReactNode;
+};
+
+export function Field({ id, label, hint, error, wide = false, children }: FieldProps) {
+  const errorId = `${id}-error`;
+  const hintId = `${id}-hint`;
+  const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ') || undefined;
+
+  return (
+    <div className={joinClassNames('field', wide && 'field--wide')}>
+      <label htmlFor={id}>{label}</label>
+      {children({ id, 'aria-invalid': Boolean(error), 'aria-describedby': describedBy })}
+      {hint ? (
+        <span id={hintId} className="field__hint">
+          {hint}
+        </span>
+      ) : null}
+      {error ? (
+        <span id={errorId} className="field__error">
+          {error}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+type SegmentedControlProps<Value extends string> = {
+  readonly label: string;
+  readonly value: Value;
+  readonly options: readonly { readonly value: Value; readonly label: string }[];
+  readonly onChange: (value: Value) => void;
+  readonly hint?: string | undefined;
+};
+
+export function SegmentedControl<Value extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  hint,
+}: SegmentedControlProps<Value>) {
+  const labelId = useId();
+  return (
+    <div className="field field--wide">
+      <span id={labelId} className="field__label">
+        {label}
+      </span>
+      <div className="segmented" role="group" aria-labelledby={labelId}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={value === option.value}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+      {hint ? <span className="field__hint">{hint}</span> : null}
+    </div>
+  );
+}
