@@ -204,7 +204,9 @@ export function TransactionEditor() {
           noValidate
         >
           <div className="field field--wide">
-            <label id="kind-label">{t('kind')}</label>
+            <span id="kind-label" className="field__label">
+              {t('kind')}
+            </span>
             <div className="segmented" role="group" aria-labelledby="kind-label">
               {(['SPENDING', 'INCOME', 'INVESTMENT'] as const).map((kind) => (
                 <button
@@ -318,7 +320,9 @@ export function TransactionEditor() {
           </div>
 
           <div className="field field--wide">
-            <label id="flow-label">{t('flow')}</label>
+            <span id="flow-label" className="field__label">
+              {t('flow')}
+            </span>
             <div className="segmented" role="group" aria-labelledby="flow-label">
               <button type="button" aria-pressed={form.flow === 'DEBIT'} onClick={() => updateField('flow', 'DEBIT')}>
                 {t('debit')}

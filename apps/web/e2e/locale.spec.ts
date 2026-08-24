@@ -38,7 +38,7 @@ async function navigate(page: Page, projectName: string, label: string, path: st
       await directLink.click();
     } else {
       await mobileNavigation.getByRole('button', { name: '更多', exact: true }).click();
-      await page.locator('.mobile-menu__sheet').getByRole('link', { name: label, exact: true }).click();
+      await page.getByRole('dialog').getByRole('link', { name: label, exact: true }).click();
     }
   } else {
     await page.locator('.sidebar__nav').getByRole('link', { name: label, exact: true }).click();

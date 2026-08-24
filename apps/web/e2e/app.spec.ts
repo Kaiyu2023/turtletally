@@ -186,18 +186,63 @@ test('surfaces an ended session without discarding what is on screen', async ({ 
   await expect(page.getByRole('heading', { level: 1, name: 'Transactions' })).toBeVisible();
 });
 
+async function axeViolations(page: Page) {
+  const scan = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  return scan.violations.filter(
+    (violation) => violation.impact === 'moderate' || violation.impact === 'serious' || violation.impact === 'critical',
+  );
+}
+
 test.describe('accessibility', () => {
   for (const route of routes) {
-    test(`${route.heading} has no serious or critical axe violations`, async ({ page }) => {
+    test(`${route.heading} has no axe violations`, async ({ page }) => {
       await openPage(page, route.path, route.heading);
-      const scan = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
-      const violations = scan.violations.filter(
-        (violation) => violation.impact === 'serious' || violation.impact === 'critical',
-      );
+      const violations = await axeViolations(page);
 
       expect(violations).toEqual([]);
     });
   }
+});
+
+test.describe('accessibility of interactive states', () => {
+  test('the transaction editor is clean when open and after a failed submit', async ({ page }) => {
+    await openPage(page, '/transactions', 'Transactions');
+    await page.getByRole('button', { name: 'Add transaction' }).first().click();
+
+    const editor = page.getByRole('dialog', { name: 'Add transaction' });
+    await expect(editor).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+
+    await editor.getByRole('button', { name: 'Add transaction', exact: true }).click();
+    await expect(editor.locator('.field__error').first()).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
+
+  test('a confirmation dialog is clean while open', async ({ page }) => {
+    await openPage(page, '/transactions', 'Transactions');
+    await page
+      .getByRole('button', { name: /^Void / })
+      .first()
+      .click();
+
+    await expect(page.getByRole('dialog', { name: 'Void this transaction?' })).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
+
+  test('the loading state is clean', async ({ page }) => {
+    await page.goto('/dashboard?latency=1500');
+    await expect(page.getByRole('status', { name: /loading/i }).first()).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+  });
+});
+
+test('the mobile navigation sheet is clean while open', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'covers the mobile navigation surface');
+  await openPage(page, '/dashboard', 'A clear view of your money');
+  await page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('button', { name: 'More' }).click();
+
+  await expect(page.getByRole('dialog', { name: 'Navigate' })).toBeVisible();
+  expect(await axeViolations(page)).toEqual([]);
 });
 
 test('keeps synthetic finance data out of persistent browser storage', async ({ page }) => {
@@ -245,7 +290,7 @@ test('mobile navigation fits the viewport and reaches every section', async ({ p
   await page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('link', { name: 'Transactions' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Transactions' })).toBeVisible();
   await page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('button', { name: 'More' }).click();
-  await page.locator('.mobile-menu__sheet').getByRole('link', { name: 'Imports' }).click();
+  await page.getByRole('dialog', { name: 'Navigate' }).getByRole('link', { name: 'Imports' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Statement imports' })).toBeVisible();
 
   for (const route of routes) {
