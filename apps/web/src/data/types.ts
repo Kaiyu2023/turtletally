@@ -332,7 +332,7 @@ export interface DashboardSummary {
 export interface CreateAccountInput {
   name: string;
   type: AccountType;
-  balanceMinor: number;
+  openingBalanceMinor: number;
   colour: string;
 }
 
@@ -340,7 +340,6 @@ export interface UpdateAccountInput {
   expectedVersion: number;
   name?: string;
   type?: AccountType;
-  balanceMinor?: number;
   colour?: string;
 }
 

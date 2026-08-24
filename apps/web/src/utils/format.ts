@@ -17,7 +17,9 @@ export function parseGbpInput(value: string): number | null {
 }
 
 export function toGbpInput(amountMinor: number): string {
-  return `${Math.floor(amountMinor / 100)}.${String(amountMinor % 100).padStart(2, '0')}`;
+  const sign = amountMinor < 0 ? '-' : '';
+  const magnitude = Math.abs(amountMinor);
+  return `${sign}${Math.floor(magnitude / 100)}.${String(magnitude % 100).padStart(2, '0')}`;
 }
 
 export function previousMonth(month: Month): Month {

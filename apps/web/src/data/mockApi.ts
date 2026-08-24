@@ -124,7 +124,7 @@ class InMemoryMockApi implements MockFinanceApi {
   async createAccount(input: CreateAccountInput): Promise<Account> {
     return this.withLatency(() => {
       const name = this.validName(input.name, 'Account name');
-      this.validMinor(input.balanceMinor, 'Opening balance', true);
+      this.validSignedMinor(input.openingBalanceMinor, 'Opening balance');
       this.validColour(input.colour);
 
       if (
@@ -140,7 +140,7 @@ class InMemoryMockApi implements MockFinanceApi {
         name,
         type: input.type,
         currency: 'GBP',
-        balanceMinor: input.balanceMinor,
+        balanceMinor: input.openingBalanceMinor,
         colour: input.colour,
         deactivatedAt: null,
         version: 1,
@@ -156,9 +156,7 @@ class InMemoryMockApi implements MockFinanceApi {
       this.assertVersion(account.version, input.expectedVersion);
       this.assertActive(account.deactivatedAt, 'Account');
       const name = input.name === undefined ? account.name : this.validName(input.name, 'Account name');
-      const balanceMinor = input.balanceMinor ?? account.balanceMinor;
       const colour = input.colour ?? account.colour;
-      this.validMinor(balanceMinor, 'Balance', true);
       this.validColour(colour);
 
       if (
@@ -176,7 +174,6 @@ class InMemoryMockApi implements MockFinanceApi {
         ...account,
         name,
         type: input.type ?? account.type,
-        balanceMinor,
         colour,
         version: account.version + 1,
       };
@@ -299,13 +296,12 @@ class InMemoryMockApi implements MockFinanceApi {
         if (filters.origin && transaction.origin !== filters.origin) return false;
         if (status === 'ACTIVE' && transaction.voidedAt !== null) return false;
         if (status === 'VOIDED' && transaction.voidedAt === null) return false;
-        if (
-          query &&
-          !`${transaction.description} ${transaction.accountName} ${transaction.categoryName ?? ''}`
-            .toLowerCase()
-            .includes(query)
-        )
-          return false;
+        if (query) {
+          const projected = this.projectTransaction(transaction);
+          const haystack =
+            `${projected.description} ${projected.accountName} ${projected.categoryName ?? ''}`.toLowerCase();
+          if (!haystack.includes(query)) return false;
+        }
         return true;
       });
 
@@ -315,7 +311,7 @@ class InMemoryMockApi implements MockFinanceApi {
       const start = (page - 1) * pageSize;
 
       return copy({
-        items: items.slice(start, start + pageSize),
+        items: items.slice(start, start + pageSize).map((transaction) => this.projectTransaction(transaction)),
         page,
         pageSize,
         totalItems,
@@ -325,7 +321,7 @@ class InMemoryMockApi implements MockFinanceApi {
   }
 
   async getTransaction(id: string): Promise<Transaction> {
-    return this.withLatency(() => copy(this.findTransaction(id)));
+    return this.withLatency(() => copy(this.projectTransaction(this.findTransaction(id))));
   }
 
   async createTransaction(input: CreateTransactionInput): Promise<Transaction> {
@@ -343,11 +339,17 @@ class InMemoryMockApi implements MockFinanceApi {
       this.assertVersion(transaction.version, input.expectedVersion);
       this.assertActive(transaction.voidedAt, 'Transaction');
 
-      const account = input.accountId
-        ? this.findActiveAccount(input.accountId)
-        : this.findActiveAccount(transaction.accountId);
+      const accountChanged = input.accountId !== undefined && input.accountId !== transaction.accountId;
+      const account = accountChanged
+        ? this.findActiveAccount(input.accountId as string)
+        : this.findAccount(transaction.accountId);
       const categoryId = 'categoryId' in input ? (input.categoryId ?? null) : transaction.categoryId;
-      const category = categoryId ? this.findActiveCategory(categoryId) : null;
+      const categoryChanged = categoryId !== transaction.categoryId;
+      const category = categoryId
+        ? categoryChanged
+          ? this.findActiveCategory(categoryId)
+          : this.findCategory(categoryId)
+        : null;
       const description =
         input.description === undefined ? transaction.description : this.validName(input.description, 'Description');
       const amountMinor = input.amountMinor ?? transaction.amountMinor;
@@ -397,7 +399,7 @@ class InMemoryMockApi implements MockFinanceApi {
       };
       this.replace(this.state.transactions, updated);
       this.adjustBalance(transaction, -1);
-      return copy(updated);
+      return copy(this.projectTransaction(updated));
     });
   }
 
@@ -497,6 +499,7 @@ class InMemoryMockApi implements MockFinanceApi {
       copy(
         this.state.schedules
           .filter((schedule) => includeInactive || schedule.deactivatedAt === null)
+          .map((schedule) => this.projectSchedule(schedule))
           .sort((left, right) => (left.nextDueDate ?? '9999-12-31').localeCompare(right.nextDueDate ?? '9999-12-31')),
       ),
     );
@@ -589,7 +592,7 @@ class InMemoryMockApi implements MockFinanceApi {
         version: schedule.version + 1,
       };
       this.replace(this.state.schedules, updated);
-      return copy(updated);
+      return copy(this.projectSchedule(updated));
     });
   }
 
@@ -804,7 +807,9 @@ class InMemoryMockApi implements MockFinanceApi {
       month,
       today: MOCK_TODAY,
       asOf: MOCK_NOW,
-      ledgerWindow: this.activeTransactionsBetween(window.from, window.to),
+      ledgerWindow: this.activeTransactionsBetween(window.from, window.to).map((transaction) =>
+        this.projectTransaction(transaction),
+      ),
       budgets: this.state.budgets,
       budgetDefaults: this.state.budgetDefaults,
       categories: this.state.categories,
@@ -940,6 +945,22 @@ class InMemoryMockApi implements MockFinanceApi {
     if (batch.expiresAt <= MOCK_NOW) throw new MockApiError('CONFLICT', 'This import preview has expired.');
   }
 
+  private projectTransaction(transaction: Transaction): Transaction {
+    return {
+      ...transaction,
+      accountName: this.findAccount(transaction.accountId).name,
+      categoryName: transaction.categoryId ? this.findCategory(transaction.categoryId).name : null,
+    };
+  }
+
+  private projectSchedule(schedule: Schedule): Schedule {
+    return {
+      ...schedule,
+      accountName: this.findAccount(schedule.accountId).name,
+      categoryName: schedule.categoryId ? this.findCategory(schedule.categoryId).name : null,
+    };
+  }
+
   private findAccount(id: string): Account {
     const account = this.state.accounts.find((candidate) => candidate.id === id);
     if (!account) throw new MockApiError('NOT_FOUND', 'Account not found.');
@@ -1016,6 +1037,10 @@ class InMemoryMockApi implements MockFinanceApi {
     const minimum = allowZero ? 0 : 1;
     if (!Number.isSafeInteger(value) || value < minimum)
       throw new MockApiError('VALIDATION', `${label} must be a whole number of pence${allowZero ? ' or zero' : ''}.`);
+  }
+
+  private validSignedMinor(value: number, label: string): void {
+    if (!Number.isSafeInteger(value)) throw new MockApiError('VALIDATION', `${label} must be a whole number of pence.`);
   }
 
   private validColour(value: string): void {

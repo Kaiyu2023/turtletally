@@ -110,11 +110,7 @@ export function SettingsPage() {
     setFormError('');
     try {
       if (editor.type === 'account') {
-        const balanceMinor =
-          accountForm.openingBalance === '0' || accountForm.openingBalance === '0.00'
-            ? 0
-            : parseGbpInput(accountForm.openingBalance);
-        if (!accountForm.name.trim() || balanceMinor === null) {
+        if (!accountForm.name.trim()) {
           setFormError(t('invalidAccount'));
           return;
         }
@@ -127,10 +123,18 @@ export function SettingsPage() {
           });
           notify(t('accountUpdated'));
         } else {
+          const openingBalanceMinor =
+            accountForm.openingBalance === '0' || accountForm.openingBalance === '0.00'
+              ? 0
+              : parseGbpInput(accountForm.openingBalance);
+          if (openingBalanceMinor === null) {
+            setFormError(t('invalidAccount'));
+            return;
+          }
           await api.createAccount({
             name: accountForm.name,
             type: accountForm.type,
-            balanceMinor,
+            openingBalanceMinor,
             colour: accountForm.colour,
           });
           notify(t('accountAdded'));
