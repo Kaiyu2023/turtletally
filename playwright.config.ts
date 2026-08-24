@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './apps/web/e2e',
+  testIgnore: process.env['VISUAL_REVIEW'] ? [] : /visual-review\.spec\.ts/,
   fullyParallel: true,
   forbidOnly: true,
   retries: 0,
@@ -24,7 +25,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev:web',
+    command: 'npm run build --workspace @turtle-tally/web && npm run preview --workspace @turtle-tally/web',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

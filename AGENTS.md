@@ -23,6 +23,7 @@ These rules apply to the entire Turtle Tally repository.
 - Before implementation, read `finance-app-implementation-plan.md` completely when it is present locally. Append dated evidence to its Progress, Surprises and discoveries, Decision log, and Outcomes sections as work progresses. It is intentionally untracked; never stage or publish it without a reviewed, sanitized replacement.
 - Run `./scripts/check-repository-secrets.sh` before every commit.
 - Keep dependencies and GitHub Actions pinned and review updates before merging.
+- GitHub Actions are restricted to an allowlist of `actions/checkout` and `actions/setup-node`, with commit-SHA pinning required. A workflow referencing any other action fails at startup with no usable log. Install tooling with a checksum-verified download, as the Terraform and Rust security tool steps do, rather than widening the allowlist.
 - Run `npm run check` before merging. It is the single gate: repository secret scan, formatting, linting, type checks, unit, browser and Terraform tests, dependency audits, builds, and a credential-free Terraform plan that must contain no changes. When a component is added, extend that script rather than this list.
 - Keep sensitive request and response bodies out of logs and test output.
 - Every Terraform test run in CI or the default local checks must set `command = plan` and use mocked providers. A test that can apply infrastructure requires a separate owner-approved workflow with explicit cost and cleanup gates.
