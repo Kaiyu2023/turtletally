@@ -68,6 +68,9 @@ export function AppProvider({ api: source, children }: AppProviderProps) {
     if (!toast) {
       return;
     }
+    if (toast.tone === 'error') {
+      return;
+    }
     const timeout = window.setTimeout(() => setToast(null), 4_000);
     return () => window.clearTimeout(timeout);
   }, [toast]);
@@ -121,6 +124,12 @@ export function AppProvider({ api: source, children }: AppProviderProps) {
   return (
     <LocaleProvider locale={preferences.locale}>
       <AppContext.Provider value={value}>
+        <div className="visually-hidden" role="status" aria-live="polite">
+          {toast?.tone === 'success' ? toast.message : ''}
+        </div>
+        <div className="visually-hidden" role="alert">
+          {toast?.tone === 'error' ? toast.message : ''}
+        </div>
         {sessionLost ? <SessionEndedNotice onReload={() => window.location.reload()} /> : null}
         {children}
         {toast ? <Toast message={toast.message} tone={toast.tone} onDismiss={() => setToast(null)} /> : null}

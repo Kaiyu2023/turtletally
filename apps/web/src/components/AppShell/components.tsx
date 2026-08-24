@@ -9,13 +9,12 @@ import {
   Plus,
   Settings,
   WalletCards,
-  X,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { commonMessages } from '../../i18n/common';
 import { useMessages } from '../../i18n/locale';
 import { joinClassNames } from '../../utils/format';
-import { Badge, Button, IconButton } from '../Ui';
+import { Badge, Button, IconButton, Modal } from '../Ui';
 
 const navigation = [
   { to: '/dashboard', label: 'overview', icon: LayoutDashboard },
@@ -146,23 +145,11 @@ function MobileMenu({ open, onClose }: MobileMenuProps) {
   const t = useMessages(commonMessages);
 
   return (
-    <div className={joinClassNames('mobile-menu', open && 'mobile-menu--open')} aria-hidden={!open}>
-      <button className="mobile-menu__backdrop" type="button" aria-label={t('closeNavigation')} onClick={onClose} />
-      <div className="mobile-menu__sheet">
-        <header>
-          <div>
-            <span className="eyebrow">{t('navigate')}</span>
-            <h2>Turtle Tally</h2>
-          </div>
-          <IconButton aria-label={t('closeNavigation')} onClick={onClose}>
-            <X aria-hidden="true" />
-          </IconButton>
-        </header>
-        <nav>
-          <NavigationLinks onNavigate={onClose} />
-        </nav>
-      </div>
-    </div>
+    <Modal open={open} title={t('navigate')} variant="sheet" size="small" onClose={onClose}>
+      <nav aria-label={t('primaryNavigation')}>
+        <NavigationLinks onNavigate={onClose} />
+      </nav>
+    </Modal>
   );
 }
 

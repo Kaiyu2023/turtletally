@@ -112,10 +112,20 @@ type ModalProps = {
   readonly children: ReactNode;
   readonly footer?: ReactNode;
   readonly size?: 'small' | 'medium' | 'large';
+  readonly variant?: 'dialog' | 'sheet';
   readonly onClose: () => void;
 };
 
-export function Modal({ open, title, description, children, footer, size = 'medium', onClose }: ModalProps) {
+export function Modal({
+  open,
+  title,
+  description,
+  children,
+  footer,
+  size = 'medium',
+  variant = 'dialog',
+  onClose,
+}: ModalProps) {
   const t = useMessages(commonMessages);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -137,7 +147,7 @@ export function Modal({ open, title, description, children, footer, size = 'medi
   return (
     <dialog
       ref={dialogRef}
-      className={`modal modal--${size}`}
+      className={joinClassNames('modal', `modal--${size}`, variant === 'sheet' && 'modal--sheet')}
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
       onCancel={onClose}
@@ -223,7 +233,7 @@ type ToastProps = {
 export function Toast({ message, tone = 'success', onDismiss }: ToastProps) {
   const t = useMessages(commonMessages);
   return (
-    <div className={`toast toast--${tone}`} role={tone === 'error' ? 'alert' : 'status'}>
+    <div className={`toast toast--${tone}`}>
       {tone === 'success' ? <Check aria-hidden="true" size={18} /> : <AlertCircle aria-hidden="true" size={18} />}
       <span>{message}</span>
       <button type="button" aria-label={t('dismissNotification')} onClick={onDismiss}>
