@@ -15,6 +15,7 @@ Commit accepts the operation identifier and expected hash rather than a replacem
 
 ## Consequences
 
-- The owner can review the exact effect before a financial change and retries cannot silently create a different operation.
+- Replay, idempotency, and staleness are enforced: a retry cannot silently create a different operation, and an altered or expired preview fails closed.
+- Human confirmation is not yet enforced. Every input to commit is a value the model received from the immediately preceding preview, so an injected statement row can drive preview and commit back to back and the server cannot distinguish that from a reviewed commit. Closing this needs an out-of-band binding the model cannot supply itself, such as approval through the browser session or a value threshold below which auto-commit is permitted.
 - Writes require an additional round trip and short-lived operation storage.
 - Expired, replayed, altered, or stale previews fail closed and must be previewed again.
