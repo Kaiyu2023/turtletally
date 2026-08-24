@@ -47,7 +47,9 @@ Open <http://127.0.0.1:4173>. The UI makes no third-party requests and writes no
 npm run check
 ```
 
-The root check covers the repository secret scan, formatting, linting, type checks, Rust, browser, and Terraform tests, dependency audits, builds, and a credential-free Terraform plan that must contain no changes. Playwright runs the browser behavior and accessibility suite in desktop and mobile Chromium. Visual-review captures are written to the ignored `artifacts/ui-draft` directory and can be refreshed with `npm run screenshots`.
+The root check covers the repository secret scan, formatting, linting, type checks, unit, browser, and Terraform tests, dependency audits, builds, and a credential-free Terraform plan that must contain no changes.
+
+Vitest covers the domain contract in `apps/web/src/data` and runs on its own with `npm run test:node`. Playwright runs the browser behaviour and accessibility suite in desktop and mobile Chromium. The Rust workspace holds no code yet, so `cargo test` compiles an empty crate and asserts nothing. Visual-review captures are written to the ignored `artifacts/ui-draft` directory and can be refreshed with `npm run screenshots`.
 
 ## Security posture
 

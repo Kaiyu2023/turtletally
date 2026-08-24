@@ -1,3 +1,12 @@
+import {
+  budgetProgress,
+  formatDate,
+  lastDateOfMonth,
+  ledgerWindowFor,
+  monthStart,
+  spendingByCategory,
+  summariseMonth,
+} from './aggregates';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
 import type {
   Account,
@@ -6,13 +15,11 @@ import type {
   BudgetDefault,
   BudgetProgress,
   Category,
-  CategorySpending,
   CreateAccountInput,
   CreateCategoryInput,
   CreateImportPreviewInput,
   CreateScheduleInput,
   CreateTransactionInput,
-  DailySpending,
   DashboardSummary,
   ImportBatch,
   ImportCommitResult,
@@ -27,7 +34,6 @@ import type {
   ScheduleRecurrence,
   SetBudgetDefaultInput,
   SetBudgetInput,
-  SpendingComparison,
   Transaction,
   TransactionFilters,
   TransactionPage,
@@ -46,26 +52,6 @@ const MAX_PAGE_SIZE = 100;
 
 function copy<T>(value: T): T {
   return structuredClone(value);
-}
-
-function formatDate(date: Date): LocalDate {
-  return date.toISOString().slice(0, 10) as LocalDate;
-}
-
-function addDays(date: LocalDate, days: number): LocalDate {
-  const value = new Date(`${date}T12:00:00.000Z`);
-  value.setUTCDate(value.getUTCDate() + days);
-  return formatDate(value);
-}
-
-function previousMonth(month: Month): Month {
-  const value = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 2, 1));
-  return value.toISOString().slice(0, 7) as Month;
-}
-
-function lastDateOfMonth(month: Month): LocalDate {
-  const value = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0));
-  return formatDate(value);
 }
 
 function initialState(scenario: MockScenario): MockFixtureState {
@@ -407,8 +393,15 @@ class InMemoryMockApi implements MockFinanceApi {
   async listBudgets(month: Month): Promise<BudgetProgress[]> {
     return this.withLatency(() => {
       this.validMonth(month);
-      const spentByCategory = this.spendingByCategory(this.activeTransactionsForMonth(month));
-      return copy(this.budgetProgress(month, spentByCategory));
+      return copy(
+        budgetProgress({
+          month,
+          budgets: this.state.budgets,
+          budgetDefaults: this.state.budgetDefaults,
+          categories: this.state.categories,
+          spentByCategory: spendingByCategory(this.activeTransactionsForMonth(month)),
+        }),
+      );
     });
   }
 
@@ -732,186 +725,26 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private dashboard(month: Month): DashboardSummary {
     this.validMonth(month);
-    const priorMonth = previousMonth(month);
-    const monthEnd = lastDateOfMonth(month);
-    const lastComparableDate = month === MOCK_TODAY.slice(0, 7) ? addDays(MOCK_TODAY, -1) : monthEnd;
-    const currentWeekStart = addDays(lastComparableDate, -6);
-    const previousWeekEnd = addDays(currentWeekStart, -1);
-    const previousWeekStart = addDays(previousWeekEnd, -6);
-    const priorMonthStart = `${priorMonth}-01` as LocalDate;
-    const ledgerWindow = this.activeTransactionsBetween(
-      previousWeekStart < priorMonthStart ? previousWeekStart : priorMonthStart,
-      monthEnd,
-    );
-
-    const transactions = ledgerWindow.filter((transaction) => transaction.localDate.startsWith(month));
-    const priorMonthTransactions = ledgerWindow.filter((transaction) => transaction.localDate.startsWith(priorMonth));
-    const spentByCategory = this.spendingByCategory(transactions);
-
-    const spendingMinor = this.totalByKind(transactions, 'SPENDING');
-    const budgets = this.budgetProgress(month, spentByCategory);
-    const budgetTotalMinor = budgets.reduce((total, budget) => total + budget.limitMinor, 0);
-    const budgetedSpendingMinor = budgets.reduce((total, budget) => total + budget.spentMinor, 0);
-
-    return {
+    const window = ledgerWindowFor(month, MOCK_TODAY);
+    return summariseMonth({
       month,
+      today: MOCK_TODAY,
       asOf: MOCK_NOW,
-      incomeMinor: this.totalByKind(transactions, 'INCOME'),
-      spendingMinor,
-      investmentCreditsMinor: this.total(
-        transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'CREDIT'),
-      ),
-      investmentDebitsMinor: this.total(
-        transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'DEBIT'),
-      ),
-      netCashFlowMinor: transactions.reduce(
-        (total, transaction) =>
-          total + (transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor),
-        0,
-      ),
-      budgetTotalMinor,
-      budgetedSpendingMinor,
-      budgetRemainingMinor: budgetTotalMinor - budgetedSpendingMinor,
-      uncategorisedSpendingMinor: spentByCategory.get(null) ?? 0,
-      transactionCount: transactions.length,
-      weekOverWeek: this.comparison(
-        this.spendingWithin(ledgerWindow, currentWeekStart, lastComparableDate),
-        this.spendingWithin(ledgerWindow, previousWeekStart, previousWeekEnd),
-      ),
-      monthOverMonth: this.comparison(spendingMinor, this.totalByKind(priorMonthTransactions, 'SPENDING')),
-      dailySpending: this.dailySpending(month, transactions),
-      spendingByCategory: this.categorySpending(spentByCategory),
-      budgets,
-      recentTransactions: [...transactions]
-        .sort((left, right) => right.occurredAt.localeCompare(left.occurredAt))
-        .slice(0, 6),
-    };
-  }
-
-  private budgetProgress(month: Month, spentByCategory: ReadonlyMap<string | null, number>): BudgetProgress[] {
-    type BudgetRow = Pick<BudgetProgress, 'id' | 'month' | 'categoryId' | 'limitMinor' | 'version'>;
-
-    const rows: BudgetRow[] = this.state.budgets
-      .filter((budget) => budget.month === month)
-      .map((budget) => ({
-        id: budget.id,
-        month: budget.month,
-        categoryId: budget.categoryId,
-        limitMinor: budget.limitMinor,
-        version: budget.version,
-      }));
-
-    for (const budgetDefault of this.state.budgetDefaults) {
-      if (rows.some((row) => row.categoryId === budgetDefault.categoryId)) continue;
-      rows.push({
-        id: `budget-${month}-${budgetDefault.categoryId}`,
-        month,
-        categoryId: budgetDefault.categoryId,
-        limitMinor: budgetDefault.limitMinor,
-        version: null,
-      });
-    }
-
-    return rows
-      .map((row) => {
-        const category = this.findCategory(row.categoryId);
-        const spentMinor = spentByCategory.get(row.categoryId) ?? 0;
-        return {
-          ...row,
-          categoryName: category.name,
-          colour: category.colour,
-          spentMinor,
-          remainingMinor: row.limitMinor - spentMinor,
-          percentUsed:
-            row.limitMinor === 0 ? (spentMinor === 0 ? 0 : 100) : Math.round((spentMinor / row.limitMinor) * 100),
-        };
-      })
-      .sort((left, right) => right.spentMinor - left.spentMinor);
-  }
-
-  private dailySpending(month: Month, transactions: Transaction[]): DailySpending[] {
-    const finalDate = month === MOCK_TODAY.slice(0, 7) ? MOCK_TODAY : lastDateOfMonth(month);
-    const days = Number(finalDate.slice(8, 10));
-    const totals = new Map<string, number>();
-    for (const transaction of transactions) {
-      if (transaction.kind !== 'SPENDING') continue;
-      totals.set(transaction.localDate, (totals.get(transaction.localDate) ?? 0) + this.signedSpending(transaction));
-    }
-
-    return Array.from({ length: days }, (_, index) => {
-      const date = `${month}-${String(index + 1).padStart(2, '0')}` as LocalDate;
-      return { date, amountMinor: totals.get(date) ?? 0 };
+      ledgerWindow: this.activeTransactionsBetween(window.from, window.to),
+      budgets: this.state.budgets,
+      budgetDefaults: this.state.budgetDefaults,
+      categories: this.state.categories,
     });
   }
 
-  private spendingByCategory(transactions: Transaction[]): Map<string | null, number> {
-    const totals = new Map<string | null, number>();
-    for (const transaction of transactions) {
-      if (transaction.kind !== 'SPENDING') continue;
-      const current = totals.get(transaction.categoryId) ?? 0;
-      totals.set(transaction.categoryId, current + this.signedSpending(transaction));
-    }
-    return totals;
-  }
-
-  private signedSpending(transaction: Transaction): number {
-    return transaction.flow === 'DEBIT' ? transaction.amountMinor : -transaction.amountMinor;
-  }
-
-  private categorySpending(spentByCategory: ReadonlyMap<string | null, number>): CategorySpending[] {
-    return [...spentByCategory.entries()]
-      .map(([categoryId, amountMinor]) => {
-        const category = categoryId ? this.findCategory(categoryId) : null;
-        return {
-          categoryId,
-          categoryName: category?.name ?? 'Uncategorised',
-          colour: category?.colour ?? '#a8adb7',
-          amountMinor,
-        };
-      })
-      .sort((left, right) => right.amountMinor - left.amountMinor);
-  }
-
-  private comparison(currentMinor: number, previousMinor: number): SpendingComparison {
-    if (previousMinor === 0) {
-      return { currentMinor, previousMinor, changePercent: null, direction: 'NOT_COMPARABLE' };
-    }
-    const changePercent = Math.round(((currentMinor - previousMinor) / previousMinor) * 1_000) / 10;
-    const direction = changePercent === 0 ? 'FLAT' : changePercent > 0 ? 'UP' : 'DOWN';
-    return { currentMinor, previousMinor, changePercent, direction };
-  }
-
   private activeTransactionsForMonth(month: Month): Transaction[] {
-    return this.activeTransactionsBetween(`${month}-01` as LocalDate, lastDateOfMonth(month));
+    return this.activeTransactionsBetween(monthStart(month), lastDateOfMonth(month));
   }
 
   private activeTransactionsBetween(from: LocalDate, to: LocalDate): Transaction[] {
     return this.state.transactions.filter(
       (transaction) => transaction.voidedAt === null && transaction.localDate >= from && transaction.localDate <= to,
     );
-  }
-
-  private spendingWithin(transactions: Transaction[], from: LocalDate, to: LocalDate): number {
-    return this.totalByKind(
-      transactions.filter((transaction) => transaction.localDate >= from && transaction.localDate <= to),
-      'SPENDING',
-    );
-  }
-
-  private totalByKind(transactions: Transaction[], kind: Transaction['kind']): number {
-    return (
-      transactions
-        .filter((transaction) => transaction.kind === kind)
-        .reduce(
-          (total, transaction) =>
-            total + (transaction.flow === 'DEBIT' ? transaction.amountMinor : -transaction.amountMinor),
-          0,
-        ) * (kind === 'INCOME' ? -1 : 1)
-    );
-  }
-
-  private total(transactions: Transaction[]): number {
-    return transactions.reduce((total, transaction) => total + transaction.amountMinor, 0);
   }
 
   private buildTransaction(input: CreateTransactionInput, origin: Transaction['origin']): Transaction {
