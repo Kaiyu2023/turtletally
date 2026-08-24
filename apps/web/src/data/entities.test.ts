@@ -86,9 +86,8 @@ describe('account balance is owned by the ledger', () => {
       accountId: account.id,
       categoryId: null,
       description: 'Large payment',
-      amountMinor: 50_000,
+      amountMinor: -50_000,
       kind: 'SPENDING',
-      flow: 'DEBIT',
       localDate: '2026-08-10',
     });
 

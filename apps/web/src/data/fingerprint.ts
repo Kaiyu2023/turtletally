@@ -1,11 +1,10 @@
-import type { LocalDate, TransactionFlow } from './types';
+import type { LocalDate } from './types';
 
 export interface SourceRow {
   readonly accountId: string;
   readonly localDate: LocalDate;
   readonly description: string;
   readonly amountMinor: number;
-  readonly flow: TransactionFlow;
 }
 
 function hash(value: string): string {
@@ -19,7 +18,7 @@ function hash(value: string): string {
 
 export function rowFingerprint(row: SourceRow): string {
   const normalised = row.description.trim().toLowerCase().replace(/\s+/g, ' ');
-  return hash(`${row.accountId}|${row.localDate}|${row.amountMinor}|${row.flow}|${normalised}`);
+  return hash(`${row.accountId}|${row.localDate}|${row.amountMinor}|${normalised}`);
 }
 
 export function batchContentHash(fileName: string, fingerprints: readonly string[]): string {

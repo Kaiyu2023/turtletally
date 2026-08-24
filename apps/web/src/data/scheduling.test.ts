@@ -100,7 +100,7 @@ describe('runDueSchedules', () => {
     const created = await api.runDueSchedules('2026-09-02');
     const delta = created
       .filter((transaction) => transaction.accountId === before.id)
-      .reduce((total, transaction) => total + (transaction.flow === 'CREDIT' ? 1 : -1) * transaction.amountMinor, 0);
+      .reduce((total, transaction) => total + transaction.amountMinor, 0);
 
     const [after] = await api.listAccounts();
     expect(after?.balanceMinor).toBe(before.balanceMinor + delta);

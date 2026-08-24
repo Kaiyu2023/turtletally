@@ -11,6 +11,8 @@ The application has one owner, bounded monthly ledger queries, scheduled lookups
 
 Use DynamoDB tables for finance entities, sessions, and audit events. Partition finance records by the authenticated Cognito subject and use typed sort keys for bounded access patterns. Use targeted indexes for direct entity lookup and due schedules; do not expose scans or arbitrary queries.
 
+Direction lives in the sign of the amount and nowhere else. A stored record carries one signed minor-unit amount, so an amount and a separate direction field cannot disagree, and every aggregation is a plain sum. A refund is a positive amount in a spending category rather than a second representation of the same fact.
+
 Display names such as an account or category name are a read-model projection resolved from the current entity, never a value stored on the record that references it. A rename is therefore visible everywhere immediately, including in search, and no propagation job is required. Account balance is the opposite case: it is a maintained counter updated with the ledger write, not a scan, for the reason ADR 0007 gives for monthly rollups. The balance is owned by the ledger and is not directly editable; an opening balance is set once at creation and may be negative.
 
 Write repositories explicitly without an ORM. Use conditional and transactional writes for version checks, idempotency, and mutation-plus-audit atomicity. Keep receipt and import objects in private, versioned S3 storage rather than DynamoDB. Enable encryption, point-in-time recovery, deletion protection, and production retention.

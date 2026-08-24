@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react';
 import { FileCheck2, Paperclip, ShieldCheck } from 'lucide-react';
 import { useApp, type TransactionEditorState } from '../app/AppContext';
+import { flowOf, magnitudeOf, signedAmount } from '../data/money';
 import type { Account, Category, LocalDate, Receipt, TransactionFlow, TransactionKind } from '../data/types';
 import { useMessages } from '../i18n/locale';
 import { parseGbpInput, toGbpInput } from '../utils/format';
@@ -61,11 +62,11 @@ export function TransactionEditor() {
           editing
             ? {
                 description: editing.description,
-                amount: toGbpInput(editing.amountMinor),
+                amount: toGbpInput(magnitudeOf(editing.amountMinor)),
                 accountId: editing.accountId,
                 categoryId: editing.categoryId ?? '',
                 kind: editing.kind,
-                flow: editing.flow,
+                flow: flowOf(editing.amountMinor),
                 localDate: editing.localDate,
                 receipt: null,
               }
@@ -148,11 +149,10 @@ export function TransactionEditor() {
         await api.updateTransaction(editing.id, {
           expectedVersion: editing.version,
           description: form.description,
-          amountMinor: valid.amountMinor,
+          amountMinor: signedAmount(valid.amountMinor, form.flow),
           accountId: form.accountId,
           categoryId: form.categoryId || null,
           kind: form.kind,
-          flow: form.flow,
           localDate: valid.localDate,
           receipt,
         });
@@ -160,11 +160,10 @@ export function TransactionEditor() {
       } else {
         await api.createTransaction({
           description: form.description,
-          amountMinor: valid.amountMinor,
+          amountMinor: signedAmount(valid.amountMinor, form.flow),
           accountId: form.accountId,
           categoryId: form.categoryId || null,
           kind: form.kind,
-          flow: form.flow,
           localDate: valid.localDate,
           receipt,
         });

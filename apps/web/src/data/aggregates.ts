@@ -37,15 +37,13 @@ export function lastDateOfMonth(month: Month): LocalDate {
   return formatDate(value);
 }
 
-export function signedSpending(transaction: Transaction): number {
-  return transaction.flow === 'DEBIT' ? transaction.amountMinor : -transaction.amountMinor;
-}
-
+// Amounts are signed, so a total is a plain sum. Spending and investment read
+// naturally as positive magnitudes, which is the only place a sign is flipped.
 export function totalByKind(transactions: readonly Transaction[], kind: Transaction['kind']): number {
   const total = transactions
     .filter((transaction) => transaction.kind === kind)
-    .reduce((running, transaction) => running + signedSpending(transaction), 0);
-  return kind === 'INCOME' ? -total : total;
+    .reduce((running, transaction) => running + transaction.amountMinor, 0);
+  return kind === 'INCOME' ? total : -total;
 }
 
 export function totalAmount(transactions: readonly Transaction[]): number {
@@ -64,7 +62,7 @@ export function spendingByCategory(transactions: readonly Transaction[]): Map<st
   for (const transaction of transactions) {
     if (transaction.kind !== 'SPENDING') continue;
     const current = totals.get(transaction.categoryId) ?? 0;
-    totals.set(transaction.categoryId, current + signedSpending(transaction));
+    totals.set(transaction.categoryId, current - transaction.amountMinor);
   }
   return totals;
 }
@@ -94,7 +92,7 @@ export function dailySpending(month: Month, today: LocalDate, transactions: read
   const totals = new Map<string, number>();
   for (const transaction of transactions) {
     if (transaction.kind !== 'SPENDING') continue;
-    totals.set(transaction.localDate, (totals.get(transaction.localDate) ?? 0) + signedSpending(transaction));
+    totals.set(transaction.localDate, (totals.get(transaction.localDate) ?? 0) - transaction.amountMinor);
   }
 
   return Array.from({ length: days }, (_, index) => {
@@ -222,16 +220,12 @@ export function summariseMonth(input: MonthSummaryInput): DashboardSummary {
     incomeMinor: totalByKind(transactions, 'INCOME'),
     spendingMinor,
     investmentCreditsMinor: totalAmount(
-      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'CREDIT'),
+      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.amountMinor > 0),
     ),
-    investmentDebitsMinor: totalAmount(
-      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'DEBIT'),
+    investmentDebitsMinor: -totalAmount(
+      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.amountMinor < 0),
     ),
-    netCashFlowMinor: transactions.reduce(
-      (total, transaction) =>
-        total + (transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor),
-      0,
-    ),
+    netCashFlowMinor: totalAmount(transactions),
     budgetTotalMinor,
     budgetedSpendingMinor,
     budgetRemainingMinor: budgetTotalMinor - budgetedSpendingMinor,
