@@ -20,7 +20,7 @@ These rules apply to the entire Turtle Tally repository.
 ## Required checks
 
 - Read [`docs/roadmap.md`](docs/roadmap.md) for the milestone vocabulary these rules refer to.
-- Before implementation, read `finance-app-implementation-plan.md` completely when it is present locally. Append dated evidence to its Progress, Surprises and discoveries, Decision log, and Outcomes sections as work progresses. It is intentionally untracked; never stage or publish it without a reviewed, sanitized replacement.
+- Record a decision worth keeping in an architecture decision record, not in a local note. Local planning material stays untracked and is never staged or published without a reviewed, sanitised replacement.
 - Run `./scripts/check-repository-secrets.sh` before every commit.
 - Keep dependencies and GitHub Actions pinned and review updates before merging.
 - GitHub Actions are restricted to an allowlist of `actions/checkout` and `actions/setup-node`, with commit-SHA pinning required. A workflow referencing any other action fails at startup with no usable log. Install tooling with a checksum-verified download, as the Terraform and Rust security tool steps do, rather than widening the allowlist.
