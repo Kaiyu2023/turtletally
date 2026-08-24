@@ -79,7 +79,7 @@ export function DashboardPage({
     );
   }
 
-  const budgetProgress = summary.budgetTotalMinor > 0 ? summary.spendingMinor / summary.budgetTotalMinor : 0;
+  const budgetProgress = summary.budgetTotalMinor > 0 ? summary.budgetedSpendingMinor / summary.budgetTotalMinor : 0;
   const budgetDetail =
     summary.budgetTotalMinor === 0
       ? t('noMonthlyBudget')

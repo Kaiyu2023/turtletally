@@ -405,7 +405,11 @@ class InMemoryMockApi implements MockFinanceApi {
   }
 
   async listBudgets(month: Month): Promise<BudgetProgress[]> {
-    return this.withLatency(() => copy(this.budgetProgress(month)));
+    return this.withLatency(() => {
+      this.validMonth(month);
+      const spentByCategory = this.spendingByCategory(this.activeTransactionsForMonth(month));
+      return copy(this.budgetProgress(month, spentByCategory));
+    });
   }
 
   async listBudgetDefaults(): Promise<BudgetDefault[]> {
@@ -728,52 +732,55 @@ class InMemoryMockApi implements MockFinanceApi {
 
   private dashboard(month: Month): DashboardSummary {
     this.validMonth(month);
-    const transactions = this.activeTransactionsForMonth(month);
-    const incomeMinor = this.totalByKind(transactions, 'INCOME');
-    const spendingMinor = this.totalByKind(transactions, 'SPENDING');
-    const investmentCreditsMinor = this.total(
-      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'CREDIT'),
-    );
-    const investmentDebitsMinor = this.total(
-      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'DEBIT'),
-    );
-    const netCashFlowMinor = transactions.reduce(
-      (total, transaction) =>
-        total + (transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor),
-      0,
-    );
-    const budgets = this.budgetProgress(month);
-    const budgetTotalMinor = budgets.reduce((total, budget) => total + budget.limitMinor, 0);
-    const budgetRemainingMinor = budgetTotalMinor - spendingMinor;
-    const uncategorisedSpendingMinor = this.totalByKind(
-      transactions.filter((transaction) => transaction.categoryId === null),
-      'SPENDING',
-    );
-    const previousMonthName = previousMonth(month);
-    const previousMonthSpending = this.totalByKind(this.activeTransactionsForMonth(previousMonthName), 'SPENDING');
-    const lastComparableDate = month === MOCK_TODAY.slice(0, 7) ? addDays(MOCK_TODAY, -1) : lastDateOfMonth(month);
+    const priorMonth = previousMonth(month);
+    const monthEnd = lastDateOfMonth(month);
+    const lastComparableDate = month === MOCK_TODAY.slice(0, 7) ? addDays(MOCK_TODAY, -1) : monthEnd;
     const currentWeekStart = addDays(lastComparableDate, -6);
     const previousWeekEnd = addDays(currentWeekStart, -1);
     const previousWeekStart = addDays(previousWeekEnd, -6);
-    const currentWeekSpending = this.spendingBetween(currentWeekStart, lastComparableDate);
-    const previousWeekSpending = this.spendingBetween(previousWeekStart, previousWeekEnd);
+    const priorMonthStart = `${priorMonth}-01` as LocalDate;
+    const ledgerWindow = this.activeTransactionsBetween(
+      previousWeekStart < priorMonthStart ? previousWeekStart : priorMonthStart,
+      monthEnd,
+    );
+
+    const transactions = ledgerWindow.filter((transaction) => transaction.localDate.startsWith(month));
+    const priorMonthTransactions = ledgerWindow.filter((transaction) => transaction.localDate.startsWith(priorMonth));
+    const spentByCategory = this.spendingByCategory(transactions);
+
+    const spendingMinor = this.totalByKind(transactions, 'SPENDING');
+    const budgets = this.budgetProgress(month, spentByCategory);
+    const budgetTotalMinor = budgets.reduce((total, budget) => total + budget.limitMinor, 0);
+    const budgetedSpendingMinor = budgets.reduce((total, budget) => total + budget.spentMinor, 0);
 
     return {
       month,
       asOf: MOCK_NOW,
-      incomeMinor,
+      incomeMinor: this.totalByKind(transactions, 'INCOME'),
       spendingMinor,
-      investmentCreditsMinor,
-      investmentDebitsMinor,
-      netCashFlowMinor,
+      investmentCreditsMinor: this.total(
+        transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'CREDIT'),
+      ),
+      investmentDebitsMinor: this.total(
+        transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.flow === 'DEBIT'),
+      ),
+      netCashFlowMinor: transactions.reduce(
+        (total, transaction) =>
+          total + (transaction.flow === 'CREDIT' ? transaction.amountMinor : -transaction.amountMinor),
+        0,
+      ),
       budgetTotalMinor,
-      budgetRemainingMinor,
-      uncategorisedSpendingMinor,
+      budgetedSpendingMinor,
+      budgetRemainingMinor: budgetTotalMinor - budgetedSpendingMinor,
+      uncategorisedSpendingMinor: spentByCategory.get(null) ?? 0,
       transactionCount: transactions.length,
-      weekOverWeek: this.comparison(currentWeekSpending, previousWeekSpending),
-      monthOverMonth: this.comparison(spendingMinor, previousMonthSpending),
+      weekOverWeek: this.comparison(
+        this.spendingWithin(ledgerWindow, currentWeekStart, lastComparableDate),
+        this.spendingWithin(ledgerWindow, previousWeekStart, previousWeekEnd),
+      ),
+      monthOverMonth: this.comparison(spendingMinor, this.totalByKind(priorMonthTransactions, 'SPENDING')),
       dailySpending: this.dailySpending(month, transactions),
-      spendingByCategory: this.categorySpending(transactions),
+      spendingByCategory: this.categorySpending(spentByCategory),
       budgets,
       recentTransactions: [...transactions]
         .sort((left, right) => right.occurredAt.localeCompare(left.occurredAt))
@@ -781,69 +788,78 @@ class InMemoryMockApi implements MockFinanceApi {
     };
   }
 
-  private budgetProgress(month: Month): BudgetProgress[] {
-    this.materialiseBudgets(month);
-    return this.state.budgets
+  private budgetProgress(month: Month, spentByCategory: ReadonlyMap<string | null, number>): BudgetProgress[] {
+    type BudgetRow = Pick<BudgetProgress, 'id' | 'month' | 'categoryId' | 'limitMinor' | 'version'>;
+
+    const rows: BudgetRow[] = this.state.budgets
       .filter((budget) => budget.month === month)
-      .map((budget) => {
-        const category = this.findCategory(budget.categoryId);
-        const spentMinor = this.spendingForCategory(month, category.id);
+      .map((budget) => ({
+        id: budget.id,
+        month: budget.month,
+        categoryId: budget.categoryId,
+        limitMinor: budget.limitMinor,
+        version: budget.version,
+      }));
+
+    for (const budgetDefault of this.state.budgetDefaults) {
+      if (rows.some((row) => row.categoryId === budgetDefault.categoryId)) continue;
+      rows.push({
+        id: `budget-${month}-${budgetDefault.categoryId}`,
+        month,
+        categoryId: budgetDefault.categoryId,
+        limitMinor: budgetDefault.limitMinor,
+        version: null,
+      });
+    }
+
+    return rows
+      .map((row) => {
+        const category = this.findCategory(row.categoryId);
+        const spentMinor = spentByCategory.get(row.categoryId) ?? 0;
         return {
-          ...budget,
+          ...row,
           categoryName: category.name,
           colour: category.colour,
           spentMinor,
-          remainingMinor: budget.limitMinor - spentMinor,
+          remainingMinor: row.limitMinor - spentMinor,
           percentUsed:
-            budget.limitMinor === 0 ? (spentMinor === 0 ? 0 : 100) : Math.round((spentMinor / budget.limitMinor) * 100),
+            row.limitMinor === 0 ? (spentMinor === 0 ? 0 : 100) : Math.round((spentMinor / row.limitMinor) * 100),
         };
       })
       .sort((left, right) => right.spentMinor - left.spentMinor);
   }
 
-  private materialiseBudgets(month: Month): void {
-    this.validMonth(month);
-    for (const budgetDefault of this.state.budgetDefaults) {
-      const exists = this.state.budgets.some(
-        (budget) => budget.month === month && budget.categoryId === budgetDefault.categoryId,
-      );
-      if (!exists) {
-        this.state.budgets.push({
-          id: this.nextId(`budget-${month}`),
-          month,
-          categoryId: budgetDefault.categoryId,
-          limitMinor: budgetDefault.limitMinor,
-          version: 1,
-        });
-      }
-    }
-  }
-
   private dailySpending(month: Month, transactions: Transaction[]): DailySpending[] {
     const finalDate = month === MOCK_TODAY.slice(0, 7) ? MOCK_TODAY : lastDateOfMonth(month);
     const days = Number(finalDate.slice(8, 10));
+    const totals = new Map<string, number>();
+    for (const transaction of transactions) {
+      if (transaction.kind !== 'SPENDING') continue;
+      totals.set(transaction.localDate, (totals.get(transaction.localDate) ?? 0) + this.signedSpending(transaction));
+    }
+
     return Array.from({ length: days }, (_, index) => {
       const date = `${month}-${String(index + 1).padStart(2, '0')}` as LocalDate;
-      const amountMinor = this.totalByKind(
-        transactions.filter((transaction) => transaction.localDate === date),
-        'SPENDING',
-      );
-      return { date, amountMinor };
+      return { date, amountMinor: totals.get(date) ?? 0 };
     });
   }
 
-  private categorySpending(transactions: Transaction[]): CategorySpending[] {
+  private spendingByCategory(transactions: Transaction[]): Map<string | null, number> {
     const totals = new Map<string | null, number>();
     for (const transaction of transactions) {
       if (transaction.kind !== 'SPENDING') continue;
       const current = totals.get(transaction.categoryId) ?? 0;
-      totals.set(
-        transaction.categoryId,
-        current + (transaction.flow === 'DEBIT' ? transaction.amountMinor : -transaction.amountMinor),
-      );
+      totals.set(transaction.categoryId, current + this.signedSpending(transaction));
     }
+    return totals;
+  }
 
-    return [...totals.entries()]
+  private signedSpending(transaction: Transaction): number {
+    return transaction.flow === 'DEBIT' ? transaction.amountMinor : -transaction.amountMinor;
+  }
+
+  private categorySpending(spentByCategory: ReadonlyMap<string | null, number>): CategorySpending[] {
+    return [...spentByCategory.entries()]
       .map(([categoryId, amountMinor]) => {
         const category = categoryId ? this.findCategory(categoryId) : null;
         return {
@@ -866,23 +882,18 @@ class InMemoryMockApi implements MockFinanceApi {
   }
 
   private activeTransactionsForMonth(month: Month): Transaction[] {
+    return this.activeTransactionsBetween(`${month}-01` as LocalDate, lastDateOfMonth(month));
+  }
+
+  private activeTransactionsBetween(from: LocalDate, to: LocalDate): Transaction[] {
     return this.state.transactions.filter(
-      (transaction) => transaction.voidedAt === null && transaction.localDate.startsWith(month),
+      (transaction) => transaction.voidedAt === null && transaction.localDate >= from && transaction.localDate <= to,
     );
   }
 
-  private spendingBetween(from: LocalDate, to: LocalDate): number {
+  private spendingWithin(transactions: Transaction[], from: LocalDate, to: LocalDate): number {
     return this.totalByKind(
-      this.state.transactions.filter(
-        (transaction) => transaction.voidedAt === null && transaction.localDate >= from && transaction.localDate <= to,
-      ),
-      'SPENDING',
-    );
-  }
-
-  private spendingForCategory(month: Month, categoryId: string): number {
-    return this.totalByKind(
-      this.activeTransactionsForMonth(month).filter((transaction) => transaction.categoryId === categoryId),
+      transactions.filter((transaction) => transaction.localDate >= from && transaction.localDate <= to),
       'SPENDING',
     );
   }

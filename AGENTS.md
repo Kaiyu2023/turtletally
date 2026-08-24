@@ -15,6 +15,7 @@ These rules apply to the entire Turtle Tally repository.
 - Backend bootstrap or migration, import, state move/remove/provider replacement, state restoration, force-unlock, replacement or deletion, teardown, and production apply each require a separate documented owner approval.
 - Stop if the Cognito, OAuth resource binding, OpenAI mTLS, or ChatGPT Work compatibility proof fails. Do not add a custom OAuth adapter without explicit owner approval.
 - Do not weaken passkey recovery, enable a paid AWS add-on, or connect live financial data to ChatGPT without the corresponding documented owner approval.
+- Do not deploy to production until ADR 0007 is implemented in full. Serving an aggregate by re-querying the ledger, offset pagination, and refetching bounded reference lists per route are not deployable states.
 
 ## Required checks
 
