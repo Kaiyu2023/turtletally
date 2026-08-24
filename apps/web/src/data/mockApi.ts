@@ -29,6 +29,7 @@ import type {
   MockApiOptions,
   MockFinanceApi,
   MockScenario,
+  MockSession,
   Month,
   Schedule,
   ScheduleRecurrence,
@@ -75,10 +76,12 @@ class InMemoryMockApi implements MockFinanceApi {
   private sequence = 1;
   private readonly scenario: MockScenario;
   private readonly latencyMs: number;
+  private readonly session: MockSession;
 
-  constructor(scenario: MockScenario, latencyMs: number) {
+  constructor(scenario: MockScenario, latencyMs: number, session: MockSession) {
     this.scenario = scenario;
     this.latencyMs = latencyMs;
+    this.session = session;
     this.state = initialState(scenario);
   }
 
@@ -976,6 +979,9 @@ class InMemoryMockApi implements MockFinanceApi {
     if (this.latencyMs > 0) {
       await new Promise<void>((resolve) => setTimeout(resolve, this.latencyMs));
     }
+    if (this.session === 'EXPIRED') {
+      throw new MockApiError('UNAUTHENTICATED', 'The session has ended. Sign in again to continue.');
+    }
     return operation();
   }
 }
@@ -984,7 +990,7 @@ export function createMockApi(scenario: MockScenario = 'DEFAULT', options: MockA
   const latencyMs = options.latencyMs ?? DEFAULT_LATENCY_MS;
   if (!Number.isFinite(latencyMs) || latencyMs < 0)
     throw new MockApiError('VALIDATION', 'Mock latency cannot be negative.');
-  return new InMemoryMockApi(scenario, latencyMs);
+  return new InMemoryMockApi(scenario, latencyMs, options.session ?? 'ACTIVE');
 }
 
 export const mockApi = createMockApi();

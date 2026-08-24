@@ -13,8 +13,12 @@ Use an authorization-code flow with S256 PKCE through a browser backend-for-fron
 
 Hash session identifiers at rest. Require a per-session CSRF header plus `Origin` and `Sec-Fetch-Site` validation for mutations. Derive ownership from verified Cognito claims and keep all authentication and finance responses out of caches.
 
+Surface a lost session as a single `UNAUTHENTICATED` response code, intercepted once where the client is constructed rather than in each caller. Expiry does not redirect and does not discard client state: the owner keeps whatever is on screen, including an open editor, and chooses when to reload. The browser draft has no authentication surface and assumes an ambient authenticated owner; it exercises this path through a mock session control rather than a real one.
+
 ## Consequences
 
 - Browser code never handles Cognito tokens, reducing the impact of script compromise.
 - Server-side session storage, refresh, expiry, concurrency limits, and revocation become application responsibilities.
 - Same-origin browser routing is required; cross-origin API access is not a supported browser architecture.
+- Expiry has one landing point, so adding real authentication does not mean revisiting every call site.
+- Preserving unsaved state on expiry means a re-authenticated owner may retry a mutation against a changed ledger, which the existing version checks must reject rather than silently apply.

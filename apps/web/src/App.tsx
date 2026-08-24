@@ -8,6 +8,7 @@ import type {
   Account,
   Category,
   DashboardSummary,
+  MockFinanceApi,
   Month,
   Schedule,
   Transaction,
@@ -24,9 +25,9 @@ import { SettingsPage } from './pages/settings';
 import { TransactionsPage } from './pages/transactions';
 import { transactionsMessages } from './pages/transactions/messages';
 
-export function App() {
+export function App({ api }: { readonly api: MockFinanceApi }) {
   return (
-    <AppProvider>
+    <AppProvider api={api}>
       <AppRoutes />
     </AppProvider>
   );

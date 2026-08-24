@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createMockApi } from '../data/mockApi';
-import type { AppLocale, MockFinanceApi, MockScenario, Transaction, UserPreferences } from '../data/types';
-import { Toast } from '../components/Ui';
+import type { AppLocale, MockFinanceApi, Transaction, UserPreferences } from '../data/types';
+import { SessionEndedNotice, Toast } from '../components/Ui';
 import { commonMessages } from '../i18n/common';
 import { LocaleProvider, message } from '../i18n/locale';
+import { guardSession } from './session';
 
 export type TransactionEditorState =
   { readonly mode: 'create' } | { readonly mode: 'edit'; readonly transaction: Transaction } | null;
@@ -28,12 +28,14 @@ type AppContextValue = {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-function selectedScenario(): MockScenario {
-  return new URLSearchParams(window.location.search).get('scenario') === 'empty' ? 'EMPTY' : 'DEFAULT';
-}
+type AppProviderProps = {
+  readonly api: MockFinanceApi;
+  readonly children: ReactNode;
+};
 
-export function AppProvider({ children }: { readonly children: ReactNode }) {
-  const api = useMemo(() => createMockApi(selectedScenario()), []);
+export function AppProvider({ api: source, children }: AppProviderProps) {
+  const [sessionLost, setSessionLost] = useState(false);
+  const api = useMemo(() => guardSession(source, () => setSessionLost(true)), [source]);
   const [refreshToken, setRefreshToken] = useState(0);
   const [transactionEditor, setTransactionEditor] = useState<TransactionEditorState>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -119,6 +121,7 @@ export function AppProvider({ children }: { readonly children: ReactNode }) {
   return (
     <LocaleProvider locale={preferences.locale}>
       <AppContext.Provider value={value}>
+        {sessionLost ? <SessionEndedNotice onReload={() => window.location.reload()} /> : null}
         {children}
         {toast ? <Toast message={toast.message} tone={toast.tone} onDismiss={() => setToast(null)} /> : null}
       </AppContext.Provider>
