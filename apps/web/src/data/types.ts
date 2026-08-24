@@ -44,10 +44,36 @@ export type TransactionFlow = 'CREDIT' | 'DEBIT';
 export type TransactionOrigin = 'MANUAL' | 'IMPORT' | 'SCHEDULE' | 'ASSISTANT';
 export type TimePrecision = 'DATE' | 'MINUTE';
 
+export type UploadMediaType = 'application/pdf' | 'image/jpeg' | 'image/png';
+
 export interface Receipt {
   id: string;
   fileName: string;
-  mediaType: 'application/pdf' | 'image/jpeg' | 'image/png';
+  mediaType: UploadMediaType;
+  sizeBytes: number;
+  checksum: string;
+}
+
+export interface RequestUploadInput {
+  fileName: string;
+  mediaType: UploadMediaType;
+  sizeBytes: number;
+}
+
+export interface UploadGrant {
+  uploadId: string;
+  uploadUrl: string;
+  expiresAt: string;
+}
+
+export interface DownloadGrant {
+  url: string;
+  expiresAt: string;
+}
+
+export interface CreateStatementUploadInput {
+  fileName: string;
+  accountId: string;
   sizeBytes: number;
 }
 
@@ -86,7 +112,7 @@ export interface CreateTransactionInput {
   localDate: LocalDate;
   occurredAt?: string;
   origin?: TransactionOrigin;
-  receipt?: Receipt | null;
+  receiptId?: string | null;
 }
 
 export interface UpdateTransactionInput {
@@ -98,7 +124,7 @@ export interface UpdateTransactionInput {
   kind?: TransactionKind;
   localDate?: LocalDate;
   occurredAt?: string;
-  receipt?: Receipt | null;
+  receiptId?: string | null;
 }
 
 export type TransactionStatus = 'ACTIVE' | 'VOIDED' | 'ALL';
@@ -266,7 +292,7 @@ export interface ImportHistoryItem {
 }
 
 export interface CreateImportPreviewInput {
-  fileName: string;
+  uploadId: string;
   accountId: string;
 }
 
@@ -396,6 +422,10 @@ export interface MockFinanceApi {
   updateSchedule(id: string, input: UpdateScheduleInput): Promise<Schedule>;
   deactivateSchedule(id: string, expectedVersion: number): Promise<Schedule>;
   runDueSchedules(asOf: LocalDate): Promise<Transaction[]>;
+  requestReceiptUpload(input: RequestUploadInput): Promise<UploadGrant>;
+  completeReceiptUpload(uploadId: string, checksum: string): Promise<Receipt>;
+  getReceiptDownloadUrl(receiptId: string): Promise<DownloadGrant>;
+  requestStatementUpload(input: CreateStatementUploadInput): Promise<UploadGrant>;
   listImports(): Promise<ImportHistoryItem[]>;
   getImportPreview(id: string): Promise<ImportBatch>;
   previewImport(input: CreateImportPreviewInput): Promise<ImportBatch>;

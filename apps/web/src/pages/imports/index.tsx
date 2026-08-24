@@ -53,7 +53,12 @@ export function ImportsPage() {
     }
     setBusy(true);
     try {
-      const batch = await api.previewImport({ fileName: file.name, accountId });
+      const grant = await api.requestStatementUpload({
+        fileName: file.name,
+        accountId,
+        sizeBytes: file.size,
+      });
+      const batch = await api.previewImport({ uploadId: grant.uploadId, accountId });
       setPreview(batch);
       notify(t('previewReady'));
       refresh();

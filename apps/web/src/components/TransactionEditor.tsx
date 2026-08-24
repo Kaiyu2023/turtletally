@@ -3,7 +3,7 @@ import { FileCheck2, Paperclip, ShieldCheck } from 'lucide-react';
 import { useApp, type TransactionEditorState } from '../app/AppContext';
 import { flowOf, magnitudeOf, signedAmount } from '../data/money';
 import { useDomainMessages } from '../i18n/domain';
-import type { Account, Category, LocalDate, Receipt, TransactionFlow, TransactionKind } from '../data/types';
+import type { Account, Category, LocalDate, TransactionFlow, TransactionKind, UploadMediaType } from '../data/types';
 import { useLocale, useMessages } from '../i18n/locale';
 import { parseGbpInput, toGbpInput } from '../utils/format';
 import { transactionEditorMessages } from './transactionEditor.messages';
@@ -32,6 +32,13 @@ const blankForm: FormState = {
   localDate: '2026-08-17',
   receipt: null,
 };
+
+// The browser computes the checksum the server will verify the stored object
+// against. The bytes go to the upload URL, never through the API.
+async function checksumOf(file: File): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
 
 export function TransactionEditor() {
   const t = useMessages(transactionEditorMessages);
@@ -139,14 +146,17 @@ export function TransactionEditor() {
 
     setBusy(true);
     try {
-      const receipt: Receipt | null = form.receipt
-        ? {
-            id: `receipt-demo-${crypto.randomUUID()}`,
-            fileName: form.receipt.name,
-            mediaType: form.receipt.type as Receipt['mediaType'],
-            sizeBytes: form.receipt.size,
-          }
-        : (editing?.receipt ?? null);
+      let receiptId: string | null = editing?.receipt?.id ?? null;
+      if (form.receipt) {
+        const file = form.receipt;
+        const grant = await api.requestReceiptUpload({
+          fileName: file.name,
+          mediaType: file.type as UploadMediaType,
+          sizeBytes: file.size,
+        });
+        const stored = await api.completeReceiptUpload(grant.uploadId, await checksumOf(file));
+        receiptId = stored.id;
+      }
 
       if (editing) {
         await api.updateTransaction(editing.id, {
@@ -157,7 +167,7 @@ export function TransactionEditor() {
           categoryId: form.categoryId || null,
           kind: form.kind,
           localDate: valid.localDate,
-          receipt,
+          receiptId,
         });
         notify(t('updated'));
       } else {
@@ -168,7 +178,7 @@ export function TransactionEditor() {
           categoryId: form.categoryId || null,
           kind: form.kind,
           localDate: valid.localDate,
-          receipt,
+          receiptId,
         });
         notify(t('added'));
       }
