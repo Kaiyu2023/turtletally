@@ -11,6 +11,7 @@ import { batchContentHash, rowFingerprint } from './fingerprint';
 import { flowOf } from './money';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
 import { nextOccurrence } from './recurrence';
+import { instantAt, reanchor, zonedDate } from './time';
 import type {
   Account,
   AppLocale,
@@ -357,7 +358,8 @@ class InMemoryMockApi implements MockFinanceApi {
       this.validAmount(amountMinor, 'Amount');
       const localDate = input.localDate ?? transaction.localDate;
       this.validDate(localDate);
-      const occurredAt = input.occurredAt ?? (input.localDate ? `${localDate}T12:00:00.000Z` : transaction.occurredAt);
+      const occurredAt =
+        input.occurredAt ?? (input.localDate ? reanchor(transaction.occurredAt, localDate) : transaction.occurredAt);
       this.validOccurredAt(occurredAt, localDate);
 
       this.adjustBalance(transaction, -1);
@@ -372,8 +374,7 @@ class InMemoryMockApi implements MockFinanceApi {
         kind: input.kind ?? transaction.kind,
         localDate,
         occurredAt,
-        timePrecision:
-          input.occurredAt || input.localDate ? (input.occurredAt ? 'MINUTE' : 'DATE') : transaction.timePrecision,
+        timePrecision: input.occurredAt ? 'MINUTE' : transaction.timePrecision,
         receipt: 'receipt' in input ? (input.receipt ?? null) : transaction.receipt,
         updatedAt: MOCK_NOW,
         version: transaction.version + 1,
@@ -832,7 +833,7 @@ class InMemoryMockApi implements MockFinanceApi {
     const description = this.validName(input.description, 'Description');
     this.validAmount(input.amountMinor, 'Amount');
     this.validDate(input.localDate);
-    const occurredAt = input.occurredAt ?? `${input.localDate}T12:00:00.000Z`;
+    const occurredAt = input.occurredAt ?? instantAt(input.localDate, '12:00:00');
     this.validOccurredAt(occurredAt, input.localDate);
 
     return {
@@ -1064,8 +1065,11 @@ class InMemoryMockApi implements MockFinanceApi {
   }
 
   private validOccurredAt(value: string, localDate: LocalDate): void {
-    if (!value.startsWith(localDate) || Number.isNaN(Date.parse(value))) {
-      throw new MockApiError('VALIDATION', 'Transaction time must be an ISO timestamp on the selected local date.');
+    if (Number.isNaN(Date.parse(value))) {
+      throw new MockApiError('VALIDATION', 'Transaction time must be an ISO timestamp.');
+    }
+    if (zonedDate(value) !== localDate) {
+      throw new MockApiError('VALIDATION', 'Transaction time must fall on the selected local date.');
     }
   }
 

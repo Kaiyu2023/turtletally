@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createMockApi } from './mockApi';
 import { toGbpInput } from '../utils/format';
+import { zonedDate, zonedTime } from './time';
 import type { MockFinanceApi } from './types';
 
 let api: MockFinanceApi;
@@ -150,5 +151,70 @@ describe('display names follow the entity, not the entry', () => {
     const affected = schedules.filter((schedule) => schedule.accountId === account.id);
     expect(affected.length).toBeGreaterThan(0);
     expect(affected.every((schedule) => schedule.accountName === 'Renamed account')).toBe(true);
+  });
+});
+
+describe('editing preserves the recorded instant', () => {
+  it('keeps the time of day when only the date changes', async () => {
+    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const timed = page.items.find((candidate) => candidate.timePrecision === 'MINUTE');
+    if (!timed) throw new Error('expected a minute-precision transaction');
+
+    const before = zonedTime(timed.occurredAt);
+    const moved = await api.updateTransaction(timed.id, {
+      localDate: '2026-08-09',
+      expectedVersion: timed.version,
+    });
+
+    expect(moved.localDate).toBe('2026-08-09');
+    expect(zonedDate(moved.occurredAt)).toBe('2026-08-09');
+    expect(zonedTime(moved.occurredAt)).toBe(before);
+    expect(moved.timePrecision).toBe('MINUTE');
+  });
+
+  it('keeps the precision when an unrelated field changes', async () => {
+    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const timed = page.items.find((candidate) => candidate.timePrecision === 'MINUTE');
+    if (!timed) throw new Error('expected a minute-precision transaction');
+
+    const renamed = await api.updateTransaction(timed.id, {
+      description: 'Renamed only',
+      expectedVersion: timed.version,
+    });
+
+    expect(renamed.occurredAt).toBe(timed.occurredAt);
+    expect(renamed.timePrecision).toBe('MINUTE');
+  });
+
+  it('rejects an instant that falls on another local date', async () => {
+    const page = await api.listTransactions({ month: '2026-08', pageSize: 1 });
+    const transaction = page.items[0];
+    if (!transaction) throw new Error('expected a transaction');
+
+    await expect(
+      api.updateTransaction(transaction.id, {
+        localDate: '2026-08-10',
+        occurredAt: '2026-08-12T09:00:00.000Z',
+        expectedVersion: transaction.version,
+      }),
+    ).rejects.toMatchObject({ code: 'VALIDATION' });
+  });
+
+  it('accepts a late-evening instant that is the next day in UTC during summer time', async () => {
+    const [account] = await api.listAccounts();
+    if (!account) throw new Error('expected an account');
+
+    const created = await api.createTransaction({
+      accountId: account.id,
+      categoryId: null,
+      description: 'Late evening',
+      amountMinor: -1_000,
+      kind: 'SPENDING',
+      localDate: '2026-08-10',
+      occurredAt: '2026-08-10T23:30:00.000+01:00',
+    });
+
+    expect(created.localDate).toBe('2026-08-10');
+    expect(created.occurredAt.slice(0, 10)).toBe('2026-08-10');
   });
 });
