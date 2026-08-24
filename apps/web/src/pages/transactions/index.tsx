@@ -114,6 +114,7 @@ export function TransactionsPage({
 
   function resetFilters() {
     onFiltersChange({
+      month: filters.month ?? '2026-08',
       page: 1,
       pageSize: filters.pageSize ?? 10,
       sort: 'NEWEST',

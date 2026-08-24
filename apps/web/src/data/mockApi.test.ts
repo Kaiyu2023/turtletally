@@ -1,24 +1,24 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createMockApi } from './mockApi';
-import { MockApiError, type MockFinanceApi, type Month } from './types';
+import { ApiError, type FinanceApi, type Month } from './types';
 
 const MONTH: Month = '2026-08';
 const UNBUDGETED_MONTH: Month = '2019-03';
 
-let api: MockFinanceApi;
+let api: FinanceApi;
 
 beforeEach(() => {
   api = createMockApi('DEFAULT', { latencyMs: 0 });
 });
 
-async function expectCode(operation: Promise<unknown>, code: MockApiError['code']): Promise<void> {
-  await expect(operation).rejects.toBeInstanceOf(MockApiError);
+async function expectCode(operation: Promise<unknown>, code: ApiError['code']): Promise<void> {
+  await expect(operation).rejects.toBeInstanceOf(ApiError);
   await operation.catch((error: unknown) => {
-    expect((error as MockApiError).code).toBe(code);
+    expect((error as ApiError).code).toBe(code);
   });
 }
 
-function countLedgerReads(target: MockFinanceApi): () => number {
+function countLedgerReads(target: FinanceApi): () => number {
   const prototype = Object.getPrototypeOf(target) as {
     activeTransactionsBetween: (...args: unknown[]) => unknown;
   };
@@ -49,6 +49,21 @@ describe('reads never write', () => {
 
     expect(after.items).toEqual(before.items);
     expect(after.totalItems).toBe(before.totalItems);
+  });
+});
+
+describe('reads are bounded', () => {
+  it('refuses a query that names no window', async () => {
+    await expect(api.listTransactions()).rejects.toMatchObject({ code: 'VALIDATION' });
+    await expect(api.listTransactions({ status: 'ALL', pageSize: 100 })).rejects.toMatchObject({
+      code: 'VALIDATION',
+    });
+    await expect(api.listTransactions({ from: '2026-08-01' })).rejects.toMatchObject({ code: 'VALIDATION' });
+  });
+
+  it('accepts a month, or an explicit from and to', async () => {
+    await expect(api.listTransactions({ month: '2026-08' })).resolves.toMatchObject({ page: 1 });
+    await expect(api.listTransactions({ from: '2026-08-01', to: '2026-08-31' })).resolves.toMatchObject({ page: 1 });
   });
 });
 

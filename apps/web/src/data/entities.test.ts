@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { createMockApi } from './mockApi';
 import { toGbpInput } from '../utils/format';
 import { zonedDate, zonedTime } from './time';
-import type { MockFinanceApi } from './types';
+import type { FinanceApi } from './types';
 
-let api: MockFinanceApi;
+let api: FinanceApi;
 
 beforeEach(() => {
   api = createMockApi('DEFAULT', { latencyMs: 0 });

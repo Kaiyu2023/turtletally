@@ -1,6 +1,6 @@
-import { MockApiError, type MockFinanceApi } from '../data/types';
+import { ApiError, type FinanceApi } from '../data/types';
 
-export function guardSession(api: MockFinanceApi, onSessionLost: () => void): MockFinanceApi {
+export function guardSession(api: FinanceApi, onSessionLost: () => void): FinanceApi {
   return new Proxy(api, {
     get(target, property, receiver) {
       const value: unknown = Reflect.get(target, property, receiver);
@@ -11,7 +11,7 @@ export function guardSession(api: MockFinanceApi, onSessionLost: () => void): Mo
         const result = method.apply(target, args);
         if (!(result instanceof Promise)) return result;
         return result.catch((error: unknown) => {
-          if (error instanceof MockApiError && error.code === 'UNAUTHENTICATED') onSessionLost();
+          if (error instanceof ApiError && error.code === 'UNAUTHENTICATED') onSessionLost();
           throw error;
         });
       };

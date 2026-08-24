@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { AppLocale, MockFinanceApi, Transaction, UserPreferences } from '../data/types';
+import type { AppLocale, FinanceApi, Transaction, UserPreferences } from '../data/types';
 import { SessionEndedNotice, Toast } from '../components/Ui';
 import { commonMessages } from '../i18n/common';
 import { LocaleProvider, message } from '../i18n/locale';
@@ -14,7 +14,7 @@ type ToastState = {
 };
 
 type AppContextValue = {
-  readonly api: MockFinanceApi;
+  readonly api: FinanceApi;
   readonly refreshToken: number;
   readonly transactionEditor: TransactionEditorState;
   readonly preferences: UserPreferences;
@@ -29,7 +29,7 @@ type AppContextValue = {
 const AppContext = createContext<AppContextValue | null>(null);
 
 type AppProviderProps = {
-  readonly api: MockFinanceApi;
+  readonly api: FinanceApi;
   readonly children: ReactNode;
 };
 

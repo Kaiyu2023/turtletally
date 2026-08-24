@@ -3,7 +3,7 @@ import { AppProvider, useApp } from './app/AppContext';
 import { RouteBoundary } from './app/RouteBoundary';
 import { AppShell } from './components/AppShell';
 import { TransactionEditor } from './components/TransactionEditor';
-import type { MockFinanceApi } from './data/types';
+import type { FinanceApi } from './data/types';
 import { commonMessages } from './i18n/common';
 import { useMessages } from './i18n/locale';
 import { BudgetsPage } from './pages/budgets';
@@ -13,7 +13,7 @@ import { SchedulesPage } from './pages/schedules';
 import { SettingsPage } from './pages/settings';
 import { TransactionsRoute } from './pages/transactions/route';
 
-export function App({ api }: { readonly api: MockFinanceApi }) {
+export function App({ api }: { readonly api: FinanceApi }) {
   return (
     <AppProvider api={api}>
       <AppRoutes />

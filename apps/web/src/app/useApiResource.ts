@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState, type DependencyList } from 'react';
-import { MockApiError, type MockApiErrorCode } from '../data/types';
+import { ApiError, type ApiErrorCode } from '../data/types';
 
 export type ResourceState<T> =
   | { readonly status: 'loading' }
-  | { readonly status: 'error'; readonly code: MockApiErrorCode | 'UNKNOWN' }
+  | { readonly status: 'error'; readonly code: ApiErrorCode | 'UNKNOWN' }
   | { readonly status: 'ready'; readonly value: T };
 
 export function useApiResource<T>(
@@ -23,7 +23,7 @@ export function useApiResource<T>(
       })
       .catch((error: unknown) => {
         if (!active) return;
-        setState({ status: 'error', code: error instanceof MockApiError ? error.code : 'UNKNOWN' });
+        setState({ status: 'error', code: error instanceof ApiError ? error.code : 'UNKNOWN' });
       });
 
     return () => {

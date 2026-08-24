@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createMockApi } from './mockApi';
-import type { MockFinanceApi } from './types';
+import type { FinanceApi } from './types';
 
-let api: MockFinanceApi;
+let api: FinanceApi;
 
 async function previewStatement(accountId: string) {
   const grant = await api.requestStatementUpload({ fileName: 'statement.csv', accountId, sizeBytes: 2_048 });
