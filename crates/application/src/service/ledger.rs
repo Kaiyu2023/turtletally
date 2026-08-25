@@ -92,13 +92,11 @@ impl<S: FinanceStore, O: ObjectStore> FinanceService<S, O> {
         actor: Actor,
         input: &CreateTransactionInput,
     ) -> DomainResult<Transaction> {
+        // Who wrote a row is a fact the server knows, not a value the caller
+        // supplies: a browser request claiming to be the assistant is still the
+        // browser.
         let transaction = self
-            .build_transaction(
-                owner,
-                input,
-                input.origin.unwrap_or(TransactionOrigin::Manual),
-                None,
-            )
+            .build_transaction(owner, input, origin_of(actor), None)
             .await?;
         let audit = self.audit(
             AuditAction::TransactionCreated,
@@ -373,6 +371,14 @@ impl<S: FinanceStore, O: ObjectStore> FinanceService<S, O> {
             updated_at: now,
             version: 1,
         })
+    }
+}
+
+fn origin_of(actor: Actor) -> TransactionOrigin {
+    match actor {
+        Actor::Browser => TransactionOrigin::Manual,
+        Actor::Assistant => TransactionOrigin::Assistant,
+        Actor::Scheduler => TransactionOrigin::Schedule,
     }
 }
 

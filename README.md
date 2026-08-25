@@ -25,9 +25,13 @@ Each route keeps orchestration, presentation components, and styles together in 
 
 The production-oriented [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
 
+## Conversational access
+
+The MCP ingress authenticates with the protocol's own OAuth 2.1 bearer tokens and publishes the metadata a client discovers from a refusal ([ADR 0011](docs/architecture/0011-model-independent-mcp-ingress.md)), so any specification-compliant assistant can connect and nothing in the server knows which model is behind it. Each assistant gets its own registered client, its own revocation, and its own review before live data. Every change it can make is a preview the owner reads and a commit that applies exactly that proposal, once.
+
 ## Rust crates
 
-`crates/domain` expresses the same domain in Rust for the future backend, `crates/application` holds the use cases both ingresses will call, and `crates/storage` implements their ports against DynamoDB and S3: validation, version checks, deactivation rules, cursor-paged reads, monthly rollup maintenance, schedule runs, and receipt grants. The domain and application crates know nothing about AWS; storage, transport, and authentication are ports, and an in-memory store implements them for the tests. [ADR 0010](docs/architecture/0010-dynamodb-key-design.md) fixes the key design the storage crate builds. The TypeScript contract remains the source of truth ([ADR 0008](docs/architecture/0008-typescript-owns-the-domain-contract.md)), and conformance is proven by data rather than code generation: `npm run contract:vector` exports the mock's fixtures and its derived aggregates to `crates/domain/tests/conformance-vector.json`, and `cargo test` deserialises that vector, re-derives every figure, and asserts identical minor-unit results. A field added on one side without the other fails a test instead of reaching production.
+`crates/domain` expresses the same domain in Rust for the backend, `crates/application` holds the use cases both ingresses call, `crates/storage` implements their ports against DynamoDB and S3, `crates/auth` holds the browser session and token verification, and `crates/app-api` and `crates/mcp-api` are the two deployable binaries: validation, version checks, deactivation rules, cursor-paged reads, monthly rollup maintenance, schedule runs, and receipt grants. The domain and application crates know nothing about AWS; storage, transport, and authentication are ports, and an in-memory store implements them for the tests. [ADR 0010](docs/architecture/0010-dynamodb-key-design.md) fixes the key design the storage crate builds. The TypeScript contract remains the source of truth ([ADR 0008](docs/architecture/0008-typescript-owns-the-domain-contract.md)), and conformance is proven by data rather than code generation: `npm run contract:vector` exports the mock's fixtures and its derived aggregates to `crates/domain/tests/conformance-vector.json`, and `cargo test` deserialises that vector, re-derives every figure, and asserts identical minor-unit results. A field added on one side without the other fails a test instead of reaching production.
 
 Use `?scenario=empty` on any route to review the first-use state.
 
@@ -86,7 +90,7 @@ See [SECURITY.md](SECURITY.md) for reporting and [the repository security policy
 - [AGENTS.md](AGENTS.md) holds the repository rules, security boundaries, and the human approval gates automation must not cross.
 - [API conventions](docs/api/conventions.md) apply to every endpoint; the [user preferences API](docs/api/user-preferences.md) is the worked example.
 - [Threat model](docs/threat-model.md) records assets, entry points, controls, and residual risks.
-- [Manual owner actions](docs/operations/manual-actions.md) identifies AWS and ChatGPT steps that automation must not cross.
+- [Manual owner actions](docs/operations/manual-actions.md) identifies the AWS and assistant-connection steps that automation must not cross.
 
 These documents use placeholders and synthetic examples. They do not grant deployment, billing, domain, or live-data approval.
 

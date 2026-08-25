@@ -1,0 +1,31 @@
+[package]
+name = "turtle-tally-mcp-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "mcp-api"
+path = "src/main.rs"
+
+[dependencies]
+aws-config = { version = "1.11.0", default-features = false, features = ["behavior-version-latest", "credentials-process", "default-https-client", "rt-tokio", "sso"] }
+aws-sdk-dynamodb = { version = "1.122.0", default-features = false, features = ["behavior-version-latest", "default-https-client", "rt-tokio"] }
+aws-sdk-s3 = { version = "1.143.0", default-features = false, features = ["behavior-version-latest", "default-https-client", "rt-tokio"] }
+axum = "0.8.9"
+chrono = { version = "0.4.45", default-features = false, features = ["std", "alloc", "now"] }
+http = "1.5.0"
+lambda_http = "0.17.0"
+rmcp = { version = "3.1.4", features = ["server", "transport-streamable-http-server"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tokio = { version = "1.53.1", features = ["macros", "rt-multi-thread"] }
+turtle-tally-application = { path = "../application" }
+turtle-tally-auth = { path = "../auth" }
+turtle-tally-domain = { path = "../domain" }
+turtle-tally-storage = { path = "../storage" }

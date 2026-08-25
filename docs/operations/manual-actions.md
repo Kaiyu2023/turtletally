@@ -70,27 +70,31 @@ Owner actions:
 
 Do not weaken passkey or recovery settings merely to satisfy a managed-login default.
 
-## ChatGPT Work compatibility gate
+## MCP client compatibility gate
 
-Owner or workspace-administrator actions:
+The proof is client-neutral (ADR 0011). Run it with whichever assistant is to be
+connected first, and run it again for each additional one; registration and
+revocation are per client.
 
-- [ ] Confirm the workspace permits the required private developer or plugin capability.
+Owner or workspace-administrator actions, for each assistant:
+
+- [ ] Confirm the assistant's workspace or account permits a private connector.
 - [ ] Review retention, training, sharing, connector, and administrator settings before any connection.
-- [ ] Supply the exact callback URL shown by ChatGPT through an approved local channel and register only that value on the dedicated Cognito client.
+- [ ] Supply the exact callback URL the assistant shows through an approved local channel and register only that value on that assistant's own Cognito client.
 - [ ] Perform interactive Cognito login and consent.
 - [ ] Approve a connection to synthetic data only for the compatibility proof.
 
 The proof must demonstrate all of the following before MCP work continues:
 
-1. ChatGPT discovers the protected-resource metadata.
-2. ChatGPT uses the pre-registered dedicated client and exact callback.
+1. The client discovers the protected-resource metadata from an unauthenticated response.
+2. The client uses its own pre-registered client and exact callback.
 3. Cognito accepts authorization and token requests, including the OAuth resource value.
-4. The access token contains the expected resource or audience and scope claims.
-5. API Gateway accepts the OpenAI client certificate and rejects a client without one.
-6. The authorizer receives the certificate and verifies the exact expected DNS SAN.
-7. A minimal read-only synthetic summary tool succeeds.
+4. The access token carries the expected audience and scope claims, and the ingress refuses a token that carries neither.
+5. The ingress refuses a request with no token at all, and answers it with the address of the metadata document.
+6. A minimal read-only synthetic summary tool succeeds.
+7. A mutation requires a preview and a commit, and a replayed commit is refused.
 
-Stop on any failure. Preserve only a redacted protocol shape. A custom OAuth adapter, relaxed certificate check, reused browser client, or weakened token binding requires a new design and explicit owner approval.
+Record which client and version was proven. Stop on any failure. Preserve only a redacted protocol shape. A custom OAuth adapter, reused browser client, or weakened token binding requires a new design and explicit owner approval.
 
 ## Imports and live-data gates
 
@@ -98,9 +102,9 @@ Owner actions:
 
 - [ ] For a supported bank parser, provide a locally controlled redacted sample and confirm column and debit/credit interpretation.
 - [ ] Before live MCP access, review every exposed field, scope, tool description, limit, annotation, and preview/commit confirmation.
-- [ ] Confirm ChatGPT workspace policy again and explicitly authorise the live-data connection.
+- [ ] Confirm each assistant's workspace policy again and explicitly authorise the live-data connection, one assistant at a time.
 
-A real statement must not enter source control, issues, pull requests, logs, or CI. Create a wholly synthetic fixture before committing parser tests. ChatGPT must not receive raw statement objects or receipt binaries in version 1.
+A real statement must not enter source control, issues, pull requests, logs, or CI. Create a wholly synthetic fixture before committing parser tests. No assistant receives raw statement objects or receipt binaries in version 1.
 
 ## Recovery, alerts, and security-review gate
 
@@ -114,14 +118,14 @@ Owner actions:
 
 Do not proceed while a recovery path is untested, an alert is unconfirmed, or a high or critical security finding remains unresolved.
 
-## Production deployment and ChatGPT connection gate
+## Production deployment and assistant connection gate
 
 Owner actions:
 
 - [ ] Review and approve the final production saved plan locally, including its checksum, root, backend key, named account, profile, region, stage, inputs, dependency order, DNS cutover, and rollback procedure.
 - [ ] Authorise production deployment and CloudFront plan association as separate actions.
 - [ ] Perform the final passkey login and production smoke checks.
-- [ ] Review ChatGPT consent and explicitly authorise the production MCP connection after the web application is stable.
+- [ ] Review each assistant's consent and explicitly authorise its production MCP connection after the web application is stable.
 - [ ] Run a fresh detailed-exit-code plan and confirm it reports no changes; confirm billing contains no unexpected paid service.
 
 Production approval does not authorise destructive cleanup. Any later infrastructure, scope, callback, workspace-policy, or live-data change returns to the corresponding gate.

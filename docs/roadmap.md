@@ -26,6 +26,8 @@ The scheduler worker and its trigger, then statement import. Each is a separate 
 
 The separate ingress of ADR 0004, gated on the compatibility proof. ADR 0009 requires that proof to run first as a throwaway spike against a disposable domain.
 
+ADR 0011 makes that ingress client-independent: it authenticates with the protocol's own OAuth 2.1 bearer tokens and publishes the metadata a client discovers from a refusal, so any specification-compliant assistant can connect and the server knows nothing about which model is behind it. The binary, its tool surface, and the preview-and-commit pairs are implemented; registering a client and proving the gate remain owner actions.
+
 ## Deferred, with reasons
 
 Work the design review identified, consciously not done, recorded here so it is a decision rather than an oversight. Each entry says what would make it worth doing.
@@ -33,7 +35,7 @@ Work the design review identified, consciously not done, recorded here so it is 
 - **Sweeping the stylesheets onto the layout tokens.** `:root` defines spacing, type-scale, z-index and breakpoint tokens, and the two values that were measurably wrong are fixed. Roughly 135 declarations still carry literals. Do this when a stylesheet is being changed for another reason, not as a sweep of its own: it is mechanical work with real regression risk and no functional payoff.
 - **Branded `Month` and `LocalDate`.** The template literal types admit `'2026-1'`, which the runtime regexes then reject. Threading a parse constructor through every literal in the fixtures, tests and components costs more than the defect removes. Revisit if a malformed value ever reaches a user, or when the Rust crate needs the same guarantee at its boundary.
 - **Splitting language from currency and timezone.** Governed by the evolution rule in the user preferences API document, which requires their product semantics to be defined first. A single `AppLocale` currently drives all three.
-- **The ChatGPT compatibility spike.** ADR 0009 moves it ahead of irreversible spend. Running it is an owner action against a sandbox account and a disposable domain.
+- **The MCP client compatibility spike.** ADR 0009 moves it ahead of irreversible spend, and ADR 0011 makes it client-neutral. Running it is an owner action against a sandbox account and a disposable domain.
 
 ## Not scheduled
 
