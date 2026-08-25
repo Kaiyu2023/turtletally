@@ -117,6 +117,15 @@ impl Month {
         LocalDate::from_naive(next_first.pred_opt().expect("a month has a last day"))
     }
 
+    pub fn next(&self) -> Self {
+        let (year, month) = if self.number() == 12 {
+            (self.year() + 1, 1)
+        } else {
+            (self.year(), self.number() + 1)
+        };
+        Self(format!("{year:04}-{month:02}"))
+    }
+
     pub fn previous(&self) -> Self {
         let (year, month) = if self.number() == 1 {
             (self.year() - 1, 12)

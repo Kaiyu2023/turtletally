@@ -10,7 +10,11 @@ allow-wildcard-paths = true
 highlight = "all"
 
 [licenses]
-allow = ["Apache-2.0", "MIT", "Unicode-3.0"]
+# The three additions below arrive with the AWS SDK's TLS stack: BSD-3-Clause
+# for constant-time comparison, ISC for the certificate verifier and its parser,
+# and Zlib for a hash function. All are permissive and carry no reciprocal
+# obligation for a repository under MIT.
+allow = ["Apache-2.0", "BSD-3-Clause", "ISC", "MIT", "Unicode-3.0", "Zlib"]
 confidence-threshold = 0.8
 unused-allowed-license = "allow"
 
