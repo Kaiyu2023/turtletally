@@ -11,7 +11,7 @@ Terraform state and saved plans can contain sensitive values, and state boundari
 
 ## Decision
 
-Use Terraform as the sole infrastructure-as-code engine. Pin Terraform 1.15.8 and the AWS provider 6.60.0, and commit the generated `.terraform.lock.hcl`. Do not retain CDK or introduce CDK for Terraform.
+Use Terraform as the sole infrastructure-as-code engine. Pin Terraform 1.15.9 and the AWS provider 6.60.0, and commit the generated `.terraform.lock.hcl`. Do not retain CDK or introduce CDK for Terraform.
 
 Milestone 0 keeps one credential-free, resource-free root in `infra`. When AWS work begins, use a separately gated bootstrap root for the state store, one account root for shared guardrails, and an environment root reused with distinct backend keys and reviewed inputs for sandbox and production. Reusable child modules may separate edge, identity, data, application, MCP, and scheduling implementation, but a child module does not own state and is not independently deployable. Do not use Terraform workspaces to separate production from sandbox.
 
