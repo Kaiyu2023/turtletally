@@ -1,5 +1,5 @@
 [package]
-name = "turtle-tally-storage"
+name = "turtle-tally-app-api"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -9,16 +9,23 @@ publish = false
 [lints]
 workspace = true
 
+[[bin]]
+name = "app-api"
+path = "src/main.rs"
+
 [dependencies]
 aws-config = { version = "1.11.0", default-features = false, features = ["behavior-version-latest", "credentials-process", "default-https-client", "rt-tokio", "sso"] }
 aws-sdk-dynamodb = { version = "1.122.0", default-features = false, features = ["behavior-version-latest", "default-https-client", "rt-tokio"] }
 aws-sdk-kms = { version = "1.98.0", default-features = false, features = ["behavior-version-latest", "default-https-client", "rt-tokio"] }
 aws-sdk-s3 = { version = "1.143.0", default-features = false, features = ["behavior-version-latest", "default-https-client", "rt-tokio"] }
-base64 = "0.23.1"
+axum = "0.8.9"
 chrono = { version = "0.4.45", default-features = false, features = ["std", "alloc", "now"] }
+lambda_http = "0.17.0"
+reqwest = { version = "0.13.1", default-features = false, features = ["form", "http2", "json", "rustls", "webpki-roots"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
-sha2 = "0.11.0"
+tokio = { version = "1.53.1", features = ["macros", "rt-multi-thread"] }
 turtle-tally-application = { path = "../application" }
 turtle-tally-auth = { path = "../auth" }
 turtle-tally-domain = { path = "../domain" }
+turtle-tally-storage = { path = "../storage" }
