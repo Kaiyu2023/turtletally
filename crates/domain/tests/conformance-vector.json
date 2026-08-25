@@ -1994,15 +1994,15 @@
               "percentUsed": 72
             },
             {
-              "id": "budget-2026-07-category-demo-subscriptions",
+              "id": "budget-2026-07-category-demo-education",
               "month": "2026-07",
-              "categoryId": "category-demo-subscriptions",
-              "limitMinor": 5500,
+              "categoryId": "category-demo-education",
+              "limitMinor": 6000,
               "version": null,
-              "categoryName": "Subscriptions",
-              "colour": "#b8a1cf",
+              "categoryName": "Education",
+              "colour": "#6c91bf",
               "spentMinor": 0,
-              "remainingMinor": 5500,
+              "remainingMinor": 6000,
               "percentUsed": 0
             },
             {
@@ -2018,15 +2018,15 @@
               "percentUsed": 0
             },
             {
-              "id": "budget-2026-07-category-demo-education",
+              "id": "budget-2026-07-category-demo-subscriptions",
               "month": "2026-07",
-              "categoryId": "category-demo-education",
-              "limitMinor": 6000,
+              "categoryId": "category-demo-subscriptions",
+              "limitMinor": 5500,
               "version": null,
-              "categoryName": "Education",
-              "colour": "#6c91bf",
+              "categoryName": "Subscriptions",
+              "colour": "#b8a1cf",
               "spentMinor": 0,
-              "remainingMinor": 6000,
+              "remainingMinor": 5500,
               "percentUsed": 0
             },
             {
@@ -2352,30 +2352,6 @@
           "spendingByCategory": [],
           "budgets": [
             {
-              "id": "budget-2026-09-category-demo-rent",
-              "month": "2026-09",
-              "categoryId": "category-demo-rent",
-              "limitMinor": 118000,
-              "version": null,
-              "categoryName": "Rent",
-              "colour": "#9b8ac4",
-              "spentMinor": 0,
-              "remainingMinor": 118000,
-              "percentUsed": 0
-            },
-            {
-              "id": "budget-2026-09-category-demo-groceries",
-              "month": "2026-09",
-              "categoryId": "category-demo-groceries",
-              "limitMinor": 36000,
-              "version": null,
-              "categoryName": "Groceries",
-              "colour": "#76b7b2",
-              "spentMinor": 0,
-              "remainingMinor": 36000,
-              "percentUsed": 0
-            },
-            {
               "id": "budget-2026-09-category-demo-dining",
               "month": "2026-09",
               "categoryId": "category-demo-dining",
@@ -2385,66 +2361,6 @@
               "colour": "#f28e8b",
               "spentMinor": 0,
               "remainingMinor": 18000,
-              "percentUsed": 0
-            },
-            {
-              "id": "budget-2026-09-category-demo-household",
-              "month": "2026-09",
-              "categoryId": "category-demo-household",
-              "limitMinor": 12000,
-              "version": null,
-              "categoryName": "Household",
-              "colour": "#edc66d",
-              "spentMinor": 0,
-              "remainingMinor": 12000,
-              "percentUsed": 0
-            },
-            {
-              "id": "budget-2026-09-category-demo-electricity",
-              "month": "2026-09",
-              "categoryId": "category-demo-electricity",
-              "limitMinor": 8000,
-              "version": null,
-              "categoryName": "Electricity",
-              "colour": "#f4a261",
-              "spentMinor": 0,
-              "remainingMinor": 8000,
-              "percentUsed": 0
-            },
-            {
-              "id": "budget-2026-09-category-demo-mobile",
-              "month": "2026-09",
-              "categoryId": "category-demo-mobile",
-              "limitMinor": 2500,
-              "version": null,
-              "categoryName": "Mobile",
-              "colour": "#84a59d",
-              "spentMinor": 0,
-              "remainingMinor": 2500,
-              "percentUsed": 0
-            },
-            {
-              "id": "budget-2026-09-category-demo-subscriptions",
-              "month": "2026-09",
-              "categoryId": "category-demo-subscriptions",
-              "limitMinor": 5500,
-              "version": null,
-              "categoryName": "Subscriptions",
-              "colour": "#b8a1cf",
-              "spentMinor": 0,
-              "remainingMinor": 5500,
-              "percentUsed": 0
-            },
-            {
-              "id": "budget-2026-09-category-demo-healthcare",
-              "month": "2026-09",
-              "categoryId": "category-demo-healthcare",
-              "limitMinor": 7000,
-              "version": null,
-              "categoryName": "Healthcare",
-              "colour": "#ef767a",
-              "spentMinor": 0,
-              "remainingMinor": 7000,
               "percentUsed": 0
             },
             {
@@ -2460,15 +2376,63 @@
               "percentUsed": 0
             },
             {
-              "id": "budget-2026-09-category-demo-transit",
+              "id": "budget-2026-09-category-demo-electricity",
               "month": "2026-09",
-              "categoryId": "category-demo-transit",
-              "limitMinor": 6500,
+              "categoryId": "category-demo-electricity",
+              "limitMinor": 8000,
               "version": null,
-              "categoryName": "Public transit",
-              "colour": "#43aa8b",
+              "categoryName": "Electricity",
+              "colour": "#f4a261",
               "spentMinor": 0,
-              "remainingMinor": 6500,
+              "remainingMinor": 8000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-groceries",
+              "month": "2026-09",
+              "categoryId": "category-demo-groceries",
+              "limitMinor": 36000,
+              "version": null,
+              "categoryName": "Groceries",
+              "colour": "#76b7b2",
+              "spentMinor": 0,
+              "remainingMinor": 36000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-healthcare",
+              "month": "2026-09",
+              "categoryId": "category-demo-healthcare",
+              "limitMinor": 7000,
+              "version": null,
+              "categoryName": "Healthcare",
+              "colour": "#ef767a",
+              "spentMinor": 0,
+              "remainingMinor": 7000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-household",
+              "month": "2026-09",
+              "categoryId": "category-demo-household",
+              "limitMinor": 12000,
+              "version": null,
+              "categoryName": "Household",
+              "colour": "#edc66d",
+              "spentMinor": 0,
+              "remainingMinor": 12000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-mobile",
+              "month": "2026-09",
+              "categoryId": "category-demo-mobile",
+              "limitMinor": 2500,
+              "version": null,
+              "categoryName": "Mobile",
+              "colour": "#84a59d",
+              "spentMinor": 0,
+              "remainingMinor": 2500,
               "percentUsed": 0
             },
             {
@@ -2481,6 +2445,42 @@
               "colour": "#577590",
               "spentMinor": 0,
               "remainingMinor": 9000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-rent",
+              "month": "2026-09",
+              "categoryId": "category-demo-rent",
+              "limitMinor": 118000,
+              "version": null,
+              "categoryName": "Rent",
+              "colour": "#9b8ac4",
+              "spentMinor": 0,
+              "remainingMinor": 118000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-subscriptions",
+              "month": "2026-09",
+              "categoryId": "category-demo-subscriptions",
+              "limitMinor": 5500,
+              "version": null,
+              "categoryName": "Subscriptions",
+              "colour": "#b8a1cf",
+              "spentMinor": 0,
+              "remainingMinor": 5500,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-transit",
+              "month": "2026-09",
+              "categoryId": "category-demo-transit",
+              "limitMinor": 6500,
+              "version": null,
+              "categoryName": "Public transit",
+              "colour": "#43aa8b",
+              "spentMinor": 0,
+              "remainingMinor": 6500,
               "percentUsed": 0
             }
           ],
@@ -2714,15 +2714,15 @@
             "percentUsed": 72
           },
           {
-            "id": "budget-2026-07-category-demo-subscriptions",
+            "id": "budget-2026-07-category-demo-education",
             "month": "2026-07",
-            "categoryId": "category-demo-subscriptions",
-            "limitMinor": 5500,
+            "categoryId": "category-demo-education",
+            "limitMinor": 6000,
             "version": null,
-            "categoryName": "Subscriptions",
-            "colour": "#b8a1cf",
+            "categoryName": "Education",
+            "colour": "#6c91bf",
             "spentMinor": 0,
-            "remainingMinor": 5500,
+            "remainingMinor": 6000,
             "percentUsed": 0
           },
           {
@@ -2738,15 +2738,15 @@
             "percentUsed": 0
           },
           {
-            "id": "budget-2026-07-category-demo-education",
+            "id": "budget-2026-07-category-demo-subscriptions",
             "month": "2026-07",
-            "categoryId": "category-demo-education",
-            "limitMinor": 6000,
+            "categoryId": "category-demo-subscriptions",
+            "limitMinor": 5500,
             "version": null,
-            "categoryName": "Education",
-            "colour": "#6c91bf",
+            "categoryName": "Subscriptions",
+            "colour": "#b8a1cf",
             "spentMinor": 0,
-            "remainingMinor": 6000,
+            "remainingMinor": 5500,
             "percentUsed": 0
           },
           {
@@ -2767,30 +2767,6 @@
         "month": "2026-09",
         "rows": [
           {
-            "id": "budget-2026-09-category-demo-rent",
-            "month": "2026-09",
-            "categoryId": "category-demo-rent",
-            "limitMinor": 118000,
-            "version": null,
-            "categoryName": "Rent",
-            "colour": "#9b8ac4",
-            "spentMinor": 0,
-            "remainingMinor": 118000,
-            "percentUsed": 0
-          },
-          {
-            "id": "budget-2026-09-category-demo-groceries",
-            "month": "2026-09",
-            "categoryId": "category-demo-groceries",
-            "limitMinor": 36000,
-            "version": null,
-            "categoryName": "Groceries",
-            "colour": "#76b7b2",
-            "spentMinor": 0,
-            "remainingMinor": 36000,
-            "percentUsed": 0
-          },
-          {
             "id": "budget-2026-09-category-demo-dining",
             "month": "2026-09",
             "categoryId": "category-demo-dining",
@@ -2800,66 +2776,6 @@
             "colour": "#f28e8b",
             "spentMinor": 0,
             "remainingMinor": 18000,
-            "percentUsed": 0
-          },
-          {
-            "id": "budget-2026-09-category-demo-household",
-            "month": "2026-09",
-            "categoryId": "category-demo-household",
-            "limitMinor": 12000,
-            "version": null,
-            "categoryName": "Household",
-            "colour": "#edc66d",
-            "spentMinor": 0,
-            "remainingMinor": 12000,
-            "percentUsed": 0
-          },
-          {
-            "id": "budget-2026-09-category-demo-electricity",
-            "month": "2026-09",
-            "categoryId": "category-demo-electricity",
-            "limitMinor": 8000,
-            "version": null,
-            "categoryName": "Electricity",
-            "colour": "#f4a261",
-            "spentMinor": 0,
-            "remainingMinor": 8000,
-            "percentUsed": 0
-          },
-          {
-            "id": "budget-2026-09-category-demo-mobile",
-            "month": "2026-09",
-            "categoryId": "category-demo-mobile",
-            "limitMinor": 2500,
-            "version": null,
-            "categoryName": "Mobile",
-            "colour": "#84a59d",
-            "spentMinor": 0,
-            "remainingMinor": 2500,
-            "percentUsed": 0
-          },
-          {
-            "id": "budget-2026-09-category-demo-subscriptions",
-            "month": "2026-09",
-            "categoryId": "category-demo-subscriptions",
-            "limitMinor": 5500,
-            "version": null,
-            "categoryName": "Subscriptions",
-            "colour": "#b8a1cf",
-            "spentMinor": 0,
-            "remainingMinor": 5500,
-            "percentUsed": 0
-          },
-          {
-            "id": "budget-2026-09-category-demo-healthcare",
-            "month": "2026-09",
-            "categoryId": "category-demo-healthcare",
-            "limitMinor": 7000,
-            "version": null,
-            "categoryName": "Healthcare",
-            "colour": "#ef767a",
-            "spentMinor": 0,
-            "remainingMinor": 7000,
             "percentUsed": 0
           },
           {
@@ -2875,15 +2791,63 @@
             "percentUsed": 0
           },
           {
-            "id": "budget-2026-09-category-demo-transit",
+            "id": "budget-2026-09-category-demo-electricity",
             "month": "2026-09",
-            "categoryId": "category-demo-transit",
-            "limitMinor": 6500,
+            "categoryId": "category-demo-electricity",
+            "limitMinor": 8000,
             "version": null,
-            "categoryName": "Public transit",
-            "colour": "#43aa8b",
+            "categoryName": "Electricity",
+            "colour": "#f4a261",
             "spentMinor": 0,
-            "remainingMinor": 6500,
+            "remainingMinor": 8000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-groceries",
+            "month": "2026-09",
+            "categoryId": "category-demo-groceries",
+            "limitMinor": 36000,
+            "version": null,
+            "categoryName": "Groceries",
+            "colour": "#76b7b2",
+            "spentMinor": 0,
+            "remainingMinor": 36000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-healthcare",
+            "month": "2026-09",
+            "categoryId": "category-demo-healthcare",
+            "limitMinor": 7000,
+            "version": null,
+            "categoryName": "Healthcare",
+            "colour": "#ef767a",
+            "spentMinor": 0,
+            "remainingMinor": 7000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-household",
+            "month": "2026-09",
+            "categoryId": "category-demo-household",
+            "limitMinor": 12000,
+            "version": null,
+            "categoryName": "Household",
+            "colour": "#edc66d",
+            "spentMinor": 0,
+            "remainingMinor": 12000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-mobile",
+            "month": "2026-09",
+            "categoryId": "category-demo-mobile",
+            "limitMinor": 2500,
+            "version": null,
+            "categoryName": "Mobile",
+            "colour": "#84a59d",
+            "spentMinor": 0,
+            "remainingMinor": 2500,
             "percentUsed": 0
           },
           {
@@ -2896,6 +2860,42 @@
             "colour": "#577590",
             "spentMinor": 0,
             "remainingMinor": 9000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-rent",
+            "month": "2026-09",
+            "categoryId": "category-demo-rent",
+            "limitMinor": 118000,
+            "version": null,
+            "categoryName": "Rent",
+            "colour": "#9b8ac4",
+            "spentMinor": 0,
+            "remainingMinor": 118000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-subscriptions",
+            "month": "2026-09",
+            "categoryId": "category-demo-subscriptions",
+            "limitMinor": 5500,
+            "version": null,
+            "categoryName": "Subscriptions",
+            "colour": "#b8a1cf",
+            "spentMinor": 0,
+            "remainingMinor": 5500,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-transit",
+            "month": "2026-09",
+            "categoryId": "category-demo-transit",
+            "limitMinor": 6500,
+            "version": null,
+            "categoryName": "Public transit",
+            "colour": "#43aa8b",
+            "spentMinor": 0,
+            "remainingMinor": 6500,
             "percentUsed": 0
           }
         ]

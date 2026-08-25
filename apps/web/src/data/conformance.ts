@@ -8,6 +8,7 @@ import {
 } from './aggregates';
 import { batchContentHash, rowFingerprint, type SourceRow } from './fingerprint';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY } from './fixtures';
+import { compareNames } from './ordering';
 import { nextOccurrence } from './recurrence';
 import { instantAt, zonedDate, zonedTime } from './time';
 import type {
@@ -129,11 +130,6 @@ function project(transactions: readonly Transaction[], accounts: readonly Accoun
   }));
 }
 
-function byName(left: string, right: string): number {
-  const folded = left.toLowerCase().localeCompare(right.toLowerCase());
-  return folded !== 0 ? folded : left.localeCompare(right);
-}
-
 export function buildConformanceVector(): ConformanceVector {
   const state = createMockFixtures();
   const { accounts, categories, budgets, budgetDefaults, schedules } = state;
@@ -196,9 +192,11 @@ export function buildConformanceVector(): ConformanceVector {
       })),
       instants: LOCAL_TIMES.map((entry) => ({ ...entry, instant: instantAt(entry.localDate, entry.timeOfDay) })),
       referenceOrder: {
-        accountIds: [...accounts].sort((left, right) => byName(left.name, right.name)).map((account) => account.id),
+        accountIds: [...accounts]
+          .sort((left, right) => compareNames(left.name, right.name))
+          .map((account) => account.id),
         categoryIds: [...categories]
-          .sort((left, right) => byName(left.group, right.group) || byName(left.name, right.name))
+          .sort((left, right) => compareNames(left.group, right.group) || compareNames(left.name, right.name))
           .map((category) => category.id),
       },
     },

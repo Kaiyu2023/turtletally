@@ -9,6 +9,7 @@ pub mod fingerprint;
 pub mod money;
 pub mod recurrence;
 pub mod reference;
+pub mod rollup;
 pub mod time;
 pub mod types;
 
