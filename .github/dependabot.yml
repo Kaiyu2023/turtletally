@@ -18,8 +18,18 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
 
+  # Every root and module keeps its own lockfile, so each is watched. A bump
+  # that reached only one of them would leave the pins disagreeing.
   - package-ecosystem: terraform
-    directory: /infra
+    directories:
+      - /infra
+      - /infra/bootstrap
+      - /infra/environment
+      - /infra/modules/*
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      terraform-providers:
+        patterns:
+          - '*'
