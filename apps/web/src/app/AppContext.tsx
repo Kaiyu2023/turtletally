@@ -130,12 +130,19 @@ export function AppProvider({ api: source, children }: AppProviderProps) {
         <div className="visually-hidden" role="alert">
           {toast?.tone === 'error' ? toast.message : ''}
         </div>
-        {sessionLost ? <SessionEndedNotice onReload={() => window.location.reload()} /> : null}
+        {sessionLost ? <SessionEndedNotice onReload={() => window.location.reload()} signInUrl={signInUrl()} /> : null}
         {children}
         {toast ? <Toast message={toast.message} tone={toast.tone} onDismiss={() => setToast(null)} /> : null}
       </AppContext.Provider>
     </LocaleProvider>
   );
+}
+
+/// A deployed build sends the owner back to the sign-in route; a draft build
+/// has no server to sign in to and offers a reload instead.
+function signInUrl(): string | undefined {
+  const base = import.meta.env.VITE_API_BASE;
+  return base === undefined ? undefined : `${base.replace(/\/$/, '')}/auth/login`;
 }
 
 export function useApp(): AppContextValue {

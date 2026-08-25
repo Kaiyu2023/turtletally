@@ -243,7 +243,13 @@ export function Toast({ message, tone = 'success', onDismiss }: ToastProps) {
   );
 }
 
-export function SessionEndedNotice({ onReload }: { readonly onReload: () => void }) {
+export function SessionEndedNotice({
+  onReload,
+  signInUrl,
+}: {
+  readonly onReload: () => void;
+  readonly signInUrl?: string | undefined;
+}) {
   const t = useMessages(commonMessages);
   return (
     <div className="session-ended" role="alert">
@@ -252,9 +258,15 @@ export function SessionEndedNotice({ onReload }: { readonly onReload: () => void
         <strong>{t('sessionEndedTitle')}</strong>
         <p>{t('sessionEndedBody')}</p>
       </div>
-      <Button variant="ghost" onClick={onReload}>
-        {t('reload')}
-      </Button>
+      {signInUrl ? (
+        <Button variant="ghost" onClick={() => window.location.assign(signInUrl)}>
+          {t('signIn')}
+        </Button>
+      ) : (
+        <Button variant="ghost" onClick={onReload}>
+          {t('reload')}
+        </Button>
+      )}
     </div>
   );
 }
