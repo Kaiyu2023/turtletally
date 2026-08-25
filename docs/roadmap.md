@@ -12,6 +12,8 @@ The domain crate expresses the contract of ADR 0008 and proves conformance again
 
 Money, the calendar types, the London wall clock, import fingerprints, recurrence, the reference-list order, and every dashboard and budget aggregate are implemented and pass against the exported vector.
 
+The use cases that sit above the domain are implemented too, against ports rather than AWS: reference entities, the ledger with its balance and rollup effects, budgets, schedules and their bounded catch-up run, and receipt grants whose stored object is checked against the checksum the client reports. An in-memory store enforces the same version conditions and single-use rules the persistent one must, so the behaviour is tested without an account.
+
 ## Milestone 2 — first AWS resources
 
 The Terraform bootstrap root and state backend of ADR 0006, then the browser application scope of ADR 0009: CloudFront, one Lambda binary, DynamoDB, Cognito, and S3 for receipts. Requires the recorded cost ceiling, a proven state restoration, and the owner approvals listed in the manual actions register.

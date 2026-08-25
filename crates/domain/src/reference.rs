@@ -1,3 +1,4 @@
+use crate::ordering::compare_names;
 use crate::types::{Account, Category};
 
 /// The bounded reference lists are read on almost every route, so their order
@@ -13,12 +14,6 @@ pub fn sort_categories(categories: &mut [Category]) {
         compare_names(group_name(left), group_name(right))
             .then_with(|| compare_names(&left.name, &right.name))
     });
-}
-
-pub fn compare_names(left: &str, right: &str) -> std::cmp::Ordering {
-    left.to_lowercase()
-        .cmp(&right.to_lowercase())
-        .then_with(|| left.cmp(right))
 }
 
 fn group_name(category: &Category) -> &'static str {

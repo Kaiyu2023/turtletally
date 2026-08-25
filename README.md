@@ -25,9 +25,9 @@ Each route keeps orchestration, presentation components, and styles together in 
 
 The production-oriented [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
 
-## Domain crate
+## Rust crates
 
-`crates/domain` expresses the same domain in Rust for the future backend. The TypeScript contract remains the source of truth ([ADR 0008](docs/architecture/0008-typescript-owns-the-domain-contract.md)), and conformance is proven by data rather than code generation: `npm run contract:vector` exports the mock's fixtures and its derived aggregates to `crates/domain/tests/conformance-vector.json`, and `cargo test` deserialises that vector, re-derives every figure, and asserts identical minor-unit results. A field added on one side without the other fails a test instead of reaching production.
+`crates/domain` expresses the same domain in Rust for the future backend, and `crates/application` holds the use cases both ingresses will call: validation, version checks, deactivation rules, cursor-paged reads, monthly rollup maintenance, schedule runs, and receipt grants. Neither crate knows about AWS; storage, transport, and authentication are ports, and an in-memory store implements them for the tests. The TypeScript contract remains the source of truth ([ADR 0008](docs/architecture/0008-typescript-owns-the-domain-contract.md)), and conformance is proven by data rather than code generation: `npm run contract:vector` exports the mock's fixtures and its derived aggregates to `crates/domain/tests/conformance-vector.json`, and `cargo test` deserialises that vector, re-derives every figure, and asserts identical minor-unit results. A field added on one side without the other fails a test instead of reaching production.
 
 Use `?scenario=empty` on any route to review the first-use state.
 
