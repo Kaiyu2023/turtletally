@@ -1,3 +1,4 @@
+import { negated } from './money';
 import {
   ApiError,
   type Budget,
@@ -43,7 +44,7 @@ export function totalByKind(transactions: readonly Transaction[], kind: Transact
   const total = transactions
     .filter((transaction) => transaction.kind === kind)
     .reduce((running, transaction) => running + transaction.amountMinor, 0);
-  return kind === 'INCOME' ? total : -total;
+  return kind === 'INCOME' ? total : negated(total);
 }
 
 export function totalAmount(transactions: readonly Transaction[]): number {
@@ -222,8 +223,10 @@ export function summariseMonth(input: MonthSummaryInput): DashboardSummary {
     investmentCreditsMinor: totalAmount(
       transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.amountMinor > 0),
     ),
-    investmentDebitsMinor: -totalAmount(
-      transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.amountMinor < 0),
+    investmentDebitsMinor: negated(
+      totalAmount(
+        transactions.filter((transaction) => transaction.kind === 'INVESTMENT' && transaction.amountMinor < 0),
+      ),
     ),
     netCashFlowMinor: totalAmount(transactions),
     budgetTotalMinor,

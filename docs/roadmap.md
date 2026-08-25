@@ -2,13 +2,15 @@
 
 Milestone vocabulary used across this repository. Written in non-identifying terms; it records what each stage delivers and what must be true before the next one starts.
 
-## Milestone 0 — foundation (current)
+## Milestone 0 — foundation (complete)
 
-Repository, security design, and a browser draft over synthetic fixtures with an in-memory mock. No AWS resources, no backend, no real data. Complete when the domain contract is settled, tested, and recorded in decision records.
+Repository, security design, and a browser draft over synthetic fixtures with an in-memory mock. No AWS resources, no backend, no real data. The domain contract is settled, tested, and recorded in decision records.
 
-## Milestone 1 — domain in Rust
+## Milestone 1 — domain in Rust (current)
 
 The domain crate expresses the contract of ADR 0008 and proves conformance against the committed fixture vector. Still no deployed infrastructure.
+
+Money, the calendar types, the London wall clock, import fingerprints, recurrence, the reference-list order, and every dashboard and budget aggregate are implemented and pass against the exported vector.
 
 ## Milestone 2 — first AWS resources
 

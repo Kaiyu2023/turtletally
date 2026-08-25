@@ -25,6 +25,10 @@ Each route keeps orchestration, presentation components, and styles together in 
 
 The production-oriented [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
 
+## Domain crate
+
+`crates/domain` expresses the same domain in Rust for the future backend. The TypeScript contract remains the source of truth ([ADR 0008](docs/architecture/0008-typescript-owns-the-domain-contract.md)), and conformance is proven by data rather than code generation: `npm run contract:vector` exports the mock's fixtures and its derived aggregates to `crates/domain/tests/conformance-vector.json`, and `cargo test` deserialises that vector, re-derives every figure, and asserts identical minor-unit results. A field added on one side without the other fails a test instead of reaching production.
+
 Use `?scenario=empty` on any route to review the first-use state.
 
 ## Local development
@@ -52,7 +56,7 @@ npm run check
 
 The root check covers the repository secret scan, formatting, linting, type checks, unit, browser, and Terraform tests, dependency audits, builds, and a credential-free Terraform plan that must contain no changes.
 
-Vitest covers the domain contract in `apps/web/src/data` and runs on its own with `npm run test:node`. Playwright runs the browser behaviour and accessibility suite in desktop and mobile Chromium. The Rust workspace holds no code yet, so `cargo test` compiles an empty crate and asserts nothing. Visual-review captures are written to the ignored `artifacts/ui-draft` directory and can be refreshed with `npm run screenshots`.
+Vitest covers the domain contract in `apps/web/src/data` and runs on its own with `npm run test:node`; it also fails when the committed conformance vector no longer matches the contract. Playwright runs the browser behaviour and accessibility suite in desktop and mobile Chromium. `cargo test` covers the Rust domain crate and its conformance against that vector. Visual-review captures are written to the ignored `artifacts/ui-draft` directory and can be refreshed with `npm run screenshots`.
 
 ## Security posture
 
