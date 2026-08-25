@@ -33,8 +33,8 @@ jobs:
 
       - name: Install pinned Terraform
         env:
-          TERRAFORM_VERSION: 1.15.8
-          TERRAFORM_ZIP_SHA256: d25ce7b6902013ad905db3d2eab0be4cd905887fe88b81a6171b8d5503c31f3d
+          TERRAFORM_VERSION: 1.15.9
+          TERRAFORM_ZIP_SHA256: 76edd0b22d2f27d3d2e097cd793209646f719cf60f02ff3af626b07361137da1
         run: |
           terraform_zip="$RUNNER_TEMP/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
           terraform_checksum="$RUNNER_TEMP/terraform_SHA256SUMS"
