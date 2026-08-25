@@ -1,0 +1,3117 @@
+{
+  "today": "2026-08-17",
+  "now": "2026-08-17T12:00:00.000Z",
+  "accounts": [
+    {
+      "id": "account-demo-everyday",
+      "name": "Everyday Current",
+      "type": "CURRENT",
+      "currency": "GBP",
+      "balanceMinor": 524380,
+      "colour": "#809bce",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "account-demo-credit",
+      "name": "Everyday Credit",
+      "type": "CREDIT_CARD",
+      "currency": "GBP",
+      "balanceMinor": 128450,
+      "colour": "#f2a65a",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "account-demo-investment",
+      "name": "Long-term Investing",
+      "type": "INVESTMENT",
+      "currency": "GBP",
+      "balanceMinor": 2459000,
+      "colour": "#70a288",
+      "deactivatedAt": null,
+      "version": 1
+    }
+  ],
+  "categories": [
+    {
+      "id": "category-demo-groceries",
+      "name": "Groceries",
+      "group": "Shopping",
+      "colour": "#76b7b2",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-dining",
+      "name": "Dining",
+      "group": "Shopping",
+      "colour": "#f28e8b",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-household",
+      "name": "Household",
+      "group": "Shopping",
+      "colour": "#edc66d",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-rent",
+      "name": "Rent",
+      "group": "Rent",
+      "colour": "#9b8ac4",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-electricity",
+      "name": "Electricity",
+      "group": "Utilities",
+      "colour": "#f4a261",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-mobile",
+      "name": "Mobile",
+      "group": "Utilities",
+      "colour": "#84a59d",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-broadband",
+      "name": "Broadband",
+      "group": "Utilities",
+      "colour": "#4d908e",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-subscriptions",
+      "name": "Subscriptions",
+      "group": "Services",
+      "colour": "#b8a1cf",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-insurance",
+      "name": "Insurance",
+      "group": "Services",
+      "colour": "#90be6d",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-healthcare",
+      "name": "Healthcare",
+      "group": "Services",
+      "colour": "#ef767a",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-education",
+      "name": "Education",
+      "group": "Services",
+      "colour": "#6c91bf",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-council-tax",
+      "name": "Council tax",
+      "group": "Tax",
+      "colour": "#8d99ae",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-transit",
+      "name": "Public transit",
+      "group": "Transport",
+      "colour": "#43aa8b",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-rail",
+      "name": "Rail",
+      "group": "Transport",
+      "colour": "#577590",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-salary",
+      "name": "Salary",
+      "group": "Income",
+      "colour": "#52b788",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-refund",
+      "name": "Refund",
+      "group": "Income",
+      "colour": "#95d5b2",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-interest",
+      "name": "Interest",
+      "group": "Income",
+      "colour": "#74c69d",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-contribution",
+      "name": "Contribution",
+      "group": "Investment",
+      "colour": "#457b9d",
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "category-demo-dividend",
+      "name": "Dividend",
+      "group": "Investment",
+      "colour": "#2a9d8f",
+      "deactivatedAt": null,
+      "version": 1
+    }
+  ],
+  "budgets": [
+    {
+      "id": "budget-demo-2026-08-category-demo-rent",
+      "month": "2026-08",
+      "categoryId": "category-demo-rent",
+      "limitMinor": 118000,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-groceries",
+      "month": "2026-08",
+      "categoryId": "category-demo-groceries",
+      "limitMinor": 36000,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-dining",
+      "month": "2026-08",
+      "categoryId": "category-demo-dining",
+      "limitMinor": 20000,
+      "version": 2
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-household",
+      "month": "2026-08",
+      "categoryId": "category-demo-household",
+      "limitMinor": 12000,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-electricity",
+      "month": "2026-08",
+      "categoryId": "category-demo-electricity",
+      "limitMinor": 8000,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-mobile",
+      "month": "2026-08",
+      "categoryId": "category-demo-mobile",
+      "limitMinor": 2500,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-subscriptions",
+      "month": "2026-08",
+      "categoryId": "category-demo-subscriptions",
+      "limitMinor": 5500,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-healthcare",
+      "month": "2026-08",
+      "categoryId": "category-demo-healthcare",
+      "limitMinor": 7000,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-education",
+      "month": "2026-08",
+      "categoryId": "category-demo-education",
+      "limitMinor": 6000,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-transit",
+      "month": "2026-08",
+      "categoryId": "category-demo-transit",
+      "limitMinor": 6500,
+      "version": 1
+    },
+    {
+      "id": "budget-demo-2026-08-category-demo-rail",
+      "month": "2026-08",
+      "categoryId": "category-demo-rail",
+      "limitMinor": 9000,
+      "version": 1
+    }
+  ],
+  "budgetDefaults": [
+    {
+      "id": "budget-default-demo-rent",
+      "categoryId": "category-demo-rent",
+      "limitMinor": 118000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-groceries",
+      "categoryId": "category-demo-groceries",
+      "limitMinor": 36000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-dining",
+      "categoryId": "category-demo-dining",
+      "limitMinor": 18000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-household",
+      "categoryId": "category-demo-household",
+      "limitMinor": 12000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-electricity",
+      "categoryId": "category-demo-electricity",
+      "limitMinor": 8000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-mobile",
+      "categoryId": "category-demo-mobile",
+      "limitMinor": 2500,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-subscriptions",
+      "categoryId": "category-demo-subscriptions",
+      "limitMinor": 5500,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-healthcare",
+      "categoryId": "category-demo-healthcare",
+      "limitMinor": 7000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-education",
+      "categoryId": "category-demo-education",
+      "limitMinor": 6000,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-transit",
+      "categoryId": "category-demo-transit",
+      "limitMinor": 6500,
+      "version": 1
+    },
+    {
+      "id": "budget-default-demo-rail",
+      "categoryId": "category-demo-rail",
+      "limitMinor": 9000,
+      "version": 1
+    }
+  ],
+  "transactions": [
+    {
+      "id": "transaction-demo-aug-001",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-salary",
+      "categoryName": "Salary",
+      "description": "Monthly salary",
+      "amountMinor": 340000,
+      "currency": "GBP",
+      "kind": "INCOME",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-01T08:30:00.000Z",
+      "localDate": "2026-08-01",
+      "timePrecision": "MINUTE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-01T08:30:00.000Z",
+      "updatedAt": "2026-08-01T08:30:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-002",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-rent",
+      "categoryName": "Rent",
+      "description": "Monthly rent",
+      "amountMinor": -118000,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-08-02T12:00:00.000Z",
+      "localDate": "2026-08-02",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-08-02",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-02T12:00:00.000Z",
+      "updatedAt": "2026-08-02T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-003",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekly groceries",
+      "amountMinor": -6845,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-08-03T12:00:00.000Z",
+      "localDate": "2026-08-03",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "1913f2e9",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-03T12:00:00.000Z",
+      "updatedAt": "2026-08-03T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-004",
+      "accountId": "account-demo-investment",
+      "accountName": "Long-term Investing",
+      "categoryId": "category-demo-contribution",
+      "categoryName": "Contribution",
+      "description": "Index fund contribution",
+      "amountMinor": -25000,
+      "currency": "GBP",
+      "kind": "INVESTMENT",
+      "origin": "ASSISTANT",
+      "occurredAt": "2026-08-04T12:00:00.000Z",
+      "localDate": "2026-08-04",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-04T12:00:00.000Z",
+      "updatedAt": "2026-08-04T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-005",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-rail",
+      "categoryName": "Rail",
+      "description": "Rail travel",
+      "amountMinor": -4250,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-08-05T12:00:00.000Z",
+      "localDate": "2026-08-05",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "05fce84b",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-05T12:00:00.000Z",
+      "updatedAt": "2026-08-05T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-006",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-electricity",
+      "categoryName": "Electricity",
+      "description": "Electricity bill",
+      "amountMinor": -6830,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-08-06T12:00:00.000Z",
+      "localDate": "2026-08-06",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-08-06",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-06T12:00:00.000Z",
+      "updatedAt": "2026-08-06T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-007",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-dining",
+      "categoryName": "Dining",
+      "description": "Lunch with friends",
+      "amountMinor": -2375,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-07T12:45:00.000Z",
+      "localDate": "2026-08-07",
+      "timePrecision": "MINUTE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-07T12:45:00.000Z",
+      "updatedAt": "2026-08-07T12:45:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-008",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-mobile",
+      "categoryName": "Mobile",
+      "description": "Mobile plan",
+      "amountMinor": -1800,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-08-08T12:00:00.000Z",
+      "localDate": "2026-08-08",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-08-08",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-08T12:00:00.000Z",
+      "updatedAt": "2026-08-08T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-009",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-household",
+      "categoryName": "Household",
+      "description": "Household supplies",
+      "amountMinor": -3420,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-08-09T12:00:00.000Z",
+      "localDate": "2026-08-09",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "236a3875",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-09T12:00:00.000Z",
+      "updatedAt": "2026-08-09T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-010",
+      "accountId": "account-demo-investment",
+      "accountName": "Long-term Investing",
+      "categoryId": "category-demo-dividend",
+      "categoryName": "Dividend",
+      "description": "Fund dividend",
+      "amountMinor": 1250,
+      "currency": "GBP",
+      "kind": "INVESTMENT",
+      "origin": "IMPORT",
+      "occurredAt": "2026-08-09T12:00:00.000Z",
+      "localDate": "2026-08-09",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "738d416b",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-09T12:00:00.000Z",
+      "updatedAt": "2026-08-09T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-011",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekly groceries",
+      "amountMinor": -7215,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-10T18:10:00.000Z",
+      "localDate": "2026-08-10",
+      "timePrecision": "MINUTE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": {
+        "id": "receipt-demo-groceries",
+        "fileName": "synthetic-groceries.png",
+        "mediaType": "image/png",
+        "sizeBytes": 184320,
+        "checksum": "a1b2c3d4"
+      },
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-10T18:10:00.000Z",
+      "updatedAt": "2026-08-10T18:10:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-012",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-subscriptions",
+      "categoryName": "Subscriptions",
+      "description": "Streaming subscription",
+      "amountMinor": -1099,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-08-11T12:00:00.000Z",
+      "localDate": "2026-08-11",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-08-11",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-11T12:00:00.000Z",
+      "updatedAt": "2026-08-11T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-013",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-transit",
+      "categoryName": "Public transit",
+      "description": "Local travel",
+      "amountMinor": -1560,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-08-12T12:00:00.000Z",
+      "localDate": "2026-08-12",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "3107b691",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-12T12:00:00.000Z",
+      "updatedAt": "2026-08-12T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-014",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-dining",
+      "categoryName": "Dining",
+      "description": "Evening meal",
+      "amountMinor": -4860,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-13T19:35:00.000Z",
+      "localDate": "2026-08-13",
+      "timePrecision": "MINUTE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-13T19:35:00.000Z",
+      "updatedAt": "2026-08-13T19:35:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-015",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-education",
+      "categoryName": "Education",
+      "description": "Book purchase",
+      "amountMinor": -1899,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "ASSISTANT",
+      "occurredAt": "2026-08-14T12:00:00.000Z",
+      "localDate": "2026-08-14",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-14T12:00:00.000Z",
+      "updatedAt": "2026-08-14T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-016",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-refund",
+      "categoryName": "Refund",
+      "description": "Purchase refund",
+      "amountMinor": 2500,
+      "currency": "GBP",
+      "kind": "INCOME",
+      "origin": "IMPORT",
+      "occurredAt": "2026-08-15T12:00:00.000Z",
+      "localDate": "2026-08-15",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "779117b4",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-15T12:00:00.000Z",
+      "updatedAt": "2026-08-15T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-017",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-dining",
+      "categoryName": "Dining",
+      "description": "Morning coffee",
+      "amountMinor": -420,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-15T09:05:00.000Z",
+      "localDate": "2026-08-15",
+      "timePrecision": "MINUTE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-15T09:05:00.000Z",
+      "updatedAt": "2026-08-15T09:05:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-018",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekend groceries",
+      "amountMinor": -5920,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-16T16:25:00.000Z",
+      "localDate": "2026-08-16",
+      "timePrecision": "MINUTE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-16T16:25:00.000Z",
+      "updatedAt": "2026-08-16T16:25:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-019",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-healthcare",
+      "categoryName": "Healthcare",
+      "description": "Fitness membership",
+      "amountMinor": -2999,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-08-17T12:00:00.000Z",
+      "localDate": "2026-08-17",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-08-17",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-08-17T12:00:00.000Z",
+      "updatedAt": "2026-08-17T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-aug-020",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-household",
+      "categoryName": "Household",
+      "description": "Duplicate household item",
+      "amountMinor": -7999,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-08-12T12:00:00.000Z",
+      "localDate": "2026-08-12",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": "2026-08-17T12:00:00.000Z",
+      "voidReason": "Duplicate demo entry",
+      "createdAt": "2026-08-12T12:00:00.000Z",
+      "updatedAt": "2026-08-17T12:00:00.000Z",
+      "version": 2
+    },
+    {
+      "id": "transaction-demo-jul-001",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-salary",
+      "categoryName": "Salary",
+      "description": "Monthly salary",
+      "amountMinor": 340000,
+      "currency": "GBP",
+      "kind": "INCOME",
+      "origin": "MANUAL",
+      "occurredAt": "2026-07-01T12:00:00.000Z",
+      "localDate": "2026-07-01",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-01T12:00:00.000Z",
+      "updatedAt": "2026-07-01T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-002",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-rent",
+      "categoryName": "Rent",
+      "description": "Monthly rent",
+      "amountMinor": -118000,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-07-02T12:00:00.000Z",
+      "localDate": "2026-07-02",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-07-02",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-02T12:00:00.000Z",
+      "updatedAt": "2026-07-02T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-003",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekly groceries",
+      "amountMinor": -6150,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-07-05T12:00:00.000Z",
+      "localDate": "2026-07-05",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "4287885d",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-05T12:00:00.000Z",
+      "updatedAt": "2026-07-05T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-004",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-dining",
+      "categoryName": "Dining",
+      "description": "Evening meal",
+      "amountMinor": -4120,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-07-09T12:00:00.000Z",
+      "localDate": "2026-07-09",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-09T12:00:00.000Z",
+      "updatedAt": "2026-07-09T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-005",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-electricity",
+      "categoryName": "Electricity",
+      "description": "Electricity bill",
+      "amountMinor": -5940,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-07-10T12:00:00.000Z",
+      "localDate": "2026-07-10",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-07-10",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-10T12:00:00.000Z",
+      "updatedAt": "2026-07-10T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-006",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekly groceries",
+      "amountMinor": -7430,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-07-12T12:00:00.000Z",
+      "localDate": "2026-07-12",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-12T12:00:00.000Z",
+      "updatedAt": "2026-07-12T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-007",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-mobile",
+      "categoryName": "Mobile",
+      "description": "Mobile plan",
+      "amountMinor": -1800,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-07-15T12:00:00.000Z",
+      "localDate": "2026-07-15",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-07-15",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-15T12:00:00.000Z",
+      "updatedAt": "2026-07-15T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-008",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-household",
+      "categoryName": "Household",
+      "description": "Household supplies",
+      "amountMinor": -4680,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-07-18T12:00:00.000Z",
+      "localDate": "2026-07-18",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "a9b82133",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-18T12:00:00.000Z",
+      "updatedAt": "2026-07-18T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-009",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-rail",
+      "categoryName": "Rail",
+      "description": "Rail travel",
+      "amountMinor": -5450,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "IMPORT",
+      "occurredAt": "2026-07-21T12:00:00.000Z",
+      "localDate": "2026-07-21",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": "de2b56f5",
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-21T12:00:00.000Z",
+      "updatedAt": "2026-07-21T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-010",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-dining",
+      "categoryName": "Dining",
+      "description": "Lunch with friends",
+      "amountMinor": -2850,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-07-24T12:00:00.000Z",
+      "localDate": "2026-07-24",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-24T12:00:00.000Z",
+      "updatedAt": "2026-07-24T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-011",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekly groceries",
+      "amountMinor": -6780,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "origin": "MANUAL",
+      "occurredAt": "2026-07-27T12:00:00.000Z",
+      "localDate": "2026-07-27",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": null,
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-27T12:00:00.000Z",
+      "updatedAt": "2026-07-27T12:00:00.000Z",
+      "version": 1
+    },
+    {
+      "id": "transaction-demo-jul-012",
+      "accountId": "account-demo-investment",
+      "accountName": "Long-term Investing",
+      "categoryId": "category-demo-contribution",
+      "categoryName": "Contribution",
+      "description": "Index fund contribution",
+      "amountMinor": -25000,
+      "currency": "GBP",
+      "kind": "INVESTMENT",
+      "origin": "SCHEDULE",
+      "occurredAt": "2026-07-28T12:00:00.000Z",
+      "localDate": "2026-07-28",
+      "timePrecision": "DATE",
+      "timezone": "Europe/London",
+      "scheduleId": null,
+      "occurrenceDate": "2026-07-28",
+      "importRowFingerprint": null,
+      "receipt": null,
+      "voidedAt": null,
+      "voidReason": null,
+      "createdAt": "2026-07-28T12:00:00.000Z",
+      "updatedAt": "2026-07-28T12:00:00.000Z",
+      "version": 1
+    }
+  ],
+  "schedules": [
+    {
+      "id": "schedule-demo-rent",
+      "name": "Monthly rent",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-rent",
+      "categoryName": "Rent",
+      "description": "Monthly rent",
+      "amountMinor": -118000,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "recurrence": {
+        "frequency": "MONTHLY",
+        "day": 2,
+        "endOfMonthPolicy": "CLAMP"
+      },
+      "nextDueDate": "2026-09-02",
+      "lastGeneratedDate": null,
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "schedule-demo-groceries",
+      "name": "Weekly groceries",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-groceries",
+      "categoryName": "Groceries",
+      "description": "Weekly groceries",
+      "amountMinor": -6500,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "recurrence": {
+        "frequency": "WEEKLY",
+        "weekday": "SATURDAY",
+        "intervalWeeks": 1
+      },
+      "nextDueDate": "2026-08-22",
+      "lastGeneratedDate": null,
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "schedule-demo-subscription",
+      "name": "Streaming subscription",
+      "accountId": "account-demo-credit",
+      "accountName": "Everyday Credit",
+      "categoryId": "category-demo-subscriptions",
+      "categoryName": "Subscriptions",
+      "description": "Streaming subscription",
+      "amountMinor": -1099,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "recurrence": {
+        "frequency": "MONTHLY",
+        "day": 11,
+        "endOfMonthPolicy": "CLAMP"
+      },
+      "nextDueDate": "2026-09-11",
+      "lastGeneratedDate": null,
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "schedule-demo-insurance",
+      "name": "Annual cover renewal",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-insurance",
+      "categoryName": "Insurance",
+      "description": "Annual cover renewal",
+      "amountMinor": -12500,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "recurrence": {
+        "frequency": "ONCE",
+        "date": "2026-08-24"
+      },
+      "nextDueDate": "2026-08-24",
+      "lastGeneratedDate": null,
+      "deactivatedAt": null,
+      "version": 1
+    },
+    {
+      "id": "schedule-demo-inactive",
+      "name": "Previous transport pass",
+      "accountId": "account-demo-everyday",
+      "accountName": "Everyday Current",
+      "categoryId": "category-demo-transit",
+      "categoryName": "Public transit",
+      "description": "Previous transport pass",
+      "amountMinor": -8000,
+      "currency": "GBP",
+      "kind": "SPENDING",
+      "recurrence": {
+        "frequency": "MONTHLY",
+        "day": 1,
+        "endOfMonthPolicy": "CLAMP"
+      },
+      "nextDueDate": null,
+      "lastGeneratedDate": null,
+      "deactivatedAt": "2026-07-31T12:00:00.000Z",
+      "version": 2
+    }
+  ],
+  "expected": {
+    "dashboards": [
+      {
+        "month": "2026-08",
+        "window": {
+          "from": "2026-07-01",
+          "to": "2026-08-31"
+        },
+        "summary": {
+          "month": "2026-08",
+          "asOf": "2026-08-17T12:00:00.000Z",
+          "incomeMinor": 342500,
+          "spendingMinor": 169492,
+          "investmentCreditsMinor": 1250,
+          "investmentDebitsMinor": 25000,
+          "netCashFlowMinor": 149258,
+          "budgetTotalMinor": 230500,
+          "budgetedSpendingMinor": 169492,
+          "budgetRemainingMinor": 61008,
+          "uncategorisedSpendingMinor": 0,
+          "transactionCount": 19,
+          "weekOverWeek": {
+            "currentMinor": 22973,
+            "previousMinor": 25520,
+            "changePercent": -10,
+            "direction": "DOWN"
+          },
+          "monthOverMonth": {
+            "currentMinor": 169492,
+            "previousMinor": 163200,
+            "changePercent": 3.9,
+            "direction": "UP"
+          },
+          "dailySpending": [
+            {
+              "date": "2026-08-01",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-08-02",
+              "amountMinor": 118000
+            },
+            {
+              "date": "2026-08-03",
+              "amountMinor": 6845
+            },
+            {
+              "date": "2026-08-04",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-08-05",
+              "amountMinor": 4250
+            },
+            {
+              "date": "2026-08-06",
+              "amountMinor": 6830
+            },
+            {
+              "date": "2026-08-07",
+              "amountMinor": 2375
+            },
+            {
+              "date": "2026-08-08",
+              "amountMinor": 1800
+            },
+            {
+              "date": "2026-08-09",
+              "amountMinor": 3420
+            },
+            {
+              "date": "2026-08-10",
+              "amountMinor": 7215
+            },
+            {
+              "date": "2026-08-11",
+              "amountMinor": 1099
+            },
+            {
+              "date": "2026-08-12",
+              "amountMinor": 1560
+            },
+            {
+              "date": "2026-08-13",
+              "amountMinor": 4860
+            },
+            {
+              "date": "2026-08-14",
+              "amountMinor": 1899
+            },
+            {
+              "date": "2026-08-15",
+              "amountMinor": 420
+            },
+            {
+              "date": "2026-08-16",
+              "amountMinor": 5920
+            },
+            {
+              "date": "2026-08-17",
+              "amountMinor": 2999
+            }
+          ],
+          "spendingByCategory": [
+            {
+              "categoryId": "category-demo-rent",
+              "categoryName": "Rent",
+              "colour": "#9b8ac4",
+              "amountMinor": 118000
+            },
+            {
+              "categoryId": "category-demo-groceries",
+              "categoryName": "Groceries",
+              "colour": "#76b7b2",
+              "amountMinor": 19980
+            },
+            {
+              "categoryId": "category-demo-dining",
+              "categoryName": "Dining",
+              "colour": "#f28e8b",
+              "amountMinor": 7655
+            },
+            {
+              "categoryId": "category-demo-electricity",
+              "categoryName": "Electricity",
+              "colour": "#f4a261",
+              "amountMinor": 6830
+            },
+            {
+              "categoryId": "category-demo-rail",
+              "categoryName": "Rail",
+              "colour": "#577590",
+              "amountMinor": 4250
+            },
+            {
+              "categoryId": "category-demo-household",
+              "categoryName": "Household",
+              "colour": "#edc66d",
+              "amountMinor": 3420
+            },
+            {
+              "categoryId": "category-demo-healthcare",
+              "categoryName": "Healthcare",
+              "colour": "#ef767a",
+              "amountMinor": 2999
+            },
+            {
+              "categoryId": "category-demo-education",
+              "categoryName": "Education",
+              "colour": "#6c91bf",
+              "amountMinor": 1899
+            },
+            {
+              "categoryId": "category-demo-mobile",
+              "categoryName": "Mobile",
+              "colour": "#84a59d",
+              "amountMinor": 1800
+            },
+            {
+              "categoryId": "category-demo-transit",
+              "categoryName": "Public transit",
+              "colour": "#43aa8b",
+              "amountMinor": 1560
+            },
+            {
+              "categoryId": "category-demo-subscriptions",
+              "categoryName": "Subscriptions",
+              "colour": "#b8a1cf",
+              "amountMinor": 1099
+            }
+          ],
+          "budgets": [
+            {
+              "id": "budget-demo-2026-08-category-demo-rent",
+              "month": "2026-08",
+              "categoryId": "category-demo-rent",
+              "limitMinor": 118000,
+              "version": 1,
+              "categoryName": "Rent",
+              "colour": "#9b8ac4",
+              "spentMinor": 118000,
+              "remainingMinor": 0,
+              "percentUsed": 100
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-groceries",
+              "month": "2026-08",
+              "categoryId": "category-demo-groceries",
+              "limitMinor": 36000,
+              "version": 1,
+              "categoryName": "Groceries",
+              "colour": "#76b7b2",
+              "spentMinor": 19980,
+              "remainingMinor": 16020,
+              "percentUsed": 56
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-dining",
+              "month": "2026-08",
+              "categoryId": "category-demo-dining",
+              "limitMinor": 20000,
+              "version": 2,
+              "categoryName": "Dining",
+              "colour": "#f28e8b",
+              "spentMinor": 7655,
+              "remainingMinor": 12345,
+              "percentUsed": 38
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-electricity",
+              "month": "2026-08",
+              "categoryId": "category-demo-electricity",
+              "limitMinor": 8000,
+              "version": 1,
+              "categoryName": "Electricity",
+              "colour": "#f4a261",
+              "spentMinor": 6830,
+              "remainingMinor": 1170,
+              "percentUsed": 85
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-rail",
+              "month": "2026-08",
+              "categoryId": "category-demo-rail",
+              "limitMinor": 9000,
+              "version": 1,
+              "categoryName": "Rail",
+              "colour": "#577590",
+              "spentMinor": 4250,
+              "remainingMinor": 4750,
+              "percentUsed": 47
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-household",
+              "month": "2026-08",
+              "categoryId": "category-demo-household",
+              "limitMinor": 12000,
+              "version": 1,
+              "categoryName": "Household",
+              "colour": "#edc66d",
+              "spentMinor": 3420,
+              "remainingMinor": 8580,
+              "percentUsed": 28
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-healthcare",
+              "month": "2026-08",
+              "categoryId": "category-demo-healthcare",
+              "limitMinor": 7000,
+              "version": 1,
+              "categoryName": "Healthcare",
+              "colour": "#ef767a",
+              "spentMinor": 2999,
+              "remainingMinor": 4001,
+              "percentUsed": 43
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-education",
+              "month": "2026-08",
+              "categoryId": "category-demo-education",
+              "limitMinor": 6000,
+              "version": 1,
+              "categoryName": "Education",
+              "colour": "#6c91bf",
+              "spentMinor": 1899,
+              "remainingMinor": 4101,
+              "percentUsed": 32
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-mobile",
+              "month": "2026-08",
+              "categoryId": "category-demo-mobile",
+              "limitMinor": 2500,
+              "version": 1,
+              "categoryName": "Mobile",
+              "colour": "#84a59d",
+              "spentMinor": 1800,
+              "remainingMinor": 700,
+              "percentUsed": 72
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-transit",
+              "month": "2026-08",
+              "categoryId": "category-demo-transit",
+              "limitMinor": 6500,
+              "version": 1,
+              "categoryName": "Public transit",
+              "colour": "#43aa8b",
+              "spentMinor": 1560,
+              "remainingMinor": 4940,
+              "percentUsed": 24
+            },
+            {
+              "id": "budget-demo-2026-08-category-demo-subscriptions",
+              "month": "2026-08",
+              "categoryId": "category-demo-subscriptions",
+              "limitMinor": 5500,
+              "version": 1,
+              "categoryName": "Subscriptions",
+              "colour": "#b8a1cf",
+              "spentMinor": 1099,
+              "remainingMinor": 4401,
+              "percentUsed": 20
+            }
+          ],
+          "recentTransactions": [
+            {
+              "id": "transaction-demo-aug-019",
+              "accountId": "account-demo-everyday",
+              "accountName": "Everyday Current",
+              "categoryId": "category-demo-healthcare",
+              "categoryName": "Healthcare",
+              "description": "Fitness membership",
+              "amountMinor": -2999,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "SCHEDULE",
+              "occurredAt": "2026-08-17T12:00:00.000Z",
+              "localDate": "2026-08-17",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": "2026-08-17",
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-08-17T12:00:00.000Z",
+              "updatedAt": "2026-08-17T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-aug-018",
+              "accountId": "account-demo-everyday",
+              "accountName": "Everyday Current",
+              "categoryId": "category-demo-groceries",
+              "categoryName": "Groceries",
+              "description": "Weekend groceries",
+              "amountMinor": -5920,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "MANUAL",
+              "occurredAt": "2026-08-16T16:25:00.000Z",
+              "localDate": "2026-08-16",
+              "timePrecision": "MINUTE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-08-16T16:25:00.000Z",
+              "updatedAt": "2026-08-16T16:25:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-aug-016",
+              "accountId": "account-demo-everyday",
+              "accountName": "Everyday Current",
+              "categoryId": "category-demo-refund",
+              "categoryName": "Refund",
+              "description": "Purchase refund",
+              "amountMinor": 2500,
+              "currency": "GBP",
+              "kind": "INCOME",
+              "origin": "IMPORT",
+              "occurredAt": "2026-08-15T12:00:00.000Z",
+              "localDate": "2026-08-15",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": "779117b4",
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-08-15T12:00:00.000Z",
+              "updatedAt": "2026-08-15T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-aug-017",
+              "accountId": "account-demo-credit",
+              "accountName": "Everyday Credit",
+              "categoryId": "category-demo-dining",
+              "categoryName": "Dining",
+              "description": "Morning coffee",
+              "amountMinor": -420,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "MANUAL",
+              "occurredAt": "2026-08-15T09:05:00.000Z",
+              "localDate": "2026-08-15",
+              "timePrecision": "MINUTE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-08-15T09:05:00.000Z",
+              "updatedAt": "2026-08-15T09:05:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-aug-015",
+              "accountId": "account-demo-credit",
+              "accountName": "Everyday Credit",
+              "categoryId": "category-demo-education",
+              "categoryName": "Education",
+              "description": "Book purchase",
+              "amountMinor": -1899,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "ASSISTANT",
+              "occurredAt": "2026-08-14T12:00:00.000Z",
+              "localDate": "2026-08-14",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-08-14T12:00:00.000Z",
+              "updatedAt": "2026-08-14T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-aug-014",
+              "accountId": "account-demo-credit",
+              "accountName": "Everyday Credit",
+              "categoryId": "category-demo-dining",
+              "categoryName": "Dining",
+              "description": "Evening meal",
+              "amountMinor": -4860,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "MANUAL",
+              "occurredAt": "2026-08-13T19:35:00.000Z",
+              "localDate": "2026-08-13",
+              "timePrecision": "MINUTE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-08-13T19:35:00.000Z",
+              "updatedAt": "2026-08-13T19:35:00.000Z",
+              "version": 1
+            }
+          ]
+        }
+      },
+      {
+        "month": "2026-07",
+        "window": {
+          "from": "2026-06-01",
+          "to": "2026-07-31"
+        },
+        "summary": {
+          "month": "2026-07",
+          "asOf": "2026-08-17T12:00:00.000Z",
+          "incomeMinor": 340000,
+          "spendingMinor": 163200,
+          "investmentCreditsMinor": 0,
+          "investmentDebitsMinor": 25000,
+          "netCashFlowMinor": 151800,
+          "budgetTotalMinor": 228500,
+          "budgetedSpendingMinor": 163200,
+          "budgetRemainingMinor": 65300,
+          "uncategorisedSpendingMinor": 0,
+          "transactionCount": 12,
+          "weekOverWeek": {
+            "currentMinor": 6780,
+            "previousMinor": 12980,
+            "changePercent": -47.8,
+            "direction": "DOWN"
+          },
+          "monthOverMonth": {
+            "currentMinor": 163200,
+            "previousMinor": 0,
+            "changePercent": null,
+            "direction": "NOT_COMPARABLE"
+          },
+          "dailySpending": [
+            {
+              "date": "2026-07-01",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-02",
+              "amountMinor": 118000
+            },
+            {
+              "date": "2026-07-03",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-04",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-05",
+              "amountMinor": 6150
+            },
+            {
+              "date": "2026-07-06",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-07",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-08",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-09",
+              "amountMinor": 4120
+            },
+            {
+              "date": "2026-07-10",
+              "amountMinor": 5940
+            },
+            {
+              "date": "2026-07-11",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-12",
+              "amountMinor": 7430
+            },
+            {
+              "date": "2026-07-13",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-14",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-15",
+              "amountMinor": 1800
+            },
+            {
+              "date": "2026-07-16",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-17",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-18",
+              "amountMinor": 4680
+            },
+            {
+              "date": "2026-07-19",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-20",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-21",
+              "amountMinor": 5450
+            },
+            {
+              "date": "2026-07-22",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-23",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-24",
+              "amountMinor": 2850
+            },
+            {
+              "date": "2026-07-25",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-26",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-27",
+              "amountMinor": 6780
+            },
+            {
+              "date": "2026-07-28",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-29",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-30",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-07-31",
+              "amountMinor": 0
+            }
+          ],
+          "spendingByCategory": [
+            {
+              "categoryId": "category-demo-rent",
+              "categoryName": "Rent",
+              "colour": "#9b8ac4",
+              "amountMinor": 118000
+            },
+            {
+              "categoryId": "category-demo-groceries",
+              "categoryName": "Groceries",
+              "colour": "#76b7b2",
+              "amountMinor": 20360
+            },
+            {
+              "categoryId": "category-demo-dining",
+              "categoryName": "Dining",
+              "colour": "#f28e8b",
+              "amountMinor": 6970
+            },
+            {
+              "categoryId": "category-demo-electricity",
+              "categoryName": "Electricity",
+              "colour": "#f4a261",
+              "amountMinor": 5940
+            },
+            {
+              "categoryId": "category-demo-rail",
+              "categoryName": "Rail",
+              "colour": "#577590",
+              "amountMinor": 5450
+            },
+            {
+              "categoryId": "category-demo-household",
+              "categoryName": "Household",
+              "colour": "#edc66d",
+              "amountMinor": 4680
+            },
+            {
+              "categoryId": "category-demo-mobile",
+              "categoryName": "Mobile",
+              "colour": "#84a59d",
+              "amountMinor": 1800
+            }
+          ],
+          "budgets": [
+            {
+              "id": "budget-2026-07-category-demo-rent",
+              "month": "2026-07",
+              "categoryId": "category-demo-rent",
+              "limitMinor": 118000,
+              "version": null,
+              "categoryName": "Rent",
+              "colour": "#9b8ac4",
+              "spentMinor": 118000,
+              "remainingMinor": 0,
+              "percentUsed": 100
+            },
+            {
+              "id": "budget-2026-07-category-demo-groceries",
+              "month": "2026-07",
+              "categoryId": "category-demo-groceries",
+              "limitMinor": 36000,
+              "version": null,
+              "categoryName": "Groceries",
+              "colour": "#76b7b2",
+              "spentMinor": 20360,
+              "remainingMinor": 15640,
+              "percentUsed": 57
+            },
+            {
+              "id": "budget-2026-07-category-demo-dining",
+              "month": "2026-07",
+              "categoryId": "category-demo-dining",
+              "limitMinor": 18000,
+              "version": null,
+              "categoryName": "Dining",
+              "colour": "#f28e8b",
+              "spentMinor": 6970,
+              "remainingMinor": 11030,
+              "percentUsed": 39
+            },
+            {
+              "id": "budget-2026-07-category-demo-electricity",
+              "month": "2026-07",
+              "categoryId": "category-demo-electricity",
+              "limitMinor": 8000,
+              "version": null,
+              "categoryName": "Electricity",
+              "colour": "#f4a261",
+              "spentMinor": 5940,
+              "remainingMinor": 2060,
+              "percentUsed": 74
+            },
+            {
+              "id": "budget-2026-07-category-demo-rail",
+              "month": "2026-07",
+              "categoryId": "category-demo-rail",
+              "limitMinor": 9000,
+              "version": null,
+              "categoryName": "Rail",
+              "colour": "#577590",
+              "spentMinor": 5450,
+              "remainingMinor": 3550,
+              "percentUsed": 61
+            },
+            {
+              "id": "budget-2026-07-category-demo-household",
+              "month": "2026-07",
+              "categoryId": "category-demo-household",
+              "limitMinor": 12000,
+              "version": null,
+              "categoryName": "Household",
+              "colour": "#edc66d",
+              "spentMinor": 4680,
+              "remainingMinor": 7320,
+              "percentUsed": 39
+            },
+            {
+              "id": "budget-2026-07-category-demo-mobile",
+              "month": "2026-07",
+              "categoryId": "category-demo-mobile",
+              "limitMinor": 2500,
+              "version": null,
+              "categoryName": "Mobile",
+              "colour": "#84a59d",
+              "spentMinor": 1800,
+              "remainingMinor": 700,
+              "percentUsed": 72
+            },
+            {
+              "id": "budget-2026-07-category-demo-subscriptions",
+              "month": "2026-07",
+              "categoryId": "category-demo-subscriptions",
+              "limitMinor": 5500,
+              "version": null,
+              "categoryName": "Subscriptions",
+              "colour": "#b8a1cf",
+              "spentMinor": 0,
+              "remainingMinor": 5500,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-07-category-demo-healthcare",
+              "month": "2026-07",
+              "categoryId": "category-demo-healthcare",
+              "limitMinor": 7000,
+              "version": null,
+              "categoryName": "Healthcare",
+              "colour": "#ef767a",
+              "spentMinor": 0,
+              "remainingMinor": 7000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-07-category-demo-education",
+              "month": "2026-07",
+              "categoryId": "category-demo-education",
+              "limitMinor": 6000,
+              "version": null,
+              "categoryName": "Education",
+              "colour": "#6c91bf",
+              "spentMinor": 0,
+              "remainingMinor": 6000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-07-category-demo-transit",
+              "month": "2026-07",
+              "categoryId": "category-demo-transit",
+              "limitMinor": 6500,
+              "version": null,
+              "categoryName": "Public transit",
+              "colour": "#43aa8b",
+              "spentMinor": 0,
+              "remainingMinor": 6500,
+              "percentUsed": 0
+            }
+          ],
+          "recentTransactions": [
+            {
+              "id": "transaction-demo-jul-012",
+              "accountId": "account-demo-investment",
+              "accountName": "Long-term Investing",
+              "categoryId": "category-demo-contribution",
+              "categoryName": "Contribution",
+              "description": "Index fund contribution",
+              "amountMinor": -25000,
+              "currency": "GBP",
+              "kind": "INVESTMENT",
+              "origin": "SCHEDULE",
+              "occurredAt": "2026-07-28T12:00:00.000Z",
+              "localDate": "2026-07-28",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": "2026-07-28",
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-07-28T12:00:00.000Z",
+              "updatedAt": "2026-07-28T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-jul-011",
+              "accountId": "account-demo-everyday",
+              "accountName": "Everyday Current",
+              "categoryId": "category-demo-groceries",
+              "categoryName": "Groceries",
+              "description": "Weekly groceries",
+              "amountMinor": -6780,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "MANUAL",
+              "occurredAt": "2026-07-27T12:00:00.000Z",
+              "localDate": "2026-07-27",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-07-27T12:00:00.000Z",
+              "updatedAt": "2026-07-27T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-jul-010",
+              "accountId": "account-demo-credit",
+              "accountName": "Everyday Credit",
+              "categoryId": "category-demo-dining",
+              "categoryName": "Dining",
+              "description": "Lunch with friends",
+              "amountMinor": -2850,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "MANUAL",
+              "occurredAt": "2026-07-24T12:00:00.000Z",
+              "localDate": "2026-07-24",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-07-24T12:00:00.000Z",
+              "updatedAt": "2026-07-24T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-jul-009",
+              "accountId": "account-demo-everyday",
+              "accountName": "Everyday Current",
+              "categoryId": "category-demo-rail",
+              "categoryName": "Rail",
+              "description": "Rail travel",
+              "amountMinor": -5450,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "IMPORT",
+              "occurredAt": "2026-07-21T12:00:00.000Z",
+              "localDate": "2026-07-21",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": "de2b56f5",
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-07-21T12:00:00.000Z",
+              "updatedAt": "2026-07-21T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-jul-008",
+              "accountId": "account-demo-credit",
+              "accountName": "Everyday Credit",
+              "categoryId": "category-demo-household",
+              "categoryName": "Household",
+              "description": "Household supplies",
+              "amountMinor": -4680,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "IMPORT",
+              "occurredAt": "2026-07-18T12:00:00.000Z",
+              "localDate": "2026-07-18",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": null,
+              "importRowFingerprint": "a9b82133",
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-07-18T12:00:00.000Z",
+              "updatedAt": "2026-07-18T12:00:00.000Z",
+              "version": 1
+            },
+            {
+              "id": "transaction-demo-jul-007",
+              "accountId": "account-demo-everyday",
+              "accountName": "Everyday Current",
+              "categoryId": "category-demo-mobile",
+              "categoryName": "Mobile",
+              "description": "Mobile plan",
+              "amountMinor": -1800,
+              "currency": "GBP",
+              "kind": "SPENDING",
+              "origin": "SCHEDULE",
+              "occurredAt": "2026-07-15T12:00:00.000Z",
+              "localDate": "2026-07-15",
+              "timePrecision": "DATE",
+              "timezone": "Europe/London",
+              "scheduleId": null,
+              "occurrenceDate": "2026-07-15",
+              "importRowFingerprint": null,
+              "receipt": null,
+              "voidedAt": null,
+              "voidReason": null,
+              "createdAt": "2026-07-15T12:00:00.000Z",
+              "updatedAt": "2026-07-15T12:00:00.000Z",
+              "version": 1
+            }
+          ]
+        }
+      },
+      {
+        "month": "2026-09",
+        "window": {
+          "from": "2026-08-01",
+          "to": "2026-09-30"
+        },
+        "summary": {
+          "month": "2026-09",
+          "asOf": "2026-08-17T12:00:00.000Z",
+          "incomeMinor": 0,
+          "spendingMinor": 0,
+          "investmentCreditsMinor": 0,
+          "investmentDebitsMinor": 0,
+          "netCashFlowMinor": 0,
+          "budgetTotalMinor": 228500,
+          "budgetedSpendingMinor": 0,
+          "budgetRemainingMinor": 228500,
+          "uncategorisedSpendingMinor": 0,
+          "transactionCount": 0,
+          "weekOverWeek": {
+            "currentMinor": 0,
+            "previousMinor": 0,
+            "changePercent": null,
+            "direction": "NOT_COMPARABLE"
+          },
+          "monthOverMonth": {
+            "currentMinor": 0,
+            "previousMinor": 169492,
+            "changePercent": -100,
+            "direction": "DOWN"
+          },
+          "dailySpending": [
+            {
+              "date": "2026-09-01",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-02",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-03",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-04",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-05",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-06",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-07",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-08",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-09",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-10",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-11",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-12",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-13",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-14",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-15",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-16",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-17",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-18",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-19",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-20",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-21",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-22",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-23",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-24",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-25",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-26",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-27",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-28",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-29",
+              "amountMinor": 0
+            },
+            {
+              "date": "2026-09-30",
+              "amountMinor": 0
+            }
+          ],
+          "spendingByCategory": [],
+          "budgets": [
+            {
+              "id": "budget-2026-09-category-demo-rent",
+              "month": "2026-09",
+              "categoryId": "category-demo-rent",
+              "limitMinor": 118000,
+              "version": null,
+              "categoryName": "Rent",
+              "colour": "#9b8ac4",
+              "spentMinor": 0,
+              "remainingMinor": 118000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-groceries",
+              "month": "2026-09",
+              "categoryId": "category-demo-groceries",
+              "limitMinor": 36000,
+              "version": null,
+              "categoryName": "Groceries",
+              "colour": "#76b7b2",
+              "spentMinor": 0,
+              "remainingMinor": 36000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-dining",
+              "month": "2026-09",
+              "categoryId": "category-demo-dining",
+              "limitMinor": 18000,
+              "version": null,
+              "categoryName": "Dining",
+              "colour": "#f28e8b",
+              "spentMinor": 0,
+              "remainingMinor": 18000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-household",
+              "month": "2026-09",
+              "categoryId": "category-demo-household",
+              "limitMinor": 12000,
+              "version": null,
+              "categoryName": "Household",
+              "colour": "#edc66d",
+              "spentMinor": 0,
+              "remainingMinor": 12000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-electricity",
+              "month": "2026-09",
+              "categoryId": "category-demo-electricity",
+              "limitMinor": 8000,
+              "version": null,
+              "categoryName": "Electricity",
+              "colour": "#f4a261",
+              "spentMinor": 0,
+              "remainingMinor": 8000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-mobile",
+              "month": "2026-09",
+              "categoryId": "category-demo-mobile",
+              "limitMinor": 2500,
+              "version": null,
+              "categoryName": "Mobile",
+              "colour": "#84a59d",
+              "spentMinor": 0,
+              "remainingMinor": 2500,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-subscriptions",
+              "month": "2026-09",
+              "categoryId": "category-demo-subscriptions",
+              "limitMinor": 5500,
+              "version": null,
+              "categoryName": "Subscriptions",
+              "colour": "#b8a1cf",
+              "spentMinor": 0,
+              "remainingMinor": 5500,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-healthcare",
+              "month": "2026-09",
+              "categoryId": "category-demo-healthcare",
+              "limitMinor": 7000,
+              "version": null,
+              "categoryName": "Healthcare",
+              "colour": "#ef767a",
+              "spentMinor": 0,
+              "remainingMinor": 7000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-education",
+              "month": "2026-09",
+              "categoryId": "category-demo-education",
+              "limitMinor": 6000,
+              "version": null,
+              "categoryName": "Education",
+              "colour": "#6c91bf",
+              "spentMinor": 0,
+              "remainingMinor": 6000,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-transit",
+              "month": "2026-09",
+              "categoryId": "category-demo-transit",
+              "limitMinor": 6500,
+              "version": null,
+              "categoryName": "Public transit",
+              "colour": "#43aa8b",
+              "spentMinor": 0,
+              "remainingMinor": 6500,
+              "percentUsed": 0
+            },
+            {
+              "id": "budget-2026-09-category-demo-rail",
+              "month": "2026-09",
+              "categoryId": "category-demo-rail",
+              "limitMinor": 9000,
+              "version": null,
+              "categoryName": "Rail",
+              "colour": "#577590",
+              "spentMinor": 0,
+              "remainingMinor": 9000,
+              "percentUsed": 0
+            }
+          ],
+          "recentTransactions": []
+        }
+      }
+    ],
+    "budgetProgress": [
+      {
+        "month": "2026-08",
+        "rows": [
+          {
+            "id": "budget-demo-2026-08-category-demo-rent",
+            "month": "2026-08",
+            "categoryId": "category-demo-rent",
+            "limitMinor": 118000,
+            "version": 1,
+            "categoryName": "Rent",
+            "colour": "#9b8ac4",
+            "spentMinor": 118000,
+            "remainingMinor": 0,
+            "percentUsed": 100
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-groceries",
+            "month": "2026-08",
+            "categoryId": "category-demo-groceries",
+            "limitMinor": 36000,
+            "version": 1,
+            "categoryName": "Groceries",
+            "colour": "#76b7b2",
+            "spentMinor": 19980,
+            "remainingMinor": 16020,
+            "percentUsed": 56
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-dining",
+            "month": "2026-08",
+            "categoryId": "category-demo-dining",
+            "limitMinor": 20000,
+            "version": 2,
+            "categoryName": "Dining",
+            "colour": "#f28e8b",
+            "spentMinor": 7655,
+            "remainingMinor": 12345,
+            "percentUsed": 38
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-electricity",
+            "month": "2026-08",
+            "categoryId": "category-demo-electricity",
+            "limitMinor": 8000,
+            "version": 1,
+            "categoryName": "Electricity",
+            "colour": "#f4a261",
+            "spentMinor": 6830,
+            "remainingMinor": 1170,
+            "percentUsed": 85
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-rail",
+            "month": "2026-08",
+            "categoryId": "category-demo-rail",
+            "limitMinor": 9000,
+            "version": 1,
+            "categoryName": "Rail",
+            "colour": "#577590",
+            "spentMinor": 4250,
+            "remainingMinor": 4750,
+            "percentUsed": 47
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-household",
+            "month": "2026-08",
+            "categoryId": "category-demo-household",
+            "limitMinor": 12000,
+            "version": 1,
+            "categoryName": "Household",
+            "colour": "#edc66d",
+            "spentMinor": 3420,
+            "remainingMinor": 8580,
+            "percentUsed": 28
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-healthcare",
+            "month": "2026-08",
+            "categoryId": "category-demo-healthcare",
+            "limitMinor": 7000,
+            "version": 1,
+            "categoryName": "Healthcare",
+            "colour": "#ef767a",
+            "spentMinor": 2999,
+            "remainingMinor": 4001,
+            "percentUsed": 43
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-education",
+            "month": "2026-08",
+            "categoryId": "category-demo-education",
+            "limitMinor": 6000,
+            "version": 1,
+            "categoryName": "Education",
+            "colour": "#6c91bf",
+            "spentMinor": 1899,
+            "remainingMinor": 4101,
+            "percentUsed": 32
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-mobile",
+            "month": "2026-08",
+            "categoryId": "category-demo-mobile",
+            "limitMinor": 2500,
+            "version": 1,
+            "categoryName": "Mobile",
+            "colour": "#84a59d",
+            "spentMinor": 1800,
+            "remainingMinor": 700,
+            "percentUsed": 72
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-transit",
+            "month": "2026-08",
+            "categoryId": "category-demo-transit",
+            "limitMinor": 6500,
+            "version": 1,
+            "categoryName": "Public transit",
+            "colour": "#43aa8b",
+            "spentMinor": 1560,
+            "remainingMinor": 4940,
+            "percentUsed": 24
+          },
+          {
+            "id": "budget-demo-2026-08-category-demo-subscriptions",
+            "month": "2026-08",
+            "categoryId": "category-demo-subscriptions",
+            "limitMinor": 5500,
+            "version": 1,
+            "categoryName": "Subscriptions",
+            "colour": "#b8a1cf",
+            "spentMinor": 1099,
+            "remainingMinor": 4401,
+            "percentUsed": 20
+          }
+        ]
+      },
+      {
+        "month": "2026-07",
+        "rows": [
+          {
+            "id": "budget-2026-07-category-demo-rent",
+            "month": "2026-07",
+            "categoryId": "category-demo-rent",
+            "limitMinor": 118000,
+            "version": null,
+            "categoryName": "Rent",
+            "colour": "#9b8ac4",
+            "spentMinor": 118000,
+            "remainingMinor": 0,
+            "percentUsed": 100
+          },
+          {
+            "id": "budget-2026-07-category-demo-groceries",
+            "month": "2026-07",
+            "categoryId": "category-demo-groceries",
+            "limitMinor": 36000,
+            "version": null,
+            "categoryName": "Groceries",
+            "colour": "#76b7b2",
+            "spentMinor": 20360,
+            "remainingMinor": 15640,
+            "percentUsed": 57
+          },
+          {
+            "id": "budget-2026-07-category-demo-dining",
+            "month": "2026-07",
+            "categoryId": "category-demo-dining",
+            "limitMinor": 18000,
+            "version": null,
+            "categoryName": "Dining",
+            "colour": "#f28e8b",
+            "spentMinor": 6970,
+            "remainingMinor": 11030,
+            "percentUsed": 39
+          },
+          {
+            "id": "budget-2026-07-category-demo-electricity",
+            "month": "2026-07",
+            "categoryId": "category-demo-electricity",
+            "limitMinor": 8000,
+            "version": null,
+            "categoryName": "Electricity",
+            "colour": "#f4a261",
+            "spentMinor": 5940,
+            "remainingMinor": 2060,
+            "percentUsed": 74
+          },
+          {
+            "id": "budget-2026-07-category-demo-rail",
+            "month": "2026-07",
+            "categoryId": "category-demo-rail",
+            "limitMinor": 9000,
+            "version": null,
+            "categoryName": "Rail",
+            "colour": "#577590",
+            "spentMinor": 5450,
+            "remainingMinor": 3550,
+            "percentUsed": 61
+          },
+          {
+            "id": "budget-2026-07-category-demo-household",
+            "month": "2026-07",
+            "categoryId": "category-demo-household",
+            "limitMinor": 12000,
+            "version": null,
+            "categoryName": "Household",
+            "colour": "#edc66d",
+            "spentMinor": 4680,
+            "remainingMinor": 7320,
+            "percentUsed": 39
+          },
+          {
+            "id": "budget-2026-07-category-demo-mobile",
+            "month": "2026-07",
+            "categoryId": "category-demo-mobile",
+            "limitMinor": 2500,
+            "version": null,
+            "categoryName": "Mobile",
+            "colour": "#84a59d",
+            "spentMinor": 1800,
+            "remainingMinor": 700,
+            "percentUsed": 72
+          },
+          {
+            "id": "budget-2026-07-category-demo-subscriptions",
+            "month": "2026-07",
+            "categoryId": "category-demo-subscriptions",
+            "limitMinor": 5500,
+            "version": null,
+            "categoryName": "Subscriptions",
+            "colour": "#b8a1cf",
+            "spentMinor": 0,
+            "remainingMinor": 5500,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-07-category-demo-healthcare",
+            "month": "2026-07",
+            "categoryId": "category-demo-healthcare",
+            "limitMinor": 7000,
+            "version": null,
+            "categoryName": "Healthcare",
+            "colour": "#ef767a",
+            "spentMinor": 0,
+            "remainingMinor": 7000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-07-category-demo-education",
+            "month": "2026-07",
+            "categoryId": "category-demo-education",
+            "limitMinor": 6000,
+            "version": null,
+            "categoryName": "Education",
+            "colour": "#6c91bf",
+            "spentMinor": 0,
+            "remainingMinor": 6000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-07-category-demo-transit",
+            "month": "2026-07",
+            "categoryId": "category-demo-transit",
+            "limitMinor": 6500,
+            "version": null,
+            "categoryName": "Public transit",
+            "colour": "#43aa8b",
+            "spentMinor": 0,
+            "remainingMinor": 6500,
+            "percentUsed": 0
+          }
+        ]
+      },
+      {
+        "month": "2026-09",
+        "rows": [
+          {
+            "id": "budget-2026-09-category-demo-rent",
+            "month": "2026-09",
+            "categoryId": "category-demo-rent",
+            "limitMinor": 118000,
+            "version": null,
+            "categoryName": "Rent",
+            "colour": "#9b8ac4",
+            "spentMinor": 0,
+            "remainingMinor": 118000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-groceries",
+            "month": "2026-09",
+            "categoryId": "category-demo-groceries",
+            "limitMinor": 36000,
+            "version": null,
+            "categoryName": "Groceries",
+            "colour": "#76b7b2",
+            "spentMinor": 0,
+            "remainingMinor": 36000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-dining",
+            "month": "2026-09",
+            "categoryId": "category-demo-dining",
+            "limitMinor": 18000,
+            "version": null,
+            "categoryName": "Dining",
+            "colour": "#f28e8b",
+            "spentMinor": 0,
+            "remainingMinor": 18000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-household",
+            "month": "2026-09",
+            "categoryId": "category-demo-household",
+            "limitMinor": 12000,
+            "version": null,
+            "categoryName": "Household",
+            "colour": "#edc66d",
+            "spentMinor": 0,
+            "remainingMinor": 12000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-electricity",
+            "month": "2026-09",
+            "categoryId": "category-demo-electricity",
+            "limitMinor": 8000,
+            "version": null,
+            "categoryName": "Electricity",
+            "colour": "#f4a261",
+            "spentMinor": 0,
+            "remainingMinor": 8000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-mobile",
+            "month": "2026-09",
+            "categoryId": "category-demo-mobile",
+            "limitMinor": 2500,
+            "version": null,
+            "categoryName": "Mobile",
+            "colour": "#84a59d",
+            "spentMinor": 0,
+            "remainingMinor": 2500,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-subscriptions",
+            "month": "2026-09",
+            "categoryId": "category-demo-subscriptions",
+            "limitMinor": 5500,
+            "version": null,
+            "categoryName": "Subscriptions",
+            "colour": "#b8a1cf",
+            "spentMinor": 0,
+            "remainingMinor": 5500,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-healthcare",
+            "month": "2026-09",
+            "categoryId": "category-demo-healthcare",
+            "limitMinor": 7000,
+            "version": null,
+            "categoryName": "Healthcare",
+            "colour": "#ef767a",
+            "spentMinor": 0,
+            "remainingMinor": 7000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-education",
+            "month": "2026-09",
+            "categoryId": "category-demo-education",
+            "limitMinor": 6000,
+            "version": null,
+            "categoryName": "Education",
+            "colour": "#6c91bf",
+            "spentMinor": 0,
+            "remainingMinor": 6000,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-transit",
+            "month": "2026-09",
+            "categoryId": "category-demo-transit",
+            "limitMinor": 6500,
+            "version": null,
+            "categoryName": "Public transit",
+            "colour": "#43aa8b",
+            "spentMinor": 0,
+            "remainingMinor": 6500,
+            "percentUsed": 0
+          },
+          {
+            "id": "budget-2026-09-category-demo-rail",
+            "month": "2026-09",
+            "categoryId": "category-demo-rail",
+            "limitMinor": 9000,
+            "version": null,
+            "categoryName": "Rail",
+            "colour": "#577590",
+            "spentMinor": 0,
+            "remainingMinor": 9000,
+            "percentUsed": 0
+          }
+        ]
+      }
+    ],
+    "recurrences": [
+      {
+        "recurrence": {
+          "frequency": "ONCE",
+          "date": "2026-08-20"
+        },
+        "currentDue": "2026-08-20",
+        "next": null
+      },
+      {
+        "recurrence": {
+          "frequency": "WEEKLY",
+          "weekday": "MONDAY",
+          "intervalWeeks": 1
+        },
+        "currentDue": "2026-08-17",
+        "next": "2026-08-24"
+      },
+      {
+        "recurrence": {
+          "frequency": "WEEKLY",
+          "weekday": "FRIDAY",
+          "intervalWeeks": 4
+        },
+        "currentDue": "2026-12-25",
+        "next": "2027-01-22"
+      },
+      {
+        "recurrence": {
+          "frequency": "MONTHLY",
+          "day": 31,
+          "endOfMonthPolicy": "CLAMP"
+        },
+        "currentDue": "2026-01-31",
+        "next": "2026-02-28"
+      },
+      {
+        "recurrence": {
+          "frequency": "MONTHLY",
+          "day": 31,
+          "endOfMonthPolicy": "SKIP"
+        },
+        "currentDue": "2026-01-31",
+        "next": "2026-03-31"
+      },
+      {
+        "recurrence": {
+          "frequency": "MONTHLY",
+          "day": 1,
+          "endOfMonthPolicy": "CLAMP"
+        },
+        "currentDue": "2026-12-01",
+        "next": "2027-01-01"
+      },
+      {
+        "recurrence": {
+          "frequency": "YEARLY",
+          "month": 2,
+          "day": 29,
+          "endOfMonthPolicy": "CLAMP"
+        },
+        "currentDue": "2028-02-29",
+        "next": "2029-02-28"
+      },
+      {
+        "recurrence": {
+          "frequency": "YEARLY",
+          "month": 2,
+          "day": 29,
+          "endOfMonthPolicy": "SKIP"
+        },
+        "currentDue": "2028-02-29",
+        "next": "2032-02-29"
+      }
+    ],
+    "fingerprints": [
+      {
+        "row": {
+          "accountId": "account-demo-everyday",
+          "localDate": "2026-08-13",
+          "description": "Weekly groceries",
+          "amountMinor": -4325
+        },
+        "fingerprint": "e845dc85"
+      },
+      {
+        "row": {
+          "accountId": "account-demo-everyday",
+          "localDate": "2026-08-13",
+          "description": "  WEEKLY   groceries  ",
+          "amountMinor": -4325
+        },
+        "fingerprint": "e845dc85"
+      },
+      {
+        "row": {
+          "accountId": "account-demo-credit",
+          "localDate": "2026-01-01",
+          "description": "Salary",
+          "amountMinor": 250000
+        },
+        "fingerprint": "d72b20fd"
+      }
+    ],
+    "batchHashes": [
+      {
+        "fileName": "statement.csv",
+        "fingerprints": [
+          "e845dc85",
+          "e845dc85",
+          "d72b20fd"
+        ],
+        "hash": "b6e8f4fd"
+      },
+      {
+        "fileName": "  Statement.CSV ",
+        "fingerprints": [],
+        "hash": "5a621f84"
+      }
+    ],
+    "zonedTimes": [
+      {
+        "instant": "2026-01-15T09:30:00.000Z",
+        "localDate": "2026-01-15",
+        "localTime": "09:30:00"
+      },
+      {
+        "instant": "2026-06-15T09:30:00.000Z",
+        "localDate": "2026-06-15",
+        "localTime": "10:30:00"
+      },
+      {
+        "instant": "2026-03-29T00:30:00.000Z",
+        "localDate": "2026-03-29",
+        "localTime": "00:30:00"
+      },
+      {
+        "instant": "2026-03-29T01:30:00.000Z",
+        "localDate": "2026-03-29",
+        "localTime": "02:30:00"
+      },
+      {
+        "instant": "2026-10-25T00:30:00.000Z",
+        "localDate": "2026-10-25",
+        "localTime": "01:30:00"
+      },
+      {
+        "instant": "2026-10-25T01:30:00.000Z",
+        "localDate": "2026-10-25",
+        "localTime": "01:30:00"
+      },
+      {
+        "instant": "2026-08-17T23:30:00.000Z",
+        "localDate": "2026-08-18",
+        "localTime": "00:30:00"
+      }
+    ],
+    "instants": [
+      {
+        "localDate": "2026-01-15",
+        "timeOfDay": "12:00:00",
+        "instant": "2026-01-15T12:00:00.000Z"
+      },
+      {
+        "localDate": "2026-06-15",
+        "timeOfDay": "12:00:00",
+        "instant": "2026-06-15T11:00:00.000Z"
+      },
+      {
+        "localDate": "2026-06-15",
+        "timeOfDay": "00:30:00",
+        "instant": "2026-06-14T23:30:00.000Z"
+      },
+      {
+        "localDate": "2026-03-29",
+        "timeOfDay": "02:30:00",
+        "instant": "2026-03-29T01:30:00.000Z"
+      },
+      {
+        "localDate": "2026-10-25",
+        "timeOfDay": "01:30:00",
+        "instant": "2026-10-25T01:30:00.000Z"
+      }
+    ],
+    "referenceOrder": {
+      "accountIds": [
+        "account-demo-credit",
+        "account-demo-everyday",
+        "account-demo-investment"
+      ],
+      "categoryIds": [
+        "category-demo-interest",
+        "category-demo-refund",
+        "category-demo-salary",
+        "category-demo-contribution",
+        "category-demo-dividend",
+        "category-demo-rent",
+        "category-demo-education",
+        "category-demo-healthcare",
+        "category-demo-insurance",
+        "category-demo-subscriptions",
+        "category-demo-dining",
+        "category-demo-groceries",
+        "category-demo-household",
+        "category-demo-council-tax",
+        "category-demo-transit",
+        "category-demo-rail",
+        "category-demo-broadband",
+        "category-demo-electricity",
+        "category-demo-mobile"
+      ]
+    }
+  }
+}

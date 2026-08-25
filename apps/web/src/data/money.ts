@@ -13,3 +13,10 @@ export function signedAmount(magnitudeMinor: number, flow: TransactionFlow): num
 export function magnitudeOf(amountMinor: number): number {
   return Math.abs(amountMinor);
 }
+
+// JSON has no negative zero: `-0` serialises as `0`, and the Rust integers on
+// the other side of the contract cannot represent it at all. A total that flips
+// sign is negated through zero so it never becomes one.
+export function negated(amountMinor: number): number {
+  return 0 - amountMinor;
+}

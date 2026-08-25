@@ -28,6 +28,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test:node && npm run test:e2e && npm run test:rust && npm run test:terraform",
     "test:node": "npm run test --workspaces --if-present",
+    "contract:vector": "npm run test --workspace @turtle-tally/web -- --update conformance",
     "test:rust": "cargo test --workspace --locked",
     "test:terraform": "npm run terraform:init && terraform -chdir=infra test",
     "test:e2e": "playwright test",
