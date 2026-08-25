@@ -4,6 +4,9 @@ yanked = "deny"
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"
+# The workspace's own crates are unpublished and referenced by path, which has no
+# version to pin. The rule still applies to every dependency from a registry.
+allow-wildcard-paths = true
 highlight = "all"
 
 [licenses]

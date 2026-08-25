@@ -7,10 +7,13 @@ pub mod calendar;
 pub mod error;
 pub mod fingerprint;
 pub mod money;
+pub mod ordering;
+pub mod paging;
 pub mod recurrence;
 pub mod reference;
 pub mod rollup;
 pub mod time;
 pub mod types;
+pub mod validation;
 
 pub use error::{DomainError, DomainResult, ErrorCode};
