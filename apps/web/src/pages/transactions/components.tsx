@@ -41,7 +41,7 @@ const flows: readonly TransactionFlow[] = ['CREDIT', 'DEBIT'];
 const origins: readonly TransactionOrigin[] = ['MANUAL', 'IMPORT', 'SCHEDULE', 'ASSISTANT'];
 const sorts: readonly TransactionSort[] = ['NEWEST', 'OLDEST', 'AMOUNT_HIGH', 'AMOUNT_LOW'];
 
-const pageSizes = [10, 20, 50] as const;
+const pageLimits = [10, 20, 50] as const;
 
 type TransactionFiltersPanelProps = {
   readonly filters: TransactionFilters;
@@ -265,11 +265,11 @@ export function TransactionFiltersPanel({
         <label className="filter-field">
           <span>{t('perPage')}</span>
           <select
-            value={filters.pageSize ?? 10}
+            value={filters.limit ?? 10}
             aria-controls="transaction-results"
-            onChange={(event) => onFilterChange('pageSize', Number(event.target.value))}
+            onChange={(event) => onFilterChange('limit', Number(event.target.value))}
           >
-            {pageSizes.map((size) => (
+            {pageLimits.map((size) => (
               <option key={size} value={size}>
                 {t('rows', { count: format.number(size) })}
               </option>
@@ -307,7 +307,10 @@ type TransactionResultsProps = {
   readonly onAdd: () => void;
   readonly onEdit: (transaction: Transaction) => void;
   readonly onVoid: (transaction: Transaction) => void;
-  readonly onPageChange: (page: number) => void;
+  readonly pageNumber: number;
+  readonly canGoNewer: boolean;
+  readonly onOlder: () => void;
+  readonly onNewer: () => void;
 };
 
 export function TransactionResults({
@@ -319,7 +322,10 @@ export function TransactionResults({
   onAdd,
   onEdit,
   onVoid,
-  onPageChange,
+  pageNumber,
+  canGoNewer,
+  onOlder,
+  onNewer,
 }: TransactionResultsProps) {
   const t = useMessages(transactionsMessages);
   const { format } = useLocale();
@@ -361,37 +367,26 @@ export function TransactionResults({
             <div>
               <h2>{t('ledgerEntries')}</h2>
               <p>
-                {page.totalItems === 1
-                  ? t('oneTransactionFound')
-                  : t('transactionsFound', { count: format.number(page.totalItems) })}
+                {page.items.length === 1
+                  ? t('oneTransactionShown')
+                  : t('transactionsShown', { count: format.number(page.items.length) })}
               </p>
             </div>
-            <span className="transaction-results__range">
-              {t('resultRange', {
-                start: format.number((page.page - 1) * page.pageSize + 1),
-                end: format.number(Math.min(page.page * page.pageSize, page.totalItems)),
-                total: format.number(page.totalItems),
-              })}
-            </span>
+            <span className="transaction-results__range">{t('pageNumber', { page: format.number(pageNumber) })}</span>
           </header>
           <TransactionTable page={page} categories={categories} onEdit={onEdit} onVoid={onVoid} />
           <TransactionCards page={page} categories={categories} onEdit={onEdit} onVoid={onVoid} />
           <nav className="transaction-pagination" aria-label={t('transactionPages')}>
-            <Button
-              variant="ghost"
-              disabled={page.page <= 1}
-              aria-label={t('goToPreviousPage')}
-              onClick={() => onPageChange(page.page - 1)}
-            >
+            <Button variant="ghost" disabled={!canGoNewer} aria-label={t('goToPreviousPage')} onClick={onNewer}>
               <ChevronLeft aria-hidden="true" size={17} />
               {t('previous')}
             </Button>
-            <span>{t('pageOfTotal', { page: format.number(page.page), total: format.number(page.totalPages) })}</span>
+            <span>{t('pageNumber', { page: format.number(pageNumber) })}</span>
             <Button
               variant="ghost"
-              disabled={page.page >= page.totalPages}
+              disabled={page.nextCursor === null}
               aria-label={t('goToNextPage')}
-              onClick={() => onPageChange(page.page + 1)}
+              onClick={onOlder}
             >
               {t('next')}
               <ChevronRight aria-hidden="true" size={17} />

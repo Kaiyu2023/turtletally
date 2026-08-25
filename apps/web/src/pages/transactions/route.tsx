@@ -12,18 +12,26 @@ export function TransactionsRoute() {
   const { api, refreshToken, openTransactionEditor, refresh, notify } = useApp();
   const [filters, setFilters] = useState<TransactionFilters>({
     month: '2026-08',
-    page: 1,
-    pageSize: 10,
+    limit: 10,
     status: 'ACTIVE',
     sort: 'NEWEST',
   });
+  // One cursor per page already read. A list resumes from the key it returned,
+  // so going back means reusing the cursor that produced the previous page.
+  const [cursors, setCursors] = useState<readonly string[]>([]);
   const [voiding, setVoiding] = useState<Transaction | null>(null);
   const [voidReason, setVoidReason] = useState('');
   const [busy, setBusy] = useState(false);
 
+  const cursor = cursors.at(-1);
   const load = useCallback(
-    () => Promise.all([api.listTransactions(filters), api.listAccounts(true), api.listCategories(true)]),
-    [api, filters, refreshToken],
+    () =>
+      Promise.all([
+        api.listTransactions(cursor === undefined ? filters : { ...filters, cursor }),
+        api.listAccounts(true),
+        api.listCategories(true),
+      ]),
+    [api, cursor, filters, refreshToken],
   );
   const resource = useApiResource(load, [load]);
 
@@ -62,7 +70,16 @@ export function TransactionsRoute() {
         categories={categories}
         filters={filters}
         loading={resource.status === 'loading'}
-        onFiltersChange={setFilters}
+        pageNumber={cursors.length + 1}
+        canGoNewer={cursors.length > 0}
+        onFiltersChange={(next) => {
+          setCursors([]);
+          setFilters(next);
+        }}
+        onOlder={() => {
+          if (page?.nextCursor) setCursors([...cursors, page.nextCursor]);
+        }}
+        onNewer={() => setCursors(cursors.slice(0, -1))}
         onAdd={() => openTransactionEditor()}
         onEdit={openTransactionEditor}
         onVoid={setVoiding}

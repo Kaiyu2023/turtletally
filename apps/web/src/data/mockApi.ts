@@ -7,6 +7,7 @@ import {
   spendingByCategory,
   summariseMonth,
 } from './aggregates';
+import { compareForSort, cursorOf, isAfterCursor, parseCursor } from './cursor';
 import { batchContentHash, rowFingerprint } from './fingerprint';
 import { flowOf } from './money';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
@@ -46,6 +47,7 @@ import type {
   Transaction,
   TransactionFilters,
   TransactionPage,
+  TransactionSort,
   UpdateImportRowInput,
   UpdateAccountInput,
   UpdateCategoryInput,
@@ -63,7 +65,8 @@ interface TransactionIdentity {
 }
 
 const DEFAULT_LATENCY_MS = 180;
-const MAX_PAGE_SIZE = 100;
+const DEFAULT_PAGE_LIMIT = 10;
+const MAX_PAGE_LIMIT = 100;
 
 function copy<T>(value: T): T {
   return structuredClone(value);
@@ -298,9 +301,8 @@ class InMemoryMockApi implements FinanceApi {
 
   async listTransactions(filters: TransactionFilters = {}): Promise<TransactionPage> {
     return this.withLatency(() => {
-      const page = filters.page ?? 1;
-      const pageSize = filters.pageSize ?? 10;
-      this.validPage(page, pageSize);
+      const limit = filters.limit ?? DEFAULT_PAGE_LIMIT;
+      this.validLimit(limit);
 
       const bounded = filters.month !== undefined || (filters.from !== undefined && filters.to !== undefined);
       if (!bounded) {
@@ -329,17 +331,18 @@ class InMemoryMockApi implements FinanceApi {
         return true;
       });
 
-      this.sortTransactions(items, filters.sort ?? 'NEWEST');
-      const totalItems = items.length;
-      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-      const start = (page - 1) * pageSize;
+      const sort = filters.sort ?? 'NEWEST';
+      this.sortTransactions(items, sort);
+
+      const cursor = filters.cursor === undefined ? null : parseCursor(filters.cursor, sort);
+      const resumed = cursor === null ? items : items.filter((item) => isAfterCursor(item, cursor, sort));
+      const page = resumed.slice(0, limit);
+      const last = page.at(-1);
 
       return copy({
-        items: items.slice(start, start + pageSize).map((transaction) => this.projectTransaction(transaction)),
-        page,
-        pageSize,
-        totalItems,
-        totalPages,
+        items: page.map((transaction) => this.projectTransaction(transaction)),
+        limit,
+        nextCursor: last && resumed.length > limit ? cursorOf(last, sort) : null,
       });
     });
   }
@@ -988,13 +991,8 @@ class InMemoryMockApi implements FinanceApi {
     account.balanceMinor += transaction.amountMinor * direction;
   }
 
-  private sortTransactions(transactions: Transaction[], sort: NonNullable<TransactionFilters['sort']>): void {
-    transactions.sort((left, right) => {
-      if (sort === 'OLDEST') return left.occurredAt.localeCompare(right.occurredAt);
-      if (sort === 'AMOUNT_HIGH') return right.amountMinor - left.amountMinor;
-      if (sort === 'AMOUNT_LOW') return left.amountMinor - right.amountMinor;
-      return right.occurredAt.localeCompare(left.occurredAt);
-    });
+  private sortTransactions(transactions: Transaction[], sort: TransactionSort): void {
+    transactions.sort((left, right) => compareForSort(left, right, sort));
   }
 
   private validRecurrence(recurrence: ScheduleRecurrence): void {
@@ -1170,10 +1168,9 @@ class InMemoryMockApi implements FinanceApi {
     }
   }
 
-  private validPage(page: number, pageSize: number): void {
-    if (!Number.isInteger(page) || page < 1) throw new ApiError('VALIDATION', 'Page must be a positive whole number.');
-    if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > MAX_PAGE_SIZE) {
-      throw new ApiError('VALIDATION', `Page size must be between 1 and ${MAX_PAGE_SIZE}.`);
+  private validLimit(limit: number): void {
+    if (!Number.isInteger(limit) || limit < 1 || limit > MAX_PAGE_LIMIT) {
+      throw new ApiError('VALIDATION', `Page limit must be between 1 and ${MAX_PAGE_LIMIT}.`);
     }
   }
 
