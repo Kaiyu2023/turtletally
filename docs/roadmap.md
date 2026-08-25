@@ -18,6 +18,8 @@ The use cases that sit above the domain are implemented too, against ports rathe
 
 The Terraform bootstrap root and state backend of ADR 0006, then the browser application scope of ADR 0009: CloudFront, one Lambda binary, DynamoDB, Cognito, and S3 for receipts. Requires the recorded cost ceiling, a proven state restoration, and the owner approvals listed in the manual actions register.
 
+The configuration for all of it is written and checked: a bootstrap root, an environment root per stage, and modules for data, identity, the two functions, the edge, the MCP ingress, and the cost ceiling with its alarms. Every check is credential-free — validation, mocked plan-only tests, and a pinned configuration scanner — so what remains is the owner's: the account, the domains, the ceiling, and each approval in the register. [The deployment runbook](operations/deployment.md) is the order they happen in.
+
 ## Milestone 3 — scheduling and import
 
 The scheduler worker and its trigger, then statement import. Each is a separate decision to proceed.

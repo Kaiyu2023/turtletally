@@ -1,0 +1,40 @@
+# Findings reviewed and accepted, each with the reason and what would change it.
+# ADR 0006 allows a narrow documented reason; it does not allow silence, and the
+# severity threshold is never lowered instead. Anything not listed here is fixed.
+misconfigurations:
+  - id: AVD-AWS-0132
+    paths:
+      - "bootstrap/main.tf"
+    statement: >-
+      The state bucket is created before any key exists, and a customer-managed
+      key would make every future Terraform run depend on a key whose loss would
+      lock the owner out of their own state. Server-side encryption with the
+      managed key is the documented choice for this bucket. Revisit if state is
+      ever shared beyond the single owner.
+
+  - id: AVD-AWS-0132
+    paths:
+      - "modules/edge/main.tf"
+    statement: >-
+      The site bucket holds the built application, which the distribution serves
+      publicly. A customer-managed key would add a request charge per object read
+      and protect content that is already public. The ledger and its receipts do
+      use one.
+
+  - id: AVD-AWS-0024
+    paths:
+      - "modules/data/main.tf"
+    statement: >-
+      Point-in-time recovery is enabled on the ledger and its audit trail. It is
+      deliberately not enabled on the session table: a session is short-lived,
+      recreated by signing in, and restoring one would be restoring a credential
+      rather than recovering data.
+
+  - id: AVD-AWS-0010
+    paths:
+      - "modules/edge/main.tf"
+    statement: >-
+      Distribution logging is an owner action rather than a Terraform one: the
+      flat-rate plan's included logging is confirmed at the CloudFront plan gate
+      in the manual actions register, and its limitations are accepted there.
+      Revisit if the plan choice changes.
