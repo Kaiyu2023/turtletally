@@ -36,13 +36,14 @@ first deployment follows rather than a record of one.
 
 ```sh
 npm run check                 # the single gate: every check this repository has
-npm run build:rust:arm64      # the two functions, native ARM64
+./scripts/package-functions.sh
 VITE_API_BASE=/ npm run build --workspace @turtle-tally/web
 ```
 
-Package each function as a ZIP containing its binary named `bootstrap`, which is
-what `provided.al2023` runs. The artifacts are inputs to the plan and are never
-committed.
+The packaging script builds both functions for ARM64 and writes each as a ZIP
+containing its binary named `bootstrap`, which is what `provided.al2023` runs. It
+writes under `private/artifacts` and refuses to run if that path is not ignored.
+Artifacts are inputs to a plan and are never committed.
 
 ## Apply a stage
 

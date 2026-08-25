@@ -85,7 +85,7 @@ See [SECURITY.md](SECURITY.md) for reporting and [the repository security policy
 
 ## Infrastructure
 
-`infra` holds the resource-free foundation, a separately gated `bootstrap` root for the state store, an `environment` root that is one deployable stack per stage, and the modules they compose. Every check runs without credentials: validation, mocked plan-only tests, and a pinned configuration scanner. [The deployment runbook](docs/operations/deployment.md) is the order a first deployment follows; nothing in it has been run, and no AWS resource exists.
+`scripts/package-functions.sh` builds and packages the two functions for ARM64. `infra` holds the resource-free foundation, a separately gated `bootstrap` root for the state store, an `environment` root that is one deployable stack per stage, and the modules they compose. Every check runs without credentials: validation, mocked plan-only tests, and a pinned configuration scanner. [The deployment runbook](docs/operations/deployment.md) is the order a first deployment follows; nothing in it has been run, and no AWS resource exists.
 
 ## Architecture and operations
 
