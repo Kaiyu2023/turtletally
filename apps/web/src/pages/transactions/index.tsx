@@ -20,7 +20,11 @@ type TransactionsPageProps = {
   readonly categories: readonly Category[];
   readonly filters: TransactionFilters;
   readonly loading: boolean;
+  readonly pageNumber: number;
+  readonly canGoNewer: boolean;
   readonly onFiltersChange: (filters: TransactionFilters) => void;
+  readonly onOlder: () => void;
+  readonly onNewer: () => void;
   readonly onAdd: () => void;
   readonly onEdit: (transaction: Transaction) => void;
   readonly onVoid: (transaction: Transaction) => void;
@@ -64,7 +68,11 @@ export function TransactionsPage({
   categories,
   filters,
   loading,
+  pageNumber,
+  canGoNewer,
   onFiltersChange,
+  onOlder,
+  onNewer,
   onAdd,
   onEdit,
   onVoid,
@@ -74,7 +82,7 @@ export function TransactionsPage({
   const activeCategories = categories.filter((category) => category.deactivatedAt === null);
 
   function setFilter<Key extends keyof TransactionFilters>(key: Key, value: TransactionFilters[Key] | '') {
-    const next: TransactionFilters = { ...filters, page: 1 };
+    const next: TransactionFilters = { ...filters };
 
     if (value === '') {
       delete next[key];
@@ -86,7 +94,7 @@ export function TransactionsPage({
   }
 
   function setMonth(value: string) {
-    const next = { ...filters, page: 1 };
+    const next = { ...filters };
     delete next.from;
     delete next.to;
 
@@ -100,7 +108,7 @@ export function TransactionsPage({
   }
 
   function setDate(key: 'from' | 'to', value: string) {
-    const next = { ...filters, page: 1 };
+    const next = { ...filters };
     delete next.month;
 
     if (value) {
@@ -115,22 +123,9 @@ export function TransactionsPage({
   function resetFilters() {
     onFiltersChange({
       month: filters.month ?? '2026-08',
-      page: 1,
-      pageSize: filters.pageSize ?? 10,
+      limit: filters.limit ?? 10,
       sort: 'NEWEST',
       status: 'ACTIVE',
-    });
-  }
-
-  function changePage(nextPage: number) {
-    if (!page) {
-      return;
-    }
-
-    onFiltersChange({
-      ...filters,
-      page: Math.min(Math.max(nextPage, 1), page.totalPages),
-      pageSize: page.pageSize,
     });
   }
 
@@ -168,7 +163,10 @@ export function TransactionsPage({
         onAdd={onAdd}
         onEdit={onEdit}
         onVoid={onVoid}
-        onPageChange={changePage}
+        pageNumber={pageNumber}
+        canGoNewer={canGoNewer}
+        onOlder={onOlder}
+        onNewer={onNewer}
       />
     </div>
   );

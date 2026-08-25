@@ -1,6 +1,7 @@
 import { createMockApi } from '../data/mockApi';
 import type { MockScenario, MockSession } from '../data/mock';
 import type { FinanceApi } from '../data/types';
+import { cacheReferenceLists } from './referenceCache';
 
 export function createApiFromLocation(search: string): FinanceApi {
   const params = new URLSearchParams(search);
@@ -12,5 +13,5 @@ export function createApiFromLocation(search: string): FinanceApi {
       ? { latencyMs: requestedLatency, session }
       : { session };
 
-  return createMockApi(scenario, options);
+  return cacheReferenceLists(createMockApi(scenario, options));
 }

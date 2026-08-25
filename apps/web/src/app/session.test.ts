@@ -51,12 +51,12 @@ describe('createApiFromLocation', () => {
     await expect(
       createApiFromLocation('?scenario=empty&latency=0').listTransactions({ month: '2026-08' }),
     ).resolves.toMatchObject({
-      totalItems: 0,
+      items: [],
     });
     await expect(
       createApiFromLocation('?scenario=nonsense&latency=0').listTransactions({ month: '2026-08' }),
     ).resolves.not.toMatchObject({
-      totalItems: 0,
+      items: [],
     });
   });
 

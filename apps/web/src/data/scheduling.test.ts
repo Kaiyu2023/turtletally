@@ -52,7 +52,7 @@ describe('runDueSchedules', () => {
     const replay = await api.runDueSchedules('2026-09-02');
     expect(replay.some((transaction) => transaction.scheduleId === 'schedule-demo-rent')).toBe(false);
 
-    const rentOccurrences = (await api.listTransactions({ month: '2026-09', pageSize: 100 })).items.filter(
+    const rentOccurrences = (await api.listTransactions({ month: '2026-09', limit: 100 })).items.filter(
       (transaction) => transaction.scheduleId === 'schedule-demo-rent',
     );
     expect(rentOccurrences).toHaveLength(1);

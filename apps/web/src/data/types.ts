@@ -143,16 +143,17 @@ export interface TransactionFilters {
   status?: TransactionStatus;
   search?: string;
   sort?: TransactionSort;
-  page?: number;
-  pageSize?: number;
+  // A list resumes from the key it last returned (ADR 0007). There is no page
+  // number and no total: serving either means reading the partition from its
+  // start on every request.
+  cursor?: string;
+  limit?: number;
 }
 
 export interface TransactionPage {
   items: Transaction[];
-  page: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
+  limit: number;
+  nextCursor: string | null;
 }
 
 export interface Budget {

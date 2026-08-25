@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 
 async function firstTransaction(accountId: string) {
-  const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+  const page = await api.listTransactions({ month: '2026-08', limit: 100 });
   const transaction = page.items.find((candidate) => candidate.accountId === accountId);
   if (!transaction) throw new Error('expected a transaction on that account');
   return transaction;
@@ -35,7 +35,7 @@ describe('deactivation keeps history editable', () => {
   });
 
   it('allows editing a transaction whose category has been deactivated', async () => {
-    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const page = await api.listTransactions({ month: '2026-08', limit: 100 });
     const transaction = page.items.find((candidate) => candidate.categoryId !== null);
     if (!transaction?.categoryId) throw new Error('expected a categorised transaction');
 
@@ -112,7 +112,7 @@ describe('account balance is owned by the ledger', () => {
 
 describe('display names follow the entity, not the entry', () => {
   it('shows the current category name after a rename', async () => {
-    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const page = await api.listTransactions({ month: '2026-08', limit: 100 });
     const transaction = page.items.find((candidate) => candidate.categoryId !== null);
     if (!transaction?.categoryId) throw new Error('expected a categorised transaction');
 
@@ -126,7 +126,7 @@ describe('display names follow the entity, not the entry', () => {
   });
 
   it('searches on the current name, not the one stored at entry', async () => {
-    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const page = await api.listTransactions({ month: '2026-08', limit: 100 });
     const transaction = page.items.find((candidate) => candidate.categoryId !== null);
     if (!transaction?.categoryId) throw new Error('expected a categorised transaction');
 
@@ -134,12 +134,12 @@ describe('display names follow the entity, not the entry', () => {
     if (!category) throw new Error('expected the category');
     await api.updateCategory(category.id, { name: 'Zzyzx', expectedVersion: category.version });
 
-    const found = await api.listTransactions({ month: '2026-08', search: 'Zzyzx', pageSize: 100 });
-    expect(found.totalItems).toBeGreaterThan(0);
+    const found = await api.listTransactions({ month: '2026-08', search: 'Zzyzx', limit: 100 });
+    expect(found.items.length).toBeGreaterThan(0);
     expect(found.items.every((item) => item.categoryName === 'Zzyzx')).toBe(true);
 
-    const stale = await api.listTransactions({ month: '2026-08', search: category.name, pageSize: 100 });
-    expect(stale.totalItems).toBe(0);
+    const stale = await api.listTransactions({ month: '2026-08', search: category.name, limit: 100 });
+    expect(stale.items).toHaveLength(0);
   });
 
   it('shows the current account name on a schedule after a rename', async () => {
@@ -156,7 +156,7 @@ describe('display names follow the entity, not the entry', () => {
 
 describe('editing preserves the recorded instant', () => {
   it('keeps the time of day when only the date changes', async () => {
-    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const page = await api.listTransactions({ month: '2026-08', limit: 100 });
     const timed = page.items.find((candidate) => candidate.timePrecision === 'MINUTE');
     if (!timed) throw new Error('expected a minute-precision transaction');
 
@@ -173,7 +173,7 @@ describe('editing preserves the recorded instant', () => {
   });
 
   it('keeps the precision when an unrelated field changes', async () => {
-    const page = await api.listTransactions({ month: '2026-08', pageSize: 100 });
+    const page = await api.listTransactions({ month: '2026-08', limit: 100 });
     const timed = page.items.find((candidate) => candidate.timePrecision === 'MINUTE');
     if (!timed) throw new Error('expected a minute-precision transaction');
 
@@ -187,7 +187,7 @@ describe('editing preserves the recorded instant', () => {
   });
 
   it('rejects an instant that falls on another local date', async () => {
-    const page = await api.listTransactions({ month: '2026-08', pageSize: 1 });
+    const page = await api.listTransactions({ month: '2026-08', limit: 1 });
     const transaction = page.items[0];
     if (!transaction) throw new Error('expected a transaction');
 

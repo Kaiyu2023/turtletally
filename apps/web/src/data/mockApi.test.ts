@@ -42,28 +42,30 @@ describe('reads never write', () => {
   });
 
   it('leaves the ledger untouched when the overview is loaded', async () => {
-    const before = await api.listTransactions({ month: MONTH, pageSize: 100 });
+    const before = await api.listTransactions({ month: MONTH, limit: 100 });
     await api.getDashboard(MONTH);
     await api.getDashboard(UNBUDGETED_MONTH);
-    const after = await api.listTransactions({ month: MONTH, pageSize: 100 });
+    const after = await api.listTransactions({ month: MONTH, limit: 100 });
 
     expect(after.items).toEqual(before.items);
-    expect(after.totalItems).toBe(before.totalItems);
+    expect(after.nextCursor).toBe(before.nextCursor);
   });
 });
 
 describe('reads are bounded', () => {
   it('refuses a query that names no window', async () => {
     await expect(api.listTransactions()).rejects.toMatchObject({ code: 'VALIDATION' });
-    await expect(api.listTransactions({ status: 'ALL', pageSize: 100 })).rejects.toMatchObject({
+    await expect(api.listTransactions({ status: 'ALL', limit: 100 })).rejects.toMatchObject({
       code: 'VALIDATION',
     });
     await expect(api.listTransactions({ from: '2026-08-01' })).rejects.toMatchObject({ code: 'VALIDATION' });
   });
 
   it('accepts a month, or an explicit from and to', async () => {
-    await expect(api.listTransactions({ month: '2026-08' })).resolves.toMatchObject({ page: 1 });
-    await expect(api.listTransactions({ from: '2026-08-01', to: '2026-08-31' })).resolves.toMatchObject({ page: 1 });
+    await expect(api.listTransactions({ month: '2026-08' })).resolves.toMatchObject({ limit: 10 });
+    await expect(api.listTransactions({ from: '2026-08-01', to: '2026-08-31' })).resolves.toMatchObject({
+      limit: 10,
+    });
   });
 });
 
@@ -144,7 +146,7 @@ describe('budget writes', () => {
 
 describe('optimistic concurrency across the contract', () => {
   it('rejects a stale transaction update and a stale void', async () => {
-    const page = await api.listTransactions({ month: MONTH, pageSize: 1 });
+    const page = await api.listTransactions({ month: MONTH, limit: 1 });
     const transaction = page.items[0];
     if (!transaction) throw new Error('expected a transaction');
 

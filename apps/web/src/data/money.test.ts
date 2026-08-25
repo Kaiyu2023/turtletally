@@ -111,11 +111,11 @@ describe('the mock enforces the signed contract', () => {
   });
 
   it('filters by direction using the sign', async () => {
-    const credits = await api.listTransactions({ month: '2026-08', flow: 'CREDIT', pageSize: 100 });
-    const debits = await api.listTransactions({ month: '2026-08', flow: 'DEBIT', pageSize: 100 });
+    const credits = await api.listTransactions({ month: '2026-08', flow: 'CREDIT', limit: 100 });
+    const debits = await api.listTransactions({ month: '2026-08', flow: 'DEBIT', limit: 100 });
 
-    expect(credits.totalItems).toBeGreaterThan(0);
-    expect(debits.totalItems).toBeGreaterThan(0);
+    expect(credits.items.length).toBeGreaterThan(0);
+    expect(debits.items.length).toBeGreaterThan(0);
     expect(credits.items.every((item) => item.amountMinor > 0)).toBe(true);
     expect(debits.items.every((item) => item.amountMinor < 0)).toBe(true);
   });

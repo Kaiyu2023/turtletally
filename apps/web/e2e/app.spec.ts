@@ -75,6 +75,23 @@ test.describe('core experience', () => {
     await expect(visibleTransaction(page, description)).toContainText('Voided');
   });
 
+  test('pages through the ledger with cursors rather than page numbers', async ({ page }) => {
+    await openPage(page, '/transactions', 'Transactions');
+
+    const firstRow = page.locator('.transaction-table tbody tr:visible, .transaction-card:visible').first();
+    const [firstDescription] = (await firstRow.innerText()).split('\n').filter((line) => line.trim().length > 0);
+    if (!firstDescription) throw new Error('expected a described transaction');
+    await expect(page.getByText('Page 1')).toHaveCount(2);
+
+    await page.getByRole('button', { name: 'Go to next page' }).click();
+    await expect(page.getByText('Page 2')).toHaveCount(2);
+    await expect(firstRow).not.toContainText(firstDescription);
+
+    await page.getByRole('button', { name: 'Go to previous page' }).click();
+    await expect(page.getByText('Page 1')).toHaveCount(2);
+    await expect(firstRow).toContainText(firstDescription);
+  });
+
   test('supports keyboard skip navigation', async ({ page }) => {
     await openPage(page, '/dashboard', 'A clear view of your money');
 
