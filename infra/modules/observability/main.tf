@@ -1,10 +1,51 @@
-resource "aws_sns_topic" "alerts" {
-  name = "${var.name_prefix}-alerts"
+# An alarm carries a resource name and a metric, never a finance value. It still
+# gets a key of its own rather than the one the ledger uses, so the services that
+# publish alerts are never granted anything over the ledger's key.
+resource "aws_kms_key" "alerts" {
+  description             = "Encrypts the topic that carries alarms and budget notices."
+  enable_key_rotation     = true
+  deletion_window_in_days = 30
+  policy                  = data.aws_iam_policy_document.alert_key.json
+}
 
-  # An alarm carries a resource name and a metric, never a finance value, but
-  # the managed key costs nothing and keeps the topic off the list of things
-  # that are readable by default.
-  kms_master_key_id = "alias/aws/sns"
+resource "aws_kms_alias" "alerts" {
+  name          = "alias/${var.name_prefix}-alerts"
+  target_key_id = aws_kms_key.alerts.key_id
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "alert_key" {
+  statement {
+    sid    = "AllowAccountAdministration"
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "AllowAlarmPublishers"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudwatch.amazonaws.com", "budgets.amazonaws.com"]
+    }
+
+    actions   = ["kms:GenerateDataKey*", "kms:Decrypt"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_sns_topic" "alerts" {
+  name              = "${var.name_prefix}-alerts"
+  kms_master_key_id = aws_kms_key.alerts.arn
 }
 
 resource "aws_sns_topic_subscription" "alerts" {

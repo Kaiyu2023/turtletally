@@ -1,4 +1,10 @@
-mock_provider "aws" {}
+mock_provider "aws" {
+  mock_data "aws_iam_policy_document" {
+    defaults = {
+      json = "{\"Version\":\"2012-10-17\",\"Statement\":[]}"
+    }
+  }
+}
 
 variables {
   name_prefix          = "turtle-tally-test"
@@ -36,6 +42,29 @@ run "a_placeholder_ceiling_is_refused" {
   }
 
   expect_failures = [var.monthly_cost_ceiling]
+}
+
+run "alerts_carry_their_own_key_rather_than_the_ledgers" {
+  command = plan
+
+  assert {
+    condition     = aws_kms_key.alerts.enable_key_rotation
+    error_message = "Every key this stack owns rotates."
+  }
+
+  assert {
+    condition = alltrue([
+      for statement in data.aws_iam_policy_document.alert_key.statement :
+      alltrue([
+        for principal in statement.principals :
+        principal.type != "Service" || alltrue([
+          for identifier in principal.identifiers :
+          contains(["cloudwatch.amazonaws.com", "budgets.amazonaws.com"], identifier)
+        ])
+      ])
+    ])
+    error_message = "Only the services that publish an alert may use the alert key."
+  }
 }
 
 run "failures_and_throttles_both_raise_an_alarm" {
