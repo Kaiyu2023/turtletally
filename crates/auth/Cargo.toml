@@ -14,7 +14,7 @@ base64 = "0.23.1"
 chrono = { version = "0.4.45", default-features = false, features = ["std", "alloc", "now"] }
 # The aws-lc-rs backend is already in the tree behind rustls, and it avoids the
 # pure-Rust RSA implementation whose timing advisory has no fix.
-jsonwebtoken = { version = "10.1.0", default-features = false, features = ["aws_lc_rs"] }
+jsonwebtoken = { version = "11.0.0", default-features = false, features = ["aws_lc_rs"] }
 rand = "0.9.2"
 reqwest = { version = "0.13.1", default-features = false, features = ["form", "http2", "json", "rustls", "webpki-roots"] }
 serde = { version = "1.0.229", features = ["derive"] }
