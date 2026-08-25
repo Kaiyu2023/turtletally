@@ -1,6 +1,6 @@
 use base64::Engine;
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
-use rand::TryRngCore;
+use rand::TryRng;
 use sha2::{Digest, Sha256};
 use subtle::ConstantTimeEq;
 use turtle_tally_domain::error::{DomainError, DomainResult};
@@ -11,7 +11,7 @@ const SECRET_BYTES: usize = 32;
 /// the same thing: a value an attacker must not be able to guess or replay.
 pub fn random_secret() -> DomainResult<String> {
     let mut bytes = [0_u8; SECRET_BYTES];
-    rand::rngs::OsRng
+    rand::rngs::SysRng
         .try_fill_bytes(&mut bytes)
         .map_err(|_| DomainError::validation("The system random source is unavailable."))?;
     Ok(URL_SAFE_NO_PAD.encode(bytes))
