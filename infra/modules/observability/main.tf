@@ -1,5 +1,10 @@
 resource "aws_sns_topic" "alerts" {
   name = "${var.name_prefix}-alerts"
+
+  # An alarm carries a resource name and a metric, never a finance value, but
+  # the managed key costs nothing and keeps the topic off the list of things
+  # that are readable by default.
+  kms_master_key_id = "alias/aws/sns"
 }
 
 resource "aws_sns_topic_subscription" "alerts" {

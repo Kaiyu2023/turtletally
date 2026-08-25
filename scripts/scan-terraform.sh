@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ADR 0006 requires a configuration security scanner once the first AWS resource
-# exists. Findings are fixed, or narrowed and explained in `.trivyignore`; they
+# exists. Findings are fixed, or narrowed and explained in `.trivyignore.yaml`; they
 # are never silenced by lowering the threshold.
 
 repo_root="$(git rev-parse --show-toplevel)"
@@ -16,6 +16,6 @@ fi
 trivy config \
   --severity MEDIUM,HIGH,CRITICAL \
   --exit-code 1 \
-  --ignorefile .trivyignore \
+  --ignorefile .trivyignore.yaml \
   --tf-exclude-downloaded-modules \
   infra

@@ -39,7 +39,7 @@ check because it no longer does.
 The configuration scanner is Trivy, pinned to 0.74.0 and downloaded in CI
 against its published checksum. Install the same version locally to run
 `npm run scan:terraform`. A finding is fixed, or narrowed and explained in
-`.trivyignore` with the reason it is accepted; the severity threshold is never
+`.trivyignore.yaml` with the reason it is accepted; the severity threshold is never
 lowered to make one disappear.
 
 ## Applying
