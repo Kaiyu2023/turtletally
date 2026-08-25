@@ -6,11 +6,13 @@
 
 Turtle Tally is a privacy-first, single-owner personal finance application for tracking transactions, budgets, scheduled entries, receipts, and monthly summaries.
 
-The implemented product surface is currently a browser-only UI draft. It uses visibly synthetic fixtures and an in-memory mock API, so every change resets when the page reloads. The repository also contains credential-free Rust and Terraform foundations plus their security design records, but no backend or AWS resources. It is not ready for real financial data or production use.
+Everything the product needs is written and checked: the browser application, the Rust services behind it, the infrastructure they run on, and the decision records that explain why each is the way it is. **Nothing has been deployed.** No AWS resource exists, no owner account exists, and no real financial data has been near any of it. What remains is the owner's: an account, the domains, a cost ceiling, and the approvals in [the manual actions register](docs/operations/manual-actions.md), in the order [the deployment runbook](docs/operations/deployment.md) sets out.
 
-## UI draft
+Run the browser application without any of that and it serves visibly synthetic fixtures from an in-memory mock, where every change resets on reload.
 
-The React and TypeScript draft includes:
+## The browser application
+
+The React and TypeScript application includes:
 
 - monthly overview, spending comparisons, budgets, and upcoming schedules;
 - searchable and filterable transactions with create, edit, receipt, and void flows;
@@ -23,7 +25,9 @@ The React and TypeScript draft includes:
 
 Each route keeps orchestration, presentation components, and styles together in its own folder. Repeated controls with the same semantics live in the shared component layer.
 
-The production-oriented [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
+The [user preferences API](docs/api/user-preferences.md) keeps locale ownership and persistence on the authenticated server rather than in browser storage.
+
+Statement import is the one screen without a server behind it: it is a later milestone ([the roadmap](docs/roadmap.md)), and a deployed build refuses those calls rather than failing obscurely.
 
 ## Conversational access
 
@@ -73,6 +77,8 @@ The root check covers the repository secret scan, formatting, linting, type chec
 Vitest covers the domain contract in `apps/web/src/data` and runs on its own with `npm run test:node`; it also fails when the committed conformance vector no longer matches the contract. Playwright runs the browser behaviour and accessibility suite in desktop and mobile Chromium. `cargo test` covers the Rust domain crate and its conformance against that vector. Visual-review captures are written to the ignored `artifacts/ui-draft` directory and can be refreshed with `npm run screenshots`.
 
 ## Security posture
+
+Sessions stay on the server and the browser holds only an opaque, revocable, host-bound cookie ([ADR 0002](docs/architecture/0002-browser-bff-sessions.md)). A mutation must carry a confirmation token that matches its session and headers only a browser sets. Ownership is derived from the verified session or token and never from the request. Receipt bytes never pass through the API: the client writes to a short-lived grant and the server checks what the store actually holds. Every store is encrypted under one key the deployment owns, and every ingress role is scoped to what that ingress does.
 
 - Never commit credentials, tokens, real statements, receipts, account identifiers, or live financial data.
 - Local AWS access will use IAM Identity Center/SSO and temporary credentials kept outside this repository.
