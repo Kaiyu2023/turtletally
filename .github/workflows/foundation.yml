@@ -49,8 +49,12 @@ jobs:
           "$terraform_bin_dir/terraform" version
           printf '%s\n' "$terraform_bin_dir" >> "$GITHUB_PATH"
 
-      - name: Install the ARM64 cross linker
-        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends gcc-aarch64-linux-gnu
+      - name: Install the ARM64 cross toolchain
+        # The TLS stack the AWS SDK uses compiles C, so the cross build needs
+        # the target's headers and libraries as well as its linker.
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends gcc-aarch64-linux-gnu libc6-dev-arm64-cross
 
       - name: Install the pinned Rust security tools
         env:
