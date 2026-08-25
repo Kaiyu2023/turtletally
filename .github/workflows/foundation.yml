@@ -87,6 +87,22 @@ jobs:
           "$tools_dir/cargo-deny" --version
           printf '%s\n' "$tools_dir" >> "$GITHUB_PATH"
 
+      - name: Install the pinned configuration scanner
+        env:
+          TRIVY_VERSION: 0.74.0
+          TRIVY_SHA256: 2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a
+        run: |
+          scanner_archive="$RUNNER_TEMP/trivy.tar.gz"
+          scanner_dir="$RUNNER_TEMP/trivy-bin"
+          curl --fail --silent --show-error --location \
+            "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" \
+            --output "$scanner_archive"
+          printf '%s  %s\n' "$TRIVY_SHA256" "$scanner_archive" | sha256sum --check
+          mkdir -p "$scanner_dir"
+          tar --extract --gzip --file "$scanner_archive" --directory "$scanner_dir" trivy
+          "$scanner_dir/trivy" --version
+          printf '%s\n' "$scanner_dir" >> "$GITHUB_PATH"
+
       - name: Install Node.js dependencies
         run: npm ci --ignore-scripts
 

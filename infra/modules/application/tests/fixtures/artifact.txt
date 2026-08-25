@@ -1,0 +1,3 @@
+Not an artifact. These tests plan only, and a plan needs a file to hash rather
+than a runnable one. A real ARM64 ZIP comes from `npm run build:rust:arm64` and
+is never committed.

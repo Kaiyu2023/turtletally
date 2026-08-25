@@ -83,6 +83,10 @@ Vitest covers the domain contract in `apps/web/src/data` and runs on its own wit
 
 See [SECURITY.md](SECURITY.md) for reporting and [the repository security policy](docs/security/repository-policy.md) for the full rules.
 
+## Infrastructure
+
+`infra` holds the resource-free foundation, a separately gated `bootstrap` root for the state store, an `environment` root that is one deployable stack per stage, and the modules they compose. Every check runs without credentials: validation, mocked plan-only tests, and a pinned configuration scanner. [The deployment runbook](docs/operations/deployment.md) is the order a first deployment follows; nothing in it has been run, and no AWS resource exists.
+
 ## Architecture and operations
 
 - [Architecture decision records](docs/architecture/README.md) explain the runtime, session, data, ingress, MCP write, contract, scope, and Terraform state boundaries.
@@ -91,6 +95,7 @@ See [SECURITY.md](SECURITY.md) for reporting and [the repository security policy
 - [API conventions](docs/api/conventions.md) apply to every endpoint; the [user preferences API](docs/api/user-preferences.md) is the worked example.
 - [Threat model](docs/threat-model.md) records assets, entry points, controls, and residual risks.
 - [Manual owner actions](docs/operations/manual-actions.md) identifies the AWS and assistant-connection steps that automation must not cross.
+- [Deployment runbook](docs/operations/deployment.md) sequences those steps into a first deployment.
 
 These documents use placeholders and synthetic examples. They do not grant deployment, billing, domain, or live-data approval.
 

@@ -1,0 +1,3 @@
+# Findings reviewed and accepted, each with the reason it is accepted and what
+# would change it. ADR 0006 allows a narrow documented reason; it does not allow
+# silence. Anything not listed here must be fixed.
