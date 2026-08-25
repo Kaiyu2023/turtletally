@@ -15,5 +15,6 @@ Use [`0000-template.md`](0000-template.md) for a new record. Number sequentially
 | [0007](0007-monthly-rollups-for-aggregate-reads.md) | Monthly rollups maintained on the write path       | Accepted |
 | [0008](0008-typescript-owns-the-domain-contract.md) | TypeScript owns the domain contract, Rust conforms | Accepted |
 | [0009](0009-v1-deployment-scope.md)                 | A one-binary v1, with MCP as an additive milestone | Accepted |
+| [0010](0010-dynamodb-key-design.md)                 | The DynamoDB key design and how a mutation commits | Accepted |
 
 ADR 0006 replaced an earlier choice of CDK that predates this log and has no record of its own.
