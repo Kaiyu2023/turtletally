@@ -7,6 +7,7 @@ use aws_sdk_dynamodb::operation::transact_write_items::TransactWriteItemsError;
 use aws_sdk_dynamodb::types::{AttributeValue, Put, TransactWriteItem, Update};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
+use turtle_tally_application::assistant::{OperationStore, StoredOperation};
 use turtle_tally_application::ports::{
     AuditEvent, EntityWrite, FinanceStore, LedgerWrite, Owner, PendingUpload,
 };
@@ -629,6 +630,46 @@ impl FinanceStore for DynamoStore {
             .attributes
             .map(|item| entity_from::<StoredUpload>(item).map(PendingUpload::from))
             .transpose()
+    }
+}
+
+impl OperationStore for DynamoStore {
+    async fn put_operation(&self, owner: &Owner, operation: &StoredOperation) -> DomainResult<()> {
+        let item = self.entity_item(
+            &keys::owner_partition(owner),
+            &keys::operation_key(&operation.id),
+            operation,
+        )?;
+
+        self.client
+            .put_item()
+            .table_name(&self.tables.finance)
+            .set_item(Some(item))
+            .send()
+            .await
+            .map_err(put_failed)
+            .map(|_| ())
+    }
+
+    /// The commit that redeems a proposal removes it, so a replay finds nothing
+    /// and an unredeemed one expires without a cleanup job.
+    async fn take_operation(
+        &self,
+        owner: &Owner,
+        id: &str,
+    ) -> DomainResult<Option<StoredOperation>> {
+        let response = self
+            .client
+            .delete_item()
+            .table_name(&self.tables.finance)
+            .key(PARTITION, text(keys::owner_partition(owner)))
+            .key(SORT, text(keys::operation_key(id)))
+            .return_values(aws_sdk_dynamodb::types::ReturnValue::AllOld)
+            .send()
+            .await
+            .map_err(write_failed)?;
+
+        response.attributes.map(entity_from).transpose()
     }
 }
 

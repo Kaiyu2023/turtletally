@@ -22,6 +22,7 @@ pub const BUDGET_DEFAULT_PREFIX: &str = "BUDGET_DEFAULT#";
 pub const SCHEDULE_PREFIX: &str = "SCHEDULE#";
 pub const RECEIPT_PREFIX: &str = "RECEIPT#";
 pub const UPLOAD_PREFIX: &str = "UPLOAD#";
+pub const OPERATION_PREFIX: &str = "OPERATION#";
 pub const ROLLUP_PREFIX: &str = "ROLLUP#";
 pub const TRANSACTION_PREFIX: &str = "TX#";
 
@@ -53,6 +54,12 @@ pub fn receipt_key(id: &str) -> String {
 
 pub fn upload_key(id: &str) -> String {
     format!("{UPLOAD_PREFIX}{id}")
+}
+
+/// A proposed operation an assistant may later commit (ADR 0005). It expires
+/// on its own and is removed by the commit that redeems it.
+pub fn operation_key(id: &str) -> String {
+    format!("{OPERATION_PREFIX}{id}")
 }
 
 pub fn rollup_key(month: &Month) -> String {

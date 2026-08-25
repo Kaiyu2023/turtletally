@@ -13,8 +13,8 @@ These rules apply to the entire Turtle Tally repository.
 - Before every apply, resolve the exact root configuration, backend key, AWS profile, account, region, stage, variable file, Terraform version, and provider lock revision. Generate a saved plan only under the repository-relative `private/terraform/plans/` path after verifying the exact path is ignored, show it to the owner locally, and apply only that exact approved plan.
 - Treat Terraform state, backups, saved plans and their JSON forms, crash logs, variable files, and outputs as sensitive. Never commit, publish, attach, or log them. Commit `.terraform.lock.hcl`.
 - Backend bootstrap or migration, import, state move/remove/provider replacement, state restoration, force-unlock, replacement or deletion, teardown, and production apply each require a separate documented owner approval.
-- Stop if the Cognito, OAuth resource binding, OpenAI mTLS, or ChatGPT Work compatibility proof fails. Do not add a custom OAuth adapter without explicit owner approval.
-- Do not weaken passkey recovery, enable a paid AWS add-on, or connect live financial data to ChatGPT without the corresponding documented owner approval.
+- Stop if the Cognito, OAuth resource binding, or MCP client compatibility proof fails. The proof is client-neutral (ADR 0011): any specification-compliant assistant must be able to discover, authenticate, and read. Do not add a custom OAuth adapter without explicit owner approval.
+- Do not weaken passkey recovery, enable a paid AWS add-on, or connect live financial data to any assistant without the corresponding documented owner approval. Each assistant is registered, reviewed, and revoked on its own.
 - Do not deploy to production until ADR 0007 is implemented in full. Serving an aggregate by re-querying the ledger, offset pagination, and refetching bounded reference lists per route are not deployable states.
 
 ## Required checks

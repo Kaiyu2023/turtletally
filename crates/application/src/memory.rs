@@ -12,6 +12,7 @@ use turtle_tally_domain::types::{
     UserPreferences,
 };
 
+use crate::assistant::{OperationStore, StoredOperation};
 use crate::ports::{
     AuditEvent, Clock, EntityWrite, FinanceStore, GrantedUrl, IdSource, LedgerWrite, ObjectStore,
     Owner, PendingUpload,
@@ -20,13 +21,14 @@ use crate::ports::{
 /// A complete store that keeps everything in memory. It exists so the use cases
 /// can be tested without AWS, and it enforces the same version conditions and
 /// single-use rules the persistent store must.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct InMemoryStore {
-    owners: Mutex<BTreeMap<String, State>>,
+    owners: std::sync::Arc<Mutex<BTreeMap<String, State>>>,
 }
 
 #[derive(Default)]
 struct State {
+    operations: Vec<StoredOperation>,
     preferences: Option<UserPreferences>,
     accounts: Vec<Account>,
     categories: Vec<Category>,
@@ -435,6 +437,29 @@ impl FinanceStore for InMemoryStore {
                 .iter()
                 .position(|upload| upload.id == id)
                 .map(|index| state.uploads.remove(index))
+        }))
+    }
+}
+
+impl OperationStore for InMemoryStore {
+    async fn put_operation(&self, owner: &Owner, operation: &StoredOperation) -> DomainResult<()> {
+        self.mutate(owner, |state| {
+            state.operations.push(operation.clone());
+            Ok(())
+        })
+    }
+
+    async fn take_operation(
+        &self,
+        owner: &Owner,
+        id: &str,
+    ) -> DomainResult<Option<StoredOperation>> {
+        Ok(self.mutate(owner, |state| {
+            state
+                .operations
+                .iter()
+                .position(|operation| operation.id == id)
+                .map(|index| state.operations.remove(index))
         }))
     }
 }

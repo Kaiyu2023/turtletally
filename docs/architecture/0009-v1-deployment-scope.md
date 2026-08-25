@@ -1,6 +1,6 @@
 # ADR 0009: Ship a one-binary v1 and treat MCP as an additive milestone
 
-- Status: Accepted
+- Status: Accepted, amended by [ADR 0011](0011-model-independent-mcp-ingress.md)
 - Date: 2026-08-24
 
 ## Context
@@ -20,6 +20,13 @@ Deferred to later milestones, in this order: the scheduler worker and its EventB
 Prove the ChatGPT compatibility gate as a throwaway spike before any irreversible commitment. The spike runs in a sandbox account against a disposable domain that is explicitly not the passkey relying party, and it proves discovery, resource binding, and mTLS only. The production gate stays where it is.
 
 Record a monthly cost ceiling and alert thresholds before the first billable resource, and treat crossing the ceiling as a stop condition rather than a notification.
+
+## Amendment
+
+ADR 0011 makes the compatibility gate client-neutral. The sequencing above
+stands — prove the gate before irreversible spend — but what is proven is
+discovery, authorization, audience and scope binding, and one read-only tool
+with any compliant client, rather than one vendor's acceptance.
 
 ## Consequences
 
