@@ -31,6 +31,16 @@ The production-oriented [user preferences API](docs/api/user-preferences.md) kee
 
 Use `?scenario=empty` on any route to review the first-use state.
 
+## Talking to a server
+
+The browser talks to the deployed API when the build names one, and to the in-memory mock when it does not:
+
+```sh
+VITE_API_BASE=/ npm run build --workspace @turtle-tally/web
+```
+
+Nothing decides this at runtime, so a draft build cannot reach a real ledger by accident. Against a server the browser sends its session cookie, echoes the confirmation token from the readable cookie beside it on every mutation, and sends the owner to the sign-in route when the session ends. Statement import has no server behind it yet ([ADR 0009](docs/architecture/0009-v1-deployment-scope.md)) and refuses rather than failing obscurely.
+
 ## Local development
 
 Node.js 22.22.1, Rust 1.98.0, and Terraform 1.15.9 are pinned in the repository. Install Rust through `rustup` so `rust-toolchain.toml` can select the pinned compiler and ARM64 target. Install Terraform and the two pinned Rust security tools before running the complete check suite:
