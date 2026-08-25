@@ -1,3 +1,4 @@
+import { compareText } from './ordering';
 import { ApiError, type Transaction, type TransactionSort } from './types';
 
 // ADR 0007: a list resumes from the last key it returned. Offset paging cannot
@@ -40,10 +41,10 @@ export function compareForSort(
   right: Pick<LedgerCursor, 'occurredAt' | 'amountMinor' | 'id'>,
   sort: TransactionSort,
 ): number {
-  if (sort === 'AMOUNT_HIGH') return right.amountMinor - left.amountMinor || right.id.localeCompare(left.id);
-  if (sort === 'AMOUNT_LOW') return left.amountMinor - right.amountMinor || left.id.localeCompare(right.id);
-  if (sort === 'OLDEST') return left.occurredAt.localeCompare(right.occurredAt) || left.id.localeCompare(right.id);
-  return right.occurredAt.localeCompare(left.occurredAt) || right.id.localeCompare(left.id);
+  if (sort === 'AMOUNT_HIGH') return right.amountMinor - left.amountMinor || compareText(right.id, left.id);
+  if (sort === 'AMOUNT_LOW') return left.amountMinor - right.amountMinor || compareText(left.id, right.id);
+  if (sort === 'OLDEST') return compareText(left.occurredAt, right.occurredAt) || compareText(left.id, right.id);
+  return compareText(right.occurredAt, left.occurredAt) || compareText(right.id, left.id);
 }
 
 export function isAfterCursor(transaction: Transaction, cursor: LedgerCursor, sort: TransactionSort): boolean {

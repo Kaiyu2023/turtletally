@@ -1,5 +1,3 @@
-use std::cmp::Reverse;
-
 use crate::calendar::{LocalDate, Month};
 use crate::error::{DomainError, DomainResult};
 use crate::types::{
@@ -29,7 +27,7 @@ impl SpendingByCategory {
         &self.0
     }
 
-    fn add(&mut self, category_id: Option<&str>, amount_minor: i64) {
+    pub fn add(&mut self, category_id: Option<&str>, amount_minor: i64) {
         match self
             .0
             .iter_mut()
@@ -177,7 +175,14 @@ pub fn category_spending(
         });
     }
 
-    rows.sort_by_key(|row| Reverse(row.amount_minor));
+    rows.sort_by(|left, right| {
+        right.amount_minor.cmp(&left.amount_minor).then_with(|| {
+            left.category_id
+                .as_deref()
+                .unwrap_or_default()
+                .cmp(right.category_id.as_deref().unwrap_or_default())
+        })
+    });
     Ok(rows)
 }
 
@@ -242,7 +247,12 @@ pub fn budget_progress(input: &BudgetProgressInput<'_>) -> DomainResult<Vec<Budg
         });
     }
 
-    progress.sort_by_key(|row| Reverse(row.spent_minor));
+    progress.sort_by(|left, right| {
+        right
+            .spent_minor
+            .cmp(&left.spent_minor)
+            .then_with(|| left.category_id.cmp(&right.category_id))
+    });
     Ok(progress)
 }
 
@@ -323,7 +333,12 @@ pub fn summarise_month(input: &MonthSummaryInput<'_>) -> DomainResult<DashboardS
         .collect();
 
     let mut recent_transactions = transactions.clone();
-    recent_transactions.sort_by(|left, right| right.occurred_at.cmp(&left.occurred_at));
+    recent_transactions.sort_by(|left, right| {
+        right
+            .occurred_at
+            .cmp(&left.occurred_at)
+            .then_with(|| right.id.cmp(&left.id))
+    });
     recent_transactions.truncate(RECENT_TRANSACTION_COUNT);
 
     Ok(DashboardSummary {

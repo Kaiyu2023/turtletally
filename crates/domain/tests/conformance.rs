@@ -7,6 +7,10 @@ use turtle_tally_domain::calendar::{LocalDate, Month};
 use turtle_tally_domain::fingerprint::{SourceRow, batch_content_hash, row_fingerprint};
 use turtle_tally_domain::recurrence::next_occurrence;
 use turtle_tally_domain::reference::{sort_accounts, sort_categories};
+use turtle_tally_domain::rollup::{
+    MonthlyRollup, RollupSummaryInput, deltas_for_batch, deltas_for_create, deltas_for_update,
+    deltas_for_void, rebuild_month, summarise_from_rollups,
+};
 use turtle_tally_domain::time::{instant_at, zoned_date, zoned_time};
 use turtle_tally_domain::types::{
     Account, Budget, BudgetDefault, BudgetProgress, Category, DashboardSummary, Schedule,
@@ -299,4 +303,160 @@ fn the_vector_carries_the_schedules_the_contract_defines() {
             .iter()
             .all(|schedule| schedule.currency == turtle_tally_domain::types::Currency::Gbp)
     );
+}
+
+fn rollup_for(vector: &Vector, month: &Month) -> turtle_tally_domain::rollup::MonthlyRollup {
+    turtle_tally_domain::rollup::rebuild_month(month, &vector.transactions)
+}
+
+#[test]
+fn a_rollup_serves_the_same_dashboard_as_the_ledger() {
+    let vector = vector();
+
+    for case in &vector.expected.dashboards {
+        let current = rollup_for(&vector, &case.month);
+        let previous = rollup_for(&vector, &case.month.previous());
+        let recent = active_within(
+            &vector.transactions,
+            &case.month.first_day(),
+            &case.month.last_day(),
+        );
+
+        let summary = summarise_from_rollups(&RollupSummaryInput {
+            today: &vector.today,
+            as_of: &vector.now,
+            current: &current,
+            previous: &previous,
+            budgets: &vector.budgets,
+            budget_defaults: &vector.budget_defaults,
+            categories: &vector.categories,
+            recent_transactions: &recent,
+        })
+        .expect("the fixtures resolve every category");
+
+        assert_eq!(
+            summary, case.summary,
+            "rollup-served dashboard for {}",
+            case.month
+        );
+    }
+}
+
+#[test]
+fn incremental_maintenance_matches_a_rebuild() {
+    let vector = vector();
+    let month = Month::parse("2026-08").expect("a valid month");
+    let mut rollup = MonthlyRollup::empty(month.clone());
+    let mut ledger: Vec<Transaction> = Vec::new();
+
+    for transaction in vector
+        .transactions
+        .iter()
+        .filter(|entry| month.contains(&entry.local_date))
+    {
+        if !transaction.is_active() {
+            continue;
+        }
+        for delta in deltas_for_create(transaction) {
+            if delta.month == month {
+                rollup.apply(&delta);
+            }
+        }
+        ledger.push(transaction.clone());
+        assert_eq!(
+            rollup,
+            rebuild_month(&month, &ledger),
+            "after adding {}",
+            transaction.id
+        );
+    }
+
+    // An edit is a reversal and an addition, and a void is a reversal alone.
+    let mut edited = ledger
+        .first()
+        .cloned()
+        .expect("the fixture month has a ledger");
+    let before = edited.clone();
+    edited.amount_minor -= 1_234;
+    edited.category_id = None;
+    edited.local_date = LocalDate::parse("2026-08-02").expect("a valid date");
+    for delta in deltas_for_update(&before, &edited) {
+        if delta.month == month {
+            rollup.apply(&delta);
+        }
+    }
+    ledger[0] = edited.clone();
+    assert_eq!(rollup, rebuild_month(&month, &ledger));
+
+    for delta in deltas_for_void(&edited) {
+        if delta.month == month {
+            rollup.apply(&delta);
+        }
+    }
+    ledger.remove(0);
+    assert_eq!(rollup, rebuild_month(&month, &ledger));
+}
+
+#[test]
+fn an_edit_that_moves_a_month_produces_one_delta_for_each() {
+    let vector = vector();
+    let before = vector
+        .transactions
+        .iter()
+        .find(|transaction| transaction.is_active())
+        .cloned()
+        .expect("the fixtures carry an active transaction");
+    let mut after = before.clone();
+    after.local_date = LocalDate::parse("2026-07-04").expect("a valid date");
+
+    let deltas = deltas_for_update(&before, &after);
+    assert_eq!(deltas.len(), 2);
+    assert_eq!(
+        deltas
+            .iter()
+            .map(|delta| delta.transaction_count)
+            .sum::<i64>(),
+        0
+    );
+    assert!(
+        deltas
+            .iter()
+            .any(|delta| delta.month == before.local_date.month())
+    );
+    assert!(
+        deltas
+            .iter()
+            .any(|delta| delta.month == after.local_date.month())
+    );
+}
+
+#[test]
+fn a_batch_commits_one_delta_for_each_month_it_touches() {
+    let vector = vector();
+    let batch: Vec<Transaction> = vector
+        .transactions
+        .iter()
+        .filter(|entry| entry.is_active())
+        .cloned()
+        .collect();
+    let deltas = deltas_for_batch(&batch);
+
+    let months: Vec<Month> = batch
+        .iter()
+        .map(|transaction| transaction.local_date.month())
+        .collect();
+    let distinct: std::collections::BTreeSet<String> =
+        months.iter().map(ToString::to_string).collect();
+    assert_eq!(deltas.len(), distinct.len());
+
+    for delta in &deltas {
+        let mut rollup = MonthlyRollup::empty(delta.month.clone());
+        rollup.apply(delta);
+        assert_eq!(
+            rollup,
+            rebuild_month(&delta.month, &batch),
+            "batch delta for {}",
+            delta.month
+        );
+    }
 }

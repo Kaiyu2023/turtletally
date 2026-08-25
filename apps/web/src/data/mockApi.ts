@@ -8,6 +8,7 @@ import {
   summariseMonth,
 } from './aggregates';
 import { compareForSort, cursorOf, isAfterCursor, parseCursor } from './cursor';
+import { compareNames, compareText } from './ordering';
 import { batchContentHash, rowFingerprint } from './fingerprint';
 import { flowOf } from './money';
 import { createMockFixtures, MOCK_NOW, MOCK_TODAY, type MockFixtureState } from './fixtures';
@@ -138,7 +139,7 @@ class InMemoryMockApi implements FinanceApi {
       copy(
         this.state.accounts
           .filter((account) => includeInactive || account.deactivatedAt === null)
-          .sort((left, right) => left.name.localeCompare(right.name)),
+          .sort((left, right) => compareNames(left.name, right.name)),
       ),
     );
   }
@@ -220,7 +221,7 @@ class InMemoryMockApi implements FinanceApi {
       copy(
         this.state.categories
           .filter((category) => includeInactive || category.deactivatedAt === null)
-          .sort((left, right) => left.group.localeCompare(right.group) || left.name.localeCompare(right.name)),
+          .sort((left, right) => compareNames(left.group, right.group) || compareNames(left.name, right.name)),
       ),
     );
   }
@@ -448,11 +449,9 @@ class InMemoryMockApi implements FinanceApi {
   async listBudgetDefaults(): Promise<BudgetDefault[]> {
     return this.withLatency(() =>
       copy(
-        this.state.budgetDefaults.sort((left, right) => {
-          const leftName = this.findCategory(left.categoryId).name;
-          const rightName = this.findCategory(right.categoryId).name;
-          return leftName.localeCompare(rightName);
-        }),
+        this.state.budgetDefaults.sort((left, right) =>
+          compareNames(this.findCategory(left.categoryId).name, this.findCategory(right.categoryId).name),
+        ),
       ),
     );
   }
@@ -527,7 +526,7 @@ class InMemoryMockApi implements FinanceApi {
         this.state.schedules
           .filter((schedule) => includeInactive || schedule.deactivatedAt === null)
           .map((schedule) => this.projectSchedule(schedule))
-          .sort((left, right) => (left.nextDueDate ?? '9999-12-31').localeCompare(right.nextDueDate ?? '9999-12-31')),
+          .sort((left, right) => compareText(left.nextDueDate ?? '9999-12-31', right.nextDueDate ?? '9999-12-31')),
       ),
     );
   }
@@ -757,7 +756,7 @@ class InMemoryMockApi implements FinanceApi {
             invalidCount: batch.rows.filter((row) => row.status === 'INVALID').length,
             importedCount: batch.importedCount,
           }))
-          .sort((left, right) => right.createdAt.localeCompare(left.createdAt)),
+          .sort((left, right) => compareText(right.createdAt, left.createdAt)),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import { negated } from './money';
+import { compareText } from './ordering';
 import {
   ApiError,
   type Budget,
@@ -117,7 +118,10 @@ export function categorySpending(
         amountMinor,
       };
     })
-    .sort((left, right) => right.amountMinor - left.amountMinor);
+    .sort(
+      (left, right) =>
+        right.amountMinor - left.amountMinor || compareText(left.categoryId ?? '', right.categoryId ?? ''),
+    );
 }
 
 export interface BudgetProgressInput {
@@ -167,7 +171,7 @@ export function budgetProgress(input: BudgetProgressInput): BudgetProgress[] {
           row.limitMinor === 0 ? (spentMinor === 0 ? 0 : 100) : Math.round((spentMinor / row.limitMinor) * 100),
       };
     })
-    .sort((left, right) => right.spentMinor - left.spentMinor);
+    .sort((left, right) => right.spentMinor - left.spentMinor || compareText(left.categoryId, right.categoryId));
 }
 
 function comparisonWindows(month: Month, today: LocalDate) {
@@ -243,7 +247,7 @@ export function summariseMonth(input: MonthSummaryInput): DashboardSummary {
     spendingByCategory: categorySpending(spentByCategory, input.categories),
     budgets,
     recentTransactions: [...transactions]
-      .sort((left, right) => right.occurredAt.localeCompare(left.occurredAt))
+      .sort((left, right) => compareText(right.occurredAt, left.occurredAt) || compareText(right.id, left.id))
       .slice(0, 6),
   };
 }
