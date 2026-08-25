@@ -78,10 +78,13 @@ Artifacts are inputs to a plan and are never committed.
 
 ## What is not deployed by this
 
-Statement import and the scheduler worker are later milestones
-([the roadmap](../roadmap.md)). The browser draft's import screens run against
-the in-memory mock and the deployed client refuses those calls rather than
-failing obscurely.
+Statement import is a later milestone ([the roadmap](../roadmap.md)). The browser
+draft's import screens run against the in-memory mock, and the deployed client
+refuses those calls rather than failing obscurely.
+
+The scheduler worker is deployed and runs daily, but it needs the owner's Cognito
+subject as an input, which does not exist until the owner is created. Apply the
+stage, create the owner, then set `owner_subject` and apply again.
 
 ## If something is wrong
 

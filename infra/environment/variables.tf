@@ -61,6 +61,17 @@ variable "mcp_api_artifact" {
   type        = string
 }
 
+variable "scheduler_artifact" {
+  description = "The built ARM64 ZIP for the scheduler worker."
+  type        = string
+}
+
+variable "owner_subject" {
+  description = "The Cognito subject the scheduler runs for. One owner, and no way to discover them without a scan."
+  type        = string
+  sensitive   = true
+}
+
 variable "monthly_cost_ceiling" {
   description = "The monthly figure ADR 0009 requires before the first billable resource. Crossing it is a stop condition, not a notification."
   type        = number

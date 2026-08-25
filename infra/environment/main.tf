@@ -118,6 +118,46 @@ module "mcp_api" {
   ]
 }
 
+module "scheduler" {
+  source = "../modules/application"
+
+  name_prefix        = local.name_prefix
+  function_name      = "scheduler-worker"
+  artifact_path      = var.scheduler_artifact
+  log_retention_days = var.log_retention_days
+  timeout_seconds    = 60
+
+  handler_environment = {
+    FINANCE_TABLE  = module.data.finance_table
+    AUDIT_TABLE    = module.data.audit_table
+    RECEIPT_BUCKET = module.data.receipt_bucket
+    OWNER_SUBJECT  = var.owner_subject
+  }
+
+  # The worker writes ledger rows and advances schedules. It reaches no session,
+  # no key, and no object.
+  policy_statements = [
+    {
+      sid       = "ReadAndWriteTheLedger"
+      actions   = ["dynamodb:GetItem", "dynamodb:Query", "dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:TransactWriteItems"]
+      resources = [module.data.finance_table_arn, module.data.finance_index_arn]
+    },
+    {
+      sid       = "RecordTheTrail"
+      actions   = ["dynamodb:PutItem", "dynamodb:TransactWriteItems"]
+      resources = [module.data.audit_table_arn]
+    },
+  ]
+}
+
+module "scheduling" {
+  source = "../modules/scheduling"
+
+  name_prefix   = local.name_prefix
+  function_arn  = module.scheduler.function_arn
+  function_name = module.scheduler.function_name
+}
+
 module "edge" {
   source = "../modules/edge"
 
@@ -157,8 +197,9 @@ module "observability" {
   alert_email          = var.alert_email
 
   watched_functions = {
-    app-api = module.app_api.function_name
-    mcp-api = module.mcp_api.function_name
+    app-api          = module.app_api.function_name
+    mcp-api          = module.mcp_api.function_name
+    scheduler-worker = module.scheduler.function_name
   }
 
   watched_tables = {

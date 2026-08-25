@@ -17,6 +17,8 @@ variables {
   passkey_relying_party_id = "app.example.invalid"
   app_api_artifact         = "tests/fixtures/artifact.txt"
   mcp_api_artifact         = "tests/fixtures/artifact.txt"
+  scheduler_artifact       = "tests/fixtures/artifact.txt"
+  owner_subject            = "example-owner-subject"
   monthly_cost_ceiling     = 25
   alert_email              = "alerts@example.invalid"
 
@@ -55,6 +57,23 @@ run "the_assistant_is_never_given_the_browser_session" {
   assert {
     condition     = contains(keys(module.app_api.environment), "SESSION_TABLE")
     error_message = "The browser API keeps the sessions it issues."
+  }
+}
+
+run "the_worker_writes_the_ledger_and_touches_nothing_else" {
+  command = plan
+
+  assert {
+    condition = alltrue([
+      for name in ["SESSION_TABLE", "SESSION_KEY_ID", "BROWSER_CLIENT_ID", "RESOURCE_URL"] :
+      !contains(keys(module.scheduler.environment), name)
+    ])
+    error_message = "The worker has no ingress and no session to read."
+  }
+
+  assert {
+    condition     = contains(keys(module.scheduler.environment), "OWNER_SUBJECT")
+    error_message = "One owner, named rather than discovered by a scan."
   }
 }
 

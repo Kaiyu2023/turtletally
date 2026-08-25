@@ -24,6 +24,8 @@ The configuration for all of it is written and checked: a bootstrap root, an env
 
 The scheduler worker and its trigger, then statement import. Each is a separate decision to proceed.
 
+The worker and its trigger are implemented: a daily run on the owner's own clock generates every occurrence that is due, and generating one twice is prevented by the occurrence itself rather than by the trigger firing exactly once. Statement import is not, and the deployed browser client refuses those calls rather than failing obscurely.
+
 ## Milestone 4 — MCP
 
 The separate ingress of ADR 0004, gated on the compatibility proof. ADR 0009 requires that proof to run first as a throwaway spike against a disposable domain.

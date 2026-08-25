@@ -19,7 +19,7 @@ fi
 cargo build --workspace --release --target "$target" --locked
 mkdir -p "$output_dir"
 
-for function_name in app-api mcp-api; do
+for function_name in app-api mcp-api scheduler-worker; do
   staging="$(mktemp -d)"
   cp "target/$target/release/$function_name" "$staging/bootstrap"
   chmod +x "$staging/bootstrap"

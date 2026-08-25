@@ -20,6 +20,7 @@ directories=(
   infra/modules/identity
   infra/modules/mcp
   infra/modules/observability
+  infra/modules/scheduling
 )
 
 for directory in "${directories[@]}"; do
