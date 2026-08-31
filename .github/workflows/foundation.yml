@@ -103,6 +103,18 @@ jobs:
           "$scanner_dir/trivy" --version
           printf '%s\n' "$scanner_dir" >> "$GITHUB_PATH"
 
+      - name: Cache the Rust build
+        # The suite compiles the workspace three times over - clippy's dev
+        # profile, the test profile, then the optimized aarch64 cross build -
+        # and none of it survived between runs, so most of the job was spent
+        # rebuilding the same dependency tree from scratch.
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          # Pull requests restore from the cache main writes but do not save
+          # their own: a branch cache is unreachable from sibling branches, so
+          # nine open Dependabot branches would only crowd the 10 GB limit.
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
       - name: Install Node.js dependencies
         run: npm ci --ignore-scripts
 
